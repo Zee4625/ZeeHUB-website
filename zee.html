@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZeeHUB - Roblox Script</title>
+    <style>
+        /* Setare pentru full-screen */
+        body {
+            font-family: 'Georgia', serif;
+            background: #1e1e1e;
+            color: white;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Containerul principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+            background: rgba(41, 41, 41, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 4px 30px rgba(255, 255, 255, 0.1);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Stil pentru titluri */
+        h1 {
+            color: #00ff00;
+            font-size: 48px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 20px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* Stil pentru butoane */
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #00aaff;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 22px;
+            margin: 15px 20px;
+            font-weight: bold;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #0088cc;
+            transform: scale(1.05);
+        }
+
+        /* Butonul pentru Get Script cu altă culoare */
+        .btn-green {
+            background: #00ff00;
+        }
+
+        .btn-green:hover {
+            background: #00cc00;
+        }
+
+        /* Butonul pentru Subscribe */
+        .btn-red {
+            background: red;
+        }
+
+        .btn-red:hover {
+            background: darkred;
+        }
+
+        /* Imagini */
+        img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        /* Stil pentru iframe (video embed) */
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            margin-top: 30px;
+            border-radius: 10px;
+        }
+
+        /* Partea de fundal */
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('background-image.jpg') no-repeat center center fixed;
+            background-size: cover;
+            z-index: -1;
+            filter: brightness(50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="container">
+        <h1>ZeeHUB - Roblox Script</h1>
+        <img src="X.png" alt="ZeeHUB Preview">
+
+        <p>A newly released script with a key system, still in beta. It offers advanced features to enhance your Roblox experience. The developers are constantly working on improvements, adding new functionalities, and ensuring optimal performance. This script works for all games on Roblox!</p>
+
+        <!-- Butonul Join Discord -->
+        <a href="https://discord.gg/ecKrSHRZa6" class="btn" target="_blank">Join our Discord</a>
+
+        <!-- Butonul Get Script -->
+        <a href="https://raw.githubusercontent.com/Zee4625/ZeeModule/refs/heads/main/Main" class="btn btn-green" target="_blank">Get Script</a>
+
+        <!-- Butonul Subscribe -->
+        <a href="https://www.youtube.com/@ZeeHUB.Z" class="btn btn-red" target="_blank">
+            Subscribe
+            <img src="8.png" alt="YouTube Logo" style="height: 25px; margin-left: 10px;">
+        </a>
+
+        <!-- Watch the Demo -->
+        <div class="section">
+            <h2>Watch the Demo</h2>
+            <iframe src="https://www.youtube.com/embed/cQ72zpU51Mw" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</body>
+</html>
