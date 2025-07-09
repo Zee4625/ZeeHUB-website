@@ -1,140 +1,339 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ro">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZeeHUB - Roblox Script</title>
-    <style>
-        /* Setare pentru full-screen */
-        body {
-            font-family: 'Georgia', serif;
-            background: #1e1e1e;
-            color: white;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-
-        /* Containerul principal */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px;
-            background: rgba(41, 41, 41, 0.9);
-            border-radius: 20px;
-            box-shadow: 0 4px 30px rgba(255, 255, 255, 0.1);
-            text-align: center;
-            position: relative;
-            z-index: 10;
-        }
-
-        /* Stil pentru titluri */
-        h1 {
-            color: #00ff00;
-            font-size: 48px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-        }
-
-        p {
-            font-size: 20px;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
-        /* Stil pentru butoane */
-        .btn {
-            display: inline-block;
-            padding: 15px 30px;
-            background: #00aaff;
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-size: 22px;
-            margin: 15px 20px;
-            font-weight: bold;
-            transition: background 0.3s ease, transform 0.2s ease;
-        }
-
-        .btn:hover {
-            background: #0088cc;
-            transform: scale(1.05);
-        }
-
-        /* Butonul pentru Get Script cu altă culoare */
-        .btn-green {
-            background: #00ff00;
-        }
-
-        .btn-green:hover {
-            background: #00cc00;
-        }
-
-        /* Butonul pentru Subscribe */
-        .btn-red {
-            background: red;
-        }
-
-        .btn-red:hover {
-            background: darkred;
-        }
-
-        /* Imagini */
-        img {
-            max-width: 100%;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-
-        /* Stil pentru iframe (video embed) */
-        iframe {
-            width: 100%;
-            height: 500px;
-            border: none;
-            margin-top: 30px;
-            border-radius: 10px;
-        }
-
-        /* Partea de fundal */
-        .background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('background-image.jpg') no-repeat center center fixed;
-            background-size: cover;
-            z-index: -1;
-            filter: brightness(50%);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Squid Game Minecraft - Cod și Semnătură</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #eee;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      padding: 40px 20px 150px; /* spațiu jos pentru document */
+      user-select: none;
+      min-height: 100vh;
+      position: relative;
+    }
+    .container {
+      background: linear-gradient(135deg, #330000, #660000);
+      border-radius: 15px;
+      padding: 35px 30px;
+      max-width: 600px;
+      margin: 0 auto 50px auto;
+      box-shadow: 0 0 25px #ff3300;
+      position: relative;
+      z-index: 2;
+    }
+    h1 {
+      color: #ff3d3d;
+      margin-bottom: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-shadow: 0 0 10px #ff0000;
+    }
+    .code {
+      font-size: 3.5em;
+      color: #00ff99;
+      margin: 25px 0 40px 0;
+      font-weight: 900;
+      letter-spacing: 0.3em;
+      user-select: text;
+      text-shadow: 0 0 12px #00ff99;
+    }
+    .rules, .games {
+      background-color: #222;
+      border-radius: 12px;
+      padding: 20px 25px;
+      margin-bottom: 30px;
+      text-align: left;
+      box-shadow: inset 0 0 10px #aa0000;
+    }
+    .rules h2, .games h2 {
+      color: #ff4d4d;
+      margin-top: 0;
+      text-shadow: 0 0 6px #ff1a1a;
+      font-weight: 700;
+    }
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    ul.rules-list li {
+      margin: 15px 0;
+      font-size: 1.15em;
+      position: relative;
+      padding-left: 35px;
+      color: #eee;
+    }
+    ul.rules-list li::before {
+      content: "✔";
+      color: #00ff66;
+      font-weight: bold;
+      position: absolute;
+      left: 10px;
+      top: 0;
+      font-size: 1.3em;
+      text-shadow: 0 0 5px #00ff66;
+    }
+    ul.games-list {
+      columns: 2;
+      column-gap: 40px;
+      font-size: 1.05em;
+      color: #ccc;
+      margin-top: 10px;
+    }
+    ul.games-list li {
+      margin: 8px 0;
+      padding-left: 22px;
+      position: relative;
+      line-height: 1.4;
+    }
+    ul.games-list li::before {
+      content: "🎮";
+      position: absolute;
+      left: 0;
+      font-size: 1.1em;
+      color: #ff6666;
+      text-shadow: 0 0 6px #ff0000;
+    }
+    form label {
+      display: block;
+      margin: 18px 0 10px 0;
+      font-weight: 700;
+      font-size: 1.15em;
+      text-align: left;
+      cursor: pointer;
+      color: #eee;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 1.15em;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      box-sizing: border-box;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+    input[type="checkbox"] {
+      margin-right: 12px;
+      transform: scale(1.4);
+      vertical-align: middle;
+      cursor: pointer;
+    }
+    button {
+      background-color: #ff3300;
+      color: #fff;
+      border: none;
+      padding: 16px 40px;
+      font-size: 1.3em;
+      font-weight: 900;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 30px;
+      transition: background-color 0.25s ease;
+      user-select: none;
+      box-shadow: 0 0 12px #ff3300;
+    }
+    button:hover:not(:disabled) {
+      background-color: #cc2900;
+      box-shadow: 0 0 20px #ff4400;
+    }
+    button:disabled {
+      background-color: #660000;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .confirmation-message {
+      margin-top: 40px;
+      font-size: 1.4em;
+      font-weight: 700;
+      color: #00ff77;
+      text-shadow: 0 0 12px #00ff77;
+    }
+    /* Document termeni jos */
+    #terms-document {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #222;
+      color: #ccc;
+      font-size: 0.9em;
+      line-height: 1.5em;
+      padding: 20px 30px;
+      max-height: 160px;
+      overflow-y: auto;
+      border-top: 3px solid #ff3300;
+      box-shadow: 0 -4px 15px rgba(255,50,0,0.9);
+      z-index: 1;
+      text-align: left;
+      font-family: 'Courier New', Courier, monospace;
+      user-select: text;
+    }
+    #terms-document h3 {
+      color: #ff3300;
+      margin-top: 0;
+      font-weight: 800;
+      text-shadow: 0 0 8px #ff3300;
+    }
+  </style>
 </head>
 <body>
-    <div class="background"></div>
-    <div class="container">
-        <h1>ZeeHUB - Roblox Script</h1>
-        <img src="X.png" alt="ZeeHUB Preview">
 
-        <p>A newly released script with a key system, still in beta. It offers advanced features to enhance your Roblox experience. The developers are constantly working on improvements, adding new functionalities, and ensuring optimal performance. This script works for all games on Roblox!</p>
+  <div class="container" id="main-container">
+    <h1>Squid Game Minecraft</h1>
+    <p>Codul tău unic este:</p>
+    <div id="code" class="code" title="Cod unic generat o singură dată"></div>
 
-        <!-- Butonul Join Discord -->
-        <a href="https://discord.gg/ecKrSHRZa6" class="btn" target="_blank">Join our Discord</a>
-
-        <!-- Butonul Get Script -->
-        <a href="https://raw.githubusercontent.com/Zee4625/ZeeModule/refs/heads/main/Main" class="btn btn-green" target="_blank">Get Script</a>
-
-        <!-- Butonul Subscribe -->
-        <a href="https://www.youtube.com/@ZeeHUB.Z" class="btn btn-red" target="_blank">
-            Subscribe
-            <img src="8.png" alt="YouTube Logo" style="height: 25px; margin-left: 10px;">
-        </a>
-
-        <!-- Watch the Demo -->
-        <div class="section">
-            <h2>Watch the Demo</h2>
-            <iframe src="https://www.youtube.com/embed/cQ72zpU51Mw" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
+    <div class="rules">
+      <h2>Reguli Esențiale</h2>
+      <ul class="rules-list">
+        <li>Codul generat este unic și valabil o singură dată.</li>
+        <li>Nu împărtăși codul cu alți jucători sub nici o formă.</li>
+        <li>Respectă regulile oficiale ale serverului Minecraft și ale jocului.</li>
+        <li>Este interzis orice tip de trișare sau comportament nesportiv.</li>
+        <li>PvP este permis <strong>DOAR</strong> în provocarea „Lights Out”. În rest, orice atac între jucători este interzis.</li>
+        <li>Participarea presupune acceptarea tuturor provocărilor și regulilor Squid Game.</li>
+        <li>Orice abatere poate duce la eliminare imediată din joc.</li>
+        <li>Respectă gardienii și deciziile lor pentru siguranța tuturor.</li>
+      </ul>
     </div>
+
+    <div class="games">
+      <h2>Provocări și Jocuri Posibile</h2>
+      <ul class="games-list">
+        <li>Red Light, Green Light</li>
+        <li>Honeycomb (Ppopgi)</li>
+        <li>Tug of War (Tracțiune de frânghie)</li>
+        <li>Marbles (Mărgele)</li>
+        <li>Glass Bridge (Podul de sticlă)</li>
+        <li>Hide and Seek (Ascuns și căutat)</li>
+        <li>Squid Game Classic</li>
+        <li>Memory Game</li>
+        <li>Lights Out</li>
+        <li>Maze Escape</li>
+        <li>Obstacle Course</li>
+        <li>Musical Chairs</li>
+        <li>Simon Says</li>
+        <li>Freeze Tag</li>
+        <li>King of the Hill</li>
+        <li>Parkour Challenge</li>
+        <li>Treasure Hunt</li>
+        <li>Trivia Quiz</li>
+      </ul>
+    </div>
+
+    <form id="signature-form">
+      <label for="username">Nume utilizator Minecraft (semnătura):</label>
+      <input type="text" id="username" name="username" placeholder="Ex: Player123" autocomplete="off" required />
+
+      <label style="cursor: default; user-select: none;">
+        <input type="checkbox" id="accept-terms" name="accept-terms" />
+        Sunt de acord cu <span style="color:#ff3300; font-weight:bold;">Termenii și Condițiile</span>
+      </label>
+
+      <button type="submit" id="submit-btn" disabled>Submit</button>
+    </form>
+
+    <div id="confirmation" class="confirmation-message" style="display:none;">
+      Mulțumim! Semnătura ta a fost înregistrată, iar codul tău unic este valabil.
+    </div>
+  </div>
+
+  <!-- Document termeni jos -->
+  <div id="terms-document">
+    <h3>Termeni și Condiții</h3>
+    <p>
+      - PvP (player versus player) este strict interzis în toate jocurile, cu excepția provocării <strong>Lights Out</strong>. Respectul între jucători este obligatoriu.
+    </p>
+    <p>
+      - Există două finaluri posibile:
+      <ul>
+        <li><strong>Câștigător</strong>: Completezi toate jocurile și devii campionul oficial Squid Game Minecraft.</li>
+        <li><strong>Rebel</strong>: Alegi să înfrunți gardienii și să fii rebel, cu riscuri și consecințe pe măsură.</li>
+      </ul>
+    </p>
+    <p>
+      - Participarea implică acceptarea regulilor și deciziilor arbitrilor. Orice încălcare poate duce la descalificare sau eliminare imediată.
+    </p>
+  </div>
+
+<script>
+  // Funcție generare cod
+  function generateCode(length) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
+
+  // Elemente HTML
+  const codeElement = document.getElementById('code');
+  const submitBtn = document.getElementById('submit-btn');
+  const usernameInput = document.getElementById('username');
+  const acceptTermsCheckbox = document.getElementById('accept-terms');
+  const form = document.getElementById('signature-form');
+  const confirmation = document.getElementById('confirmation');
+
+  // Verifică dacă există deja cod salvat în localStorage
+  let savedCode = localStorage.getItem('squid_game_code');
+  let signed = localStorage.getItem('squid_game_signed');
+
+  // Dacă codul nu există, generează unul și salvează-l
+  if (!savedCode) {
+    savedCode = generateCode(4);
+    localStorage.setItem('squid_game_code', savedCode);
+  }
+  codeElement.textContent = savedCode;
+
+  // Dacă s-a semnat deja, afișează mesajul de confirmare și dezactivează formularul
+  if (signed === "true") {
+    confirmation.style.display = 'block';
+    submitBtn.disabled = true;
+    usernameInput.disabled = true;
+    acceptTermsCheckbox.disabled = true;
+  }
+
+  // Activează butonul Submit doar dacă ambele condiții sunt îndeplinite
+  function toggleSubmitButton() {
+    if (usernameInput.value.trim() !== '' && acceptTermsCheckbox.checked) {
+      submitBtn.disabled = false;
+    } else {
+      submitBtn.disabled = true;
+    }
+  }
+
+  usernameInput.addEventListener('input', toggleSubmitButton);
+  acceptTermsCheckbox.addEventListener('change', toggleSubmitButton);
+
+  // La submit, salvează semnătura și afișează mesajul, fără să închidă pagina
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const username = usernameInput.value.trim();
+    if (username === '') {
+      alert('Te rugăm să introduci numele tău de utilizator Minecraft.');
+      return;
+    }
+    if (!acceptTermsCheckbox.checked) {
+      alert('Trebuie să fii de acord cu Termenii și Condițiile.');
+      return;
+    }
+
+    // Salvează semnătura în localStorage (flag și username)
+    localStorage.setItem('squid_game_signed', 'true');
+    localStorage.setItem('squid_game_username', username);
+
+    // Afișează mesajul de confirmare și dezactivează inputurile și butonul
+    confirmation.style.display = 'block';
+    submitBtn.disabled = true;
+    usernameInput.disabled = true;
+    acceptTermsCheckbox.disabled = true;
+  });
+</script>
+
 </body>
 </html>
