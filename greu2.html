@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antrenament Greu – ZeeHUB</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0f0f0f;
+      color: #ff8800;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      background-color: #1a1a1a;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 10px #ff8800;
+    }
+    .navbar .logo {
+      color: #ffaa00;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .navbar a {
+      color: #ff8800;
+      text-decoration: none;
+      background: #262626;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+    .navbar a:hover {
+      background-color: #ff8800;
+      color: black;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #ff8800;
+    }
+    h1, h2 {
+      color: #ffaa00;
+      text-align: center;
+    }
+    .day {
+      margin-bottom: 30px;
+    }
+    .day h2 {
+      background: #ff5500;
+      color: #fff;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      background: #262626;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .check {
+      margin-left: 10px;
+      transform: scale(1.5);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 14px;
+      color: #999;
+    }
+    .reset-btn {
+      display: block;
+      margin: 40px auto 0;
+      padding: 15px 30px;
+      font-size: 16px;
+      background: #ff0033;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff0033;
+    }
+    .reset-btn:hover {
+      background: #cc002a;
+    }
+    @media (max-width: 600px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="logo">ZeeHUB</div>
+    <a href="aaa.html">Înapoi</a>
+  </div>
+
+  <div class="container">
+    <h1>Antrenament Sală – Nivel Greu</h1>
+
+    <div class="day">
+      <h2>Luni – Piept & Triceps</h2>
+      <ul>
+        <li>5 seturi | Presă cu haltera la bancă – 6-8 rep | 60–90 kg <input type="checkbox" class="check"></li>
+        <li>4 seturi | Presă înclinat cu gantere – 8 rep | 24–30 kg/ganteră <input type="checkbox" class="check"></li>
+        <li>4 seturi | Dips la paralele – 10 rep | fără asistență <input type="checkbox" class="check"></li>
+        <li>3 seturi | Triceps la cablu cu frânghia – 12 rep | 30–40 kg <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Marți – Spate & Biceps</h2>
+      <ul>
+        <li>5 seturi | Tracțiuni la bară – 8-10 rep | cu greutate dacă e cazul <input type="checkbox" class="check"></li>
+        <li>4 seturi | Ramat cu bara – 10 rep | 50–70 kg <input type="checkbox" class="check"></li>
+        <li>3 seturi | Pull-over cablu – 12 rep | 20–30 kg <input type="checkbox" class="check"></li>
+        <li>3 seturi | Flexii concentrate – 10 rep | 14–18 kg/ganteră <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Miercuri – Picioare Puternice</h2>
+      <ul>
+        <li>5 seturi | Genuflexiuni cu haltera – 6–8 rep | 80–110 kg <input type="checkbox" class="check"></li>
+        <li>4 seturi | Presă picioare – 10 rep | 120–160 kg <input type="checkbox" class="check"></li>
+        <li>3 seturi | Îndreptări românești – 12 rep | 60–80 kg <input type="checkbox" class="check"></li>
+        <li>3 seturi | Ridicări gambă la aparat – 15 rep | 40–60 kg <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Vineri – Umeri & Core</h2>
+      <ul>
+        <li>4 seturi | Presă umeri cu haltera – 8 rep | 40–60 kg <input type="checkbox" class="check"></li>
+        <li>3 seturi | Ridicări laterale gantere – 12 rep | 8–12 kg <input type="checkbox" class="check"></li>
+        <li>3 seturi | Arnold Press – 10 rep | 16–20 kg <input type="checkbox" class="check"></li>
+        <li>4 seturi | Abdomene la cablu – 20 rep | 20–30 kg <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Sâmbătă – Full Body Exploziv</h2>
+      <ul>
+        <li>4 runde | Kettlebell swing – 20 rep | 16–24 kg <input type="checkbox" class="check"></li>
+        <li>4 runde | Burpee + săritură box – 10 rep | box 50 cm <input type="checkbox" class="check"></li>
+        <li>3 runde | Ramat TRX + 10 genuflexiuni cu greutate <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <button class="reset-btn" onclick="resetCheckboxes()">🔁 Resetează Bifele</button>
+
+    <div class="footer">
+      ZeeHUB – Doar pentru cei hotărâți 🔥
+    </div>
+  </div>
+
+  <script>
+    function resetCheckboxes() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = false);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antrenament Extrem – ZeeHUB</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0d0d0d;
+      color: #ff0044;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      background-color: #1a1a1a;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 10px #ff0044;
+    }
+    .navbar .logo {
+      color: #ff3366;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .navbar a {
+      color: #ff0044;
+      text-decoration: none;
+      background: #262626;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+    .navbar a:hover {
+      background-color: #ff0044;
+      color: black;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #ff0044;
+    }
+    h1, h2 {
+      color: #ff3366;
+      text-align: center;
+    }
+    .day {
+      margin-bottom: 30px;
+    }
+    .day h2 {
+      background: #cc0033;
+      color: #fff;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      background: #262626;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .check {
+      margin-left: 10px;
+      transform: scale(1.5);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 14px;
+      color: #999;
+    }
+    .reset-btn {
+      display: block;
+      margin: 40px auto 0;
+      padding: 15px 30px;
+      font-size: 16px;
+      background: #ff0033;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff0033;
+    }
+    .reset-btn:hover {
+      background: #cc002a;
+    }
+    @media (max-width: 600px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="logo">ZeeHUB</div>
+    <a href="aaa.html">Înapoi</a>
+  </div>
+
+  <div class="container">
+    <h1>Antrenament Sală – Nivel EXTREM</h1>
+
+    <div class="day">
+      <h2>Luni – Piept & Spate (Superseturi)</h2>
+      <ul>
+        <li>Superset: Presă cu haltera orizontal + Tracțiuni greutate | 5x8 | 80–100 kg / cu greutate suplimentară <input type="checkbox" class="check"></li>
+        <li>Superset: Presă înclinat gantere + Ramat cu gantera | 4x10 | 30 kg / 36 kg <input type="checkbox" class="check"></li>
+        <li>Drop set: Fluturări la aparat (pec deck) | 3x15–10–8 | 50→30→20 kg <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Marți – Picioare de Oțel</h2>
+      <ul>
+        <li>Genuflexiuni cu haltera (pauză jos 2 sec) – 5 seturi x 6 rep | 100–130 kg <input type="checkbox" class="check"></li>
+        <li>Presă picioare + extensii (superset) – 4 seturi | 150–200 kg + 50 kg <input type="checkbox" class="check"></li>
+        <li>Îndreptări românești + ridicări gambă (superset) – 4 seturi | 80 kg + 60 kg <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Miercuri – Umeri & Core Exploziv</h2>
+      <ul>
+        <li>Arnold Press + Ridicări frontale – 4x10 | 20 kg / 10 kg <input type="checkbox" class="check"></li>
+        <li>Superset: Presă militară la aparat + Laterale – 4x12 | 50 kg / 12 kg <input type="checkbox" class="check"></li>
+        <li>Abdomene cu roata + crunch cablu – 3x15 | Greutate 30–40 kg <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Vineri – Brațe & Strong Core</h2>
+      <ul>
+        <li>Superset: Flexii cu bara EZ + Triceps cu bara V – 4x10 | 35–45 kg <input type="checkbox" class="check"></li>
+        <li>Concentrare + extensie la un braț – 3x12 | 14–18 kg <input type="checkbox" class="check"></li>
+        <li>Drop set: Hammer curls – 15–12–10 rep | 16→14→12 kg <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Sâmbătă – Full Body Metabolic Burn</h2>
+      <ul>
+        <li>5 runde | Thruster cu bara (genuflexiune + împins) – 12 rep | 40–50 kg <input type="checkbox" class="check"></li>
+        <li>5 runde | Deadlift + Kettlebell swing – 8 + 15 rep | 100 kg + 20 kg <input type="checkbox" class="check"></li>
+        <li>Tabata Plank Hold + Jumping Jacks – 4 min total <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <button class="reset-btn" onclick="resetCheckboxes()">🔁 Resetează Bifele</button>
+
+    <div class="footer">
+      ZeeHUB – Unde forța devine disciplină 💥
+    </div>
+  </div>
+
+  <script>
+    function resetCheckboxes() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = false);
+    }
+  </script>
+</body>
+</html>
