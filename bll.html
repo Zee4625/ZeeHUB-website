@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plan Adaptat - Afecțiuni</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(ellipse at top, #0f1117, #1a1d24);
+      color: #ffffff;
+      animation: bgFlow 10s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgFlow {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 100% 100%; }
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: rgba(27, 30, 38, 0.95);
+      padding: 45px;
+      border-radius: 25px;
+      box-shadow: 0 0 40px #00fff2cc;
+      backdrop-filter: blur(8px);
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      color: #39ff14;
+      font-size: 34px;
+      margin-bottom: 30px;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 15px;
+      font-size: 17px;
+      border-radius: 12px;
+      border: none;
+      outline: none;
+    }
+
+    select {
+      background: #101218;
+      color: #00fff2;
+      border: 2px solid #00fff2;
+    }
+
+    button {
+      background: #00fff2;
+      color: #0f1117;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #39ff14;
+    }
+
+    .plan-box {
+      background: #12151c;
+      margin-top: 35px;
+      padding: 25px;
+      border-radius: 18px;
+      color: #cfe;
+      text-align: left;
+      line-height: 1.7;
+      border-left: 6px solid #00fff2;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    a.back {
+      display: inline-block;
+      margin-top: 30px;
+      background-color: #00fff2;
+      padding: 14px 28px;
+      color: #0f1117;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 12px;
+      transition: 0.3s ease;
+    }
+
+    a.back:hover {
+      background-color: #39ff14;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🩺 Plan Adaptat la Afecțiuni</h1>
+
+    <form id="healthForm">
+      <label for="condition"><strong>Selectează o afecțiune sau alergie:</strong></label>
+      <select id="condition" required>
+        <option value="" disabled selected>-- Alege o opțiune --</option>
+        <option value="astm">Astm</option>
+        <option value="diabet">Diabet zaharat</option>
+        <option value="alergii">Alergii severe</option>
+        <option value="cardiac">Afecțiuni cardiace</option>
+        <option value="ortopedic">Probleme ortopedice</option>
+        <option value="obezitate">Obezitate</option>
+        <option value="hipertensiune">Hipertensiune</option>
+        <option value="anxietate">Anxietate sau depresie</option>
+        <option value="epilepsie">Epilepsie</option>
+        <option value="sindrom_fatigue">Sindrom de oboseală cronică</option>
+        <option value="hernie">Hernie de disc</option>
+        <option value="fibromialgie">Fibromialgie</option>
+        <option value="tulburari_vestibulare">Tulburări de echilibru</option>
+      </select>
+
+      <button type="submit">⚙️ Generează Planul Adaptat</button>
+    </form>
+
+    <div id="plan" class="plan-box" style="display:none;"></div>
+
+    <a href="index.html" class="back">← Înapoi la Meniu Principal</a>
+  </div>
+
+  <script>
+    const form = document.getElementById('healthForm');
+    const planBox = document.getElementById('plan');
+
+    const plans = {
+      astm: `
+        💨 <strong>Astm:</strong><br>
+        ✅ Exerciții: Înot (în apă caldă), mers rapid, yoga ușoară<br>
+        ❌ Evită: Alergare în frig/polen, efort brusc<br>
+        🔎 Important: Încălzire + inhalator preventiv cu 20 min înainte.
+      `,
+      diabet: `
+        🍬 <strong>Diabet zaharat:</strong><br>
+        ✅ Exerciții: Mers, bicicletă, rezistență ușoară<br>
+        ❌ Evită: Activitate fără mâncare, efort intens seara<br>
+        📊 Monitorizează glicemia înainte și după!
+      `,
+      alergii: `
+        🌬️ <strong>Alergii severe:</strong><br>
+        ✅ Exerciții: În spații închise, sală cu aer filtrat<br>
+        ❌ Evită: Alergat afară primăvara/toamna<br>
+        🛡️ Ia antihistaminic înainte de efort.
+      `,
+      cardiac: `
+        ❤️ <strong>Afecțiuni cardiace:</strong><br>
+        ✅ Exerciții: Mers lent, exerciții cu greutatea corpului<br>
+        ❌ Evită: Greutăți mari, efort fără pauze<br>
+        📈 Supraveghează tensiunea și pulsul. Consult medical obligatoriu!
+      `,
+      ortopedic: `
+        🦴 <strong>Probleme ortopedice:</strong><br>
+        ✅ Exerciții: Pilates, mobilizare, bandă cu suport<br>
+        ❌ Evită: Sărituri, impact pe articulații<br>
+        ⚠️ Folosește încălțăminte specială și suprafețe moi.
+      `,
+      obezitate: `
+        ⚖️ <strong>Obezitate:</strong><br>
+        ✅ Exerciții: Aqua gym, mers ușor, eliptică<br>
+        ❌ Evită: Jogging, HIIT, exerciții cu greutăți<br>
+        🔁 Începe treptat, 20–30 min/zi, focus pe dietă și odihnă.
+      `,
+      hipertensiune: `
+        🩸 <strong>Hipertensiune:</strong><br>
+        ✅ Exerciții: Mers rapid, bandă, stretching<br>
+        ❌ Evită: Ridicări mari, blocaj respirator<br>
+        🧘 Respirația ritmică e esențială în timpul efortului!
+      `,
+      anxietate: `
+        🧠 <strong>Anxietate / depresie:</strong><br>
+        ✅ Exerciții: Yoga, pilates, mers afară<br>
+        ❌ Evită: Sport de competiție, medii aglomerate<br>
+        🫂 Efort fizic = terapie, dar menține un ritm blând și constant.
+      `,
+      epilepsie: `
+        ⚡ <strong>Epilepsie:</strong><br>
+        ✅ Exerciții: Bicicletă staționară, mers, yoga<br>
+        ❌ Evită: Sporturi cu risc de cădere, lumină intermitentă<br>
+        🕒 Nu fă sport singur, evită stresul, setează rutină.
+      `,
+      sindrom_fatigue: `
+        💤 <strong>Sindrom de oboseală cronică:</strong><br>
+        ✅ Exerciții: Stretching, tai chi, mers lent<br>
+        ❌ Evită: Exerciții de intensitate chiar medie<br>
+        ⏳ Răbdare + pauze dese + alimentație echilibrată.
+      `,
+      hernie: `
+        🔁 <strong>Hernie de disc:</strong><br>
+        ✅ Exerciții: Exerciții pentru core, izometrie, spate<br>
+        ❌ Evită: Ridicări, torsiuni, mișcări bruște<br>
+        🧍 Corectarea posturii este cheia succesului.
+      `,
+      fibromialgie: `
+        🔷 <strong>Fibromialgie:</strong><br>
+        ✅ Exerciții: Înot, mers, yoga, întinderi<br>
+        ❌ Evită: Exerciții explozive, competiție<br>
+        ☁️ Nivel scăzut de stres și efort susținut sunt esențiale.
+      `,
+      tulburari_vestibulare: `
+        🌀 <strong>Tulburări de echilibru:</strong><br>
+        ✅ Exerciții: Sprijin pe perete, pe scaun, mers ghidat<br>
+        ❌ Evită: Rotații, alergare, spații instabile<br>
+        🔄 Fă mișcări lente și asigură mereu sprijin.
+      `
+    };
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const condition = document.getElementById('condition').value;
+      if (plans[condition]) {
+        planBox.innerHTML = plans[condition];
+        planBox.style.display = 'block';
+        planBox.scrollIntoView({ behavior: "smooth" });
+      }
+    });
+  </script>
+</body>
+</html>
