@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Statistici Sportive Avansate - ZeeHUB</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+
+    body {
+      background: #0f1117;
+      color: #00fff2;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: #1c1f26;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px #00fff2;
+      flex-grow: 1;
+    }
+
+    header {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 48px;
+      color: #39ff14;
+      text-align: center;
+      margin-bottom: 20px;
+      text-shadow:
+        0 0 5px #00fff2,
+        0 0 10px #00fff2,
+        0 0 20px #39ff14,
+        0 0 30px #39ff14,
+        0 0 40px #00fff2;
+      user-select: none;
+    }
+
+    h1 {
+      text-align: center;
+      color: #39ff14;
+      margin-bottom: 30px;
+      font-weight: 700;
+    }
+
+    label, select, input {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 10px;
+      background: #20232b;
+      color: #00fff2;
+      border: 1px solid #39ff14;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    #sports-count {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #39ff14;
+      user-select: none;
+    }
+
+    canvas {
+      background: #1a1d24;
+      border-radius: 10px;
+      padding: 10px;
+      margin-top: 30px;
+      width: 100% !important;
+      height: auto !important;
+    }
+
+    button {
+      background: #ff0044;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 30px;
+      width: 100%;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+
+    button:hover {
+      background: #cc0033;
+    }
+
+    #recommendation {
+      margin-top: 30px;
+      font-size: 18px;
+      color: #00fff2;
+      background: #12141b;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00fff2;
+      user-select: none;
+    }
+
+    /* Buton principal jos */
+    .home-btn {
+      background: transparent;
+      border: 2.5px solid #00fff2;
+      color: #00fff2;
+      border-radius: 20px;
+      padding: 15px 0;
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 30px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 0 15px #00fff2aa;
+      transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+      text-decoration: none;
+      display: block;
+      user-select: none;
+    }
+
+    .home-btn:hover {
+      background: #00fff2;
+      color: #0f1117;
+      box-shadow: 0 0 30px #39ff14;
+    }
+
+    @media (max-width: 600px) {
+      canvas {
+        width: 100% !important;
+        height: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>ZeeHUB</header>
+  <div class="container">
+    <h1>Profil Sportiv Avansat</h1>
+
+    <label for="age">Vârstă:</label>
+    <input type="number" id="age" min="10" max="80" value="18" />
+
+    <label for="height">Înălțime (cm):</label>
+    <input type="number" id="height" min="100" max="250" value="175" />
+
+    <label for="weight">Greutate (kg):</label>
+    <input type="number" id="weight" min="30" max="200" value="70" />
+
+    <label for="sports">Alege maxim 3 sporturi:</label>
+    <select id="sports" multiple size="6" aria-describedby="sports-count">
+      <option>Muay Thai</option>
+      <option>Calistenice</option>
+      <option>Parkour</option>
+      <option>Box</option>
+      <option>Atletism</option>
+      <option>Fitness</option>
+      <option>Înot</option>
+      <option>Fotbal</option>
+      <option>Baschet</option>
+      <option>Gimnastică</option>
+    </select>
+
+    <div id="sports-count" aria-live="polite" aria-atomic="true">Sporturi alese: 0</div>
+
+    <canvas id="radarChart" width="400" height="400" aria-label="Grafic radar al statisticilor sportive"></canvas>
+
+    <div id="recommendation" aria-live="polite" aria-atomic="true">Recomandări vor apărea aici...</div>
+
+    <button onclick="resetAll()">🔁 Resetează tot</button>
+  </div>
+
+  <a href="index.html" class="home-btn" aria-label="Pagina principală ZeeHUB">🏠 Înapoi la pagina principală</a>
+
+  <script>
+    const ctx = document.getElementById('radarChart').getContext('2d');
+    let radarChart;
+
+    function updateChart() {
+      const age = parseInt(document.getElementById('age').value);
+      const height = parseInt(document.getElementById('height').value);
+      const weight = parseInt(document.getElementById('weight').value);
+      const selectedOptions = Array.from(document.getElementById('sports').selectedOptions).map(opt => opt.value);
+
+      if (selectedOptions.length > 3) {
+        alert("Poți selecta maxim 3 sporturi!");
+        // deselect ultimul ales
+        const sportsSelect = document.getElementById('sports');
+        sportsSelect.options[sportsSelect.selectedIndex].selected = false;
+        return;
+      }
+
+      document.getElementById('sports-count').innerText =
+        `Sporturi alese: ${selectedOptions.length} → ${selectedOptions.join(', ') || "Nimic"}`;
+
+      let base = {
+        strength: (weight / age) * 10,
+        endurance: (height / weight) * 10,
+        speed: (180 - age) / 2,
+        flexibility: 50 - (age / 2),
+        coordination: 40 + (height / 10),
+        reflex: 60 - (weight / 2)
+      };
+
+      selectedOptions.forEach(sport => {
+        switch (sport) {
+          case 'Muay Thai': base.strength += 10; base.reflex += 10; break;
+          case 'Calistenice': base.strength += 12; base.coordination += 6; break;
+          case 'Parkour': base.speed += 10; base.flexibility += 8; break;
+          case 'Box': base.strength += 9; base.reflex += 12; break;
+          case 'Atletism': base.speed += 12; base.endurance += 10; break;
+          case 'Fitness': base.strength += 14; break;
+          case 'Înot': base.endurance += 12; base.coordination += 8; break;
+          case 'Fotbal': base.speed += 7; base.coordination += 6; break;
+          case 'Baschet': base.coordination += 8; break;
+          case 'Gimnastică': base.flexibility += 20; base.coordination += 12; break;
+        }
+      });
+
+      const labels = ['Forță', 'Rezistență', 'Viteză', 'Flexibilitate', 'Coordonare', 'Reflexe'];
+      const values = [
+        base.strength,
+        base.endurance,
+        base.speed,
+        base.flexibility,
+        base.coordination,
+        base.reflex
+      ];
+
+      if (radarChart) radarChart.destroy();
+
+      radarChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Statistici Sportive',
+            data: values,
+            backgroundColor: 'rgba(0, 255, 242, 0.2)',
+            borderColor: '#00fff2',
+            pointBackgroundColor: '#39ff14',
+            pointRadius: 6,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            r: {
+              angleLines: { color: '#444' },
+              grid: { color: '#333' },
+              pointLabels: { color: '#00fff2', font: { size: 14, weight: 'bold' } },
+              ticks: { display: false, beginAtZero: true }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: { color: '#00fff2', font: { size: 16, weight: 'bold' } }
+            },
+            tooltip: {
+              enabled: true,
+              backgroundColor: '#00fff2',
+              titleColor: '#0f1117',
+              bodyColor: '#0f1117',
+            }
+          }
+        }
+      });
+
+      // Recomandări
+      let minValue = Math.min(...values);
+      let weakestIndex = values.indexOf(minValue);
+      let weakestSkill = labels[weakestIndex];
+      let suggestion = '';
+
+      switch (weakestSkill) {
+        case 'Forță': suggestion = 'Crește forța prin antrenamente de calistenice sau greutăți libere (flotări, tracțiuni, dips).'; break;
+        case 'Rezistență': suggestion = 'Include antrenamente cardio: alergări, ciclism, HIIT sau înot constant 20-30 min.'; break;
+        case 'Viteză': suggestion = 'Sprinturi, pliometrie și exerciții cu reacție rapidă sunt cheia pentru mai multă viteză.'; break;
+        case 'Flexibilitate': suggestion = 'Stretching zilnic, yoga, mobilitate activă. Fă 15-20 min după antrenamente.'; break;
+        case 'Coordonare': suggestion = 'Lucrează cu exerciții de echilibru, parkour, baschet sau sporturi cu mingea.'; break;
+        case 'Reflexe': suggestion = 'Antrenează-te cu partener, padwork, reacții luminoase sau aplicații pentru reflexe.'; break;
+      }
+
+      document.getElementById('recommendation').innerHTML = `
+        <strong>Cea mai slabă abilitate: ${weakestSkill}</strong><br>
+        <em>${suggestion}</em>
+      `;
+    }
+
+    function resetAll() {
+      document.getElementById('age').value = 18;
+      document.getElementById('height').value = 175;
+      document.getElementById('weight').value = 70;
+      const select = document.getElementById('sports');
+      Array.from(select.options).forEach(option => option.selected = false);
+      updateChart();
+    }
+
+    document.getElementById('age').addEventListener('input', updateChart);
+    document.getElementById('height').addEventListener('input', updateChart);
+    document.getElementById('weight').addEventListener('input', updateChart);
+    document.getElementById('sports').addEventListener('change', updateChart);
+    window.onload = updateChart;
+  </script>
+</body>
+</html>

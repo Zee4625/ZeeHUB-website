@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antrenament Mediu – ZeeHUB</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0f0f0f;
+      color: #00ffc3;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .navbar {
+      background-color: #1a1a1a;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 10px #00ffc3;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #39ff14;
+    }
+
+    .back-btn {
+      color: #00ffc3;
+      text-decoration: none;
+      background: #262626;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .back-btn:hover {
+      background: #00ffc3;
+      color: black;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #00ffc3;
+    }
+
+    h1, h2 {
+      color: #00ff88;
+    }
+
+    .day {
+      margin-bottom: 30px;
+    }
+
+    .day h2 {
+      background: #00bfa5;
+      color: #fff;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background: #262626;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .check {
+      margin-left: 10px;
+      transform: scale(1.5);
+    }
+
+    .reset-btn {
+      display: block;
+      margin: 40px auto 0;
+      padding: 15px 30px;
+      font-size: 16px;
+      background: #ff0033;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff0033;
+    }
+
+    .reset-btn:hover {
+      background: #cc002a;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 14px;
+      color: #999;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="logo">ZeeHUB</div>
+    <a class="back-btn" href="pgs.html">⬅ Înapoi la Meniu</a>
+  </div>
+
+  <div class="container">
+    <h1>Program Mediu – Bodyweight Muay Thai</h1>
+
+    <div class="day">
+      <h2>Luni – Push Focus</h2>
+      <ul>
+        <li>3 seturi | 10 flotări normale <input type="checkbox" class="check"></li>
+        <li>3 seturi | 8 flotări diamond <input type="checkbox" class="check"></li>
+        <li>2 seturi | 10 dips pe scaun <input type="checkbox" class="check"></li>
+        <li>2 seturi | plank 45 sec <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Marți – Pull & Core</h2>
+      <ul>
+        <li>3 seturi | 6 tracțiuni (sau asistate) <input type="checkbox" class="check"></li>
+        <li>3 seturi | 12 row-uri sub masă <input type="checkbox" class="check"></li>
+        <li>3 seturi | 15 abdomene clasice <input type="checkbox" class="check"></li>
+        <li>3 seturi | 20 mountain climbers <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Miercuri – Picioare & Mobilitate</h2>
+      <ul>
+        <li>3 seturi | 15 genuflexiuni <input type="checkbox" class="check"></li>
+        <li>3 seturi | 12 fandări (6/parte) <input type="checkbox" class="check"></li>
+        <li>2 seturi | wall sit 45 sec <input type="checkbox" class="check"></li>
+        <li>5 min stretching picioare <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Joi – Full Body Explosiv</h2>
+      <ul>
+        <li>3 runde | 10 burpees + 10 jump squats <input type="checkbox" class="check"></li>
+        <li>2 seturi | 20 high knees <input type="checkbox" class="check"></li>
+        <li>2 seturi | plank + reach 30 sec <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Vineri – Mix Light</h2>
+      <ul>
+        <li>2 seturi | 15 push-ups <input type="checkbox" class="check"></li>
+        <li>2 seturi | 10 jumping lunges <input type="checkbox" class="check"></li>
+        <li>2 seturi | 20 sec plank + 10 burpees <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Sâmbătă – Core & Stretch</h2>
+      <ul>
+        <li>3 seturi | 20 abdomene <input type="checkbox" class="check"></li>
+        <li>3 seturi | 15 leg raises <input type="checkbox" class="check"></li>
+        <li>5 min stretching total <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <button class="reset-btn" onclick="resetCheckboxes()">🔁 Reset Bife</button>
+    <div class="footer">
+      Creat pentru luptători & entuziaști bodyweight – ZeeHUB ⚡
+    </div>
+  </div>
+
+  <script>
+    function resetCheckboxes() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = false);
+    }
+  </script>
+</body>
+</html>

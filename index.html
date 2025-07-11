@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Meniu Principal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #0f1117, #1a1d24);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #00fff2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      animation: bgPulse 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgPulse {
+      0% {background-position: 0% 50%;}
+      100% {background-position: 100% 50%;}
+    }
+
+    .menu-container {
+      background: #1b1e26cc;
+      padding: 50px 40px 60px;
+      border-radius: 25px;
+      box-shadow: 0 0 35px #00fff2cc;
+      text-align: center;
+      max-width: 420px;
+      width: 90%;
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease;
+    }
+    .menu-container:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 55px #39ff14cc;
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      color: #39ff14;
+      font-size: 36px;
+      margin-bottom: 40px;
+      text-shadow:
+        0 0 8px #39ff14,
+        0 0 15px #00fff2,
+        0 0 25px #00fff2;
+    }
+
+    .menu-button {
+      display: block;
+      margin: 15px auto;
+      padding: 18px 30px;
+      background: transparent;
+      border: 2.5px solid #00fff2;
+      border-radius: 18px;
+      font-size: 20px;
+      color: #00fff2;
+      text-decoration: none;
+      box-shadow:
+        0 0 12px #00fff2aa,
+        inset 0 0 6px #00fff2aa;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.2s ease;
+      user-select: none;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-align: center;
+    }
+
+    .menu-button:hover, .menu-button:focus {
+      background: #00fff2;
+      color: #0f1117;
+      box-shadow:
+        0 0 25px #39ff14,
+        inset 0 0 18px #39ff14;
+      transform: scale(1.1);
+      outline: none;
+    }
+
+    .footer-note {
+      margin-top: 50px;
+      font-size: 14px;
+      color: #888;
+      user-select: none;
+    }
+
+    @media screen and (max-width: 500px) {
+      .menu-button {
+        font-size: 18px;
+        padding: 14px 25px;
+      }
+
+      h1 {
+        font-size: 28px;
+        margin-bottom: 30px;
+      }
+
+      .menu-container {
+        padding: 35px 25px 45px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="menu-container" role="main">
+    <h1>🏁 Meniu Principal</h1>
+
+    <a class="menu-button" href="drg.html" role="button" aria-label="Profil Sportiv">📊 Profil Sportiv</a>
+    <a class="menu-button" href="pgs.html" role="button" aria-label="Program de Antrenament">💪 Program de Antrenament</a>
+    <a class="menu-button" href="nnt.html" role="button" aria-label="Nutriție și Sfaturi">🧠 Nutriție & Sfaturi</a>
+    <a class="menu-button" href="acc.html" role="button" aria-label="Crează propriul antrenament">✍️ Crează Propriul Antrenament</a>
+
+    <div class="footer-note">Versiune Alpha • Creat cu pasiune 🔥</div>
+  </div>
+</body>
+</html>

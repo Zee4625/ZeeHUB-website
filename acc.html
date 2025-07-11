@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crează Propriul Antrenament</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #0f1117, #1a1d24);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #00fff2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      color: #39ff14;
+      font-size: 32px;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px #00fff2, 0 0 20px #00fff2;
+    }
+    form {
+      background: #1b1e26cc;
+      padding: 25px 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px #00fff2cc;
+      width: 100%;
+      max-width: 480px;
+      margin-bottom: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      box-sizing: border-box;
+    }
+    label {
+      flex: 1 1 100%;
+      font-weight: 600;
+      margin-bottom: 6px;
+      user-select: none;
+    }
+    input[type="text"], input[type="number"] {
+      flex: 1 1 calc(50% - 10px);
+      padding: 10px 15px;
+      border: 2px solid #00fff2;
+      border-radius: 15px;
+      background: transparent;
+      color: #00fff2;
+      font-size: 16px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus, input[type="number"]:focus {
+      outline: none;
+      border-color: #39ff14;
+      box-shadow: 0 0 10px #39ff14;
+    }
+    button {
+      flex: 1 1 100%;
+      padding: 15px;
+      background: transparent;
+      border: 2.5px solid #00fff2;
+      border-radius: 20px;
+      font-size: 18px;
+      color: #00fff2;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 0 15px #00fff2aa;
+      transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+    }
+    button:hover {
+      background: #00fff2;
+      color: #0f1117;
+      box-shadow: 0 0 30px #39ff14;
+    }
+    ul {
+      background: #1b1e26cc;
+      max-width: 480px;
+      width: 100%;
+      list-style: none;
+      padding: 20px 25px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px #00fff2cc;
+      margin: 0;
+      box-sizing: border-box;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+    li {
+      padding: 12px 15px;
+      margin-bottom: 12px;
+      border: 1.8px solid #00fff2aa;
+      border-radius: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+      user-select: none;
+    }
+    li:last-child {
+      margin-bottom: 0;
+    }
+    .del-btn {
+      background: #ff0033;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-weight: 700;
+      padding: 6px 10px;
+      cursor: pointer;
+      box-shadow: 0 0 8px #ff0033cc;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    .del-btn:hover {
+      background: #cc002a;
+    }
+    .btn-group {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 480px;
+      width: 100%;
+    }
+    .btn-group button, .btn-group a {
+      flex: 1 1 calc(33% - 10px);
+      text-align: center;
+      text-decoration: none;
+    }
+    a.menu-link {
+      display: inline-block;
+      background: transparent;
+      border: 2.5px solid #00fff2;
+      border-radius: 20px;
+      padding: 14px 0;
+      color: #00fff2;
+      font-weight: 600;
+      font-size: 18px;
+      box-shadow: 0 0 15px #00fff2aa;
+      user-select: none;
+      transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    }
+    a.menu-link:hover {
+      background: #00fff2;
+      color: #0f1117;
+      box-shadow: 0 0 30px #39ff14;
+    }
+    @media (max-width: 520px) {
+      input[type="text"], input[type="number"] {
+        flex: 1 1 100%;
+      }
+      .btn-group button, .btn-group a {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>✍️ Crează Propriul Antrenament</h1>
+
+  <form id="exercise-form" aria-label="Formular adăugare exercițiu">
+    <label for="name">Nume exercițiu</label>
+    <input type="text" id="name" name="name" placeholder="Ex: Flotări" required />
+
+    <label for="sets">Seturi</label>
+    <input type="number" id="sets" name="sets" min="1" placeholder="Ex: 3" required />
+
+    <label for="reps">Repetări</label>
+    <input type="number" id="reps" name="reps" min="1" placeholder="Ex: 12" required />
+
+    <label for="rest">Pauză (secunde)</label>
+    <input type="number" id="rest" name="rest" min="0" placeholder="Ex: 60" required />
+
+    <button type="submit">Adaugă exercițiu</button>
+  </form>
+
+  <ul id="exercise-list" aria-live="polite" aria-label="Lista exercițiilor adăugate">
+    <!-- exerciții vor apărea aici -->
+  </ul>
+
+  <div class="btn-group">
+    <button id="save-btn" aria-label="Salvează antrenamentul">💾 Salvează Antrenamentul</button>
+    <button id="load-btn" aria-label="Încarcă antrenamentul salvat">📂 Încarcă Antrenamentul</button>
+    <button id="clear-btn" aria-label="Șterge toate exercițiile">🗑️ Șterge Tot</button>
+  </div>
+
+  <a href="index.html" class="menu-link" aria-label="Înapoi la Program de Antrenament">⬅️ Înapoi la Pagina Principala</a>
+
+<script>
+  const form = document.getElementById('exercise-form');
+  const list = document.getElementById('exercise-list');
+  const saveBtn = document.getElementById('save-btn');
+  const loadBtn = document.getElementById('load-btn');
+  const clearBtn = document.getElementById('clear-btn');
+
+  let exercises = [];
+
+  function renderList() {
+    list.innerHTML = '';
+    if (exercises.length === 0) {
+      list.innerHTML = '<li style="color:#888; user-select:none;">Niciun exercițiu adăugat încă.</li>';
+      return;
+    }
+
+    exercises.forEach((ex, i) => {
+      const li = document.createElement('li');
+      li.textContent = `${ex.name} - ${ex.sets} seturi x ${ex.reps} rep. | Pauză ${ex.rest} sec`;
+
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '❌';
+      delBtn.className = 'del-btn';
+      delBtn.setAttribute('aria-label', `Șterge exercițiul ${ex.name}`);
+      delBtn.onclick = () => {
+        exercises.splice(i, 1);
+        renderList();
+      };
+      li.appendChild(delBtn);
+      list.appendChild(li);
+    });
+  }
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const name = form.name.value.trim();
+    const sets = parseInt(form.sets.value);
+    const reps = parseInt(form.reps.value);
+    const rest = parseInt(form.rest.value);
+
+    if (!name || sets <= 0 || reps <= 0 || rest < 0) {
+      alert('Te rog completează toate câmpurile corect.');
+      return;
+    }
+
+    exercises.push({ name, sets, reps, rest });
+    form.reset();
+    renderList();
+  });
+
+  saveBtn.onclick = () => {
+    if (exercises.length === 0) {
+      alert('Lista este goală, nu există nimic de salvat.');
+      return;
+    }
+    localStorage.setItem('customWorkout', JSON.stringify(exercises));
+    alert('Antrenamentul a fost salvat cu succes!');
+  };
+
+  loadBtn.onclick = () => {
+    const saved = localStorage.getItem('customWorkout');
+    if (!saved) {
+      alert('Nu există antrenament salvat.');
+      return;
+    }
+    exercises = JSON.parse(saved);
+    renderList();
+    alert('Antrenamentul a fost încărcat!');
+  };
+
+  clearBtn.onclick = () => {
+    if (!confirm('Ești sigur că vrei să ștergi toate exercițiile?')) return;
+    exercises = [];
+    renderList();
+    localStorage.removeItem('customWorkout');
+  };
+
+  // Inițializează la încărcare
+  renderList();
+</script>
+
+</body>
+</html>

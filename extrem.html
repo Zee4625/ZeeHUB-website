@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antrenament Extrem – ZeeHUB</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0f0f0f;
+      color: #00ffc3;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .navbar {
+      background-color: #1a1a1a;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 10px #00ffc3;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #39ff14;
+    }
+
+    .back-btn {
+      color: #00ffc3;
+      text-decoration: none;
+      background: #262626;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .back-btn:hover {
+      background: #00ffc3;
+      color: black;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #00ffc3;
+    }
+
+    h1, h2 {
+      color: #00ff88;
+    }
+
+    .day {
+      margin-bottom: 30px;
+    }
+
+    .day h2 {
+      background: #ff0040;
+      color: #fff;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background: #262626;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .check {
+      margin-left: 10px;
+      transform: scale(1.5);
+    }
+
+    .reset-btn {
+      display: block;
+      margin: 40px auto 0;
+      padding: 15px 30px;
+      font-size: 16px;
+      background: #ff0033;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff0033;
+    }
+
+    .reset-btn:hover {
+      background: #cc002a;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 14px;
+      color: #999;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="logo">ZeeHUB</div>
+    <a class="back-btn" href="pgs.html">⬅ Înapoi la Meniu</a>
+  </div>
+
+  <div class="container">
+    <h1>Program Extrem – Muay Thai Bodyweight</h1>
+
+    <div class="day">
+      <h2>Luni – Push Max</h2>
+      <ul>
+        <li>5 seturi | 15 pseudo planche push-ups <input type="checkbox" class="check"></li>
+        <li>4 seturi | 10 handstand push-ups asistate <input type="checkbox" class="check"></li>
+        <li>4 seturi | 15 slow diamond push-ups <input type="checkbox" class="check"></li>
+        <li>3 seturi | plank walkouts 30 sec <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Marți – Tracțiuni Grele</h2>
+      <ul>
+        <li>4 seturi | 10 pull-ups lente + 5 explozive <input type="checkbox" class="check"></li>
+        <li>4 seturi | 8 negative muscle-ups <input type="checkbox" class="check"></li>
+        <li>4 seturi | 15 scapular pull-ups <input type="checkbox" class="check"></li>
+        <li>3 seturi | hanging L-sit 40 sec <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Miercuri – Core Extrem</h2>
+      <ul>
+        <li>4 seturi | 20 hanging leg raises lente <input type="checkbox" class="check"></li>
+        <li>3 seturi | 30 V-ups <input type="checkbox" class="check"></li>
+        <li>3 seturi | hollow hold 60 sec <input type="checkbox" class="check"></li>
+        <li>3 seturi | plank to push-up 20 reps <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Joi – Full Superset Challenge</h2>
+      <ul>
+        <li>5 superseturi | 10 dips + 15 pull-ups <input type="checkbox" class="check"></li>
+        <li>4 superseturi | 15 push-ups + 20 rows <input type="checkbox" class="check"></li>
+        <li>3 superseturi | planche hold 20 sec + 15 bodyweight curls <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Vineri – Explozie Picioare</h2>
+      <ul>
+        <li>5 runde | 6 pistol squats/parte + 15 jump lunges + 12 box jumps <input type="checkbox" class="check"></li>
+        <li>3 seturi | wall sit 90 sec <input type="checkbox" class="check"></li>
+        <li>8 sprinturi x 30m <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Sâmbătă – AMRAP Hardcore</h2>
+      <ul>
+        <li>AMRAP 25 min: 10 muscle-ups sau 15 pull-ups + 25 push-ups + 25 squats + 15 burpees + plank 60 sec <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <button class="reset-btn" onclick="resetCheckboxes()">🔁 Reset Bife</button>
+
+    <div class="footer">
+      Designed for elite Muay Thai athletes – ZeeHUB ⚡
+    </div>
+  </div>
+
+  <script>
+    function resetCheckboxes() {
+      document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+    }
+  </script>
+</body>
+</html>

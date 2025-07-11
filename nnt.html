@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nutriție & Sfaturi ZeeHUB</title>
+  <style>
+    body {
+      background: #0d0f14;
+      color: #e0ffef;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: #161a20;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 15px #00fff2;
+    }
+
+    h1 {
+      text-align: center;
+      color: #39ff14;
+      margin-bottom: 20px;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      background: #20242c;
+      color: #00fff2;
+      border: 1px solid #39ff14;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .info-section {
+      background: #1d222a;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px #00fff2;
+    }
+
+    .info-section h2 {
+      color: #39ff14;
+      margin-top: 0;
+    }
+
+    .info-section ul {
+      padding-left: 20px;
+    }
+
+    button {
+      background: #ff0044;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background: #cc0033;
+    }
+
+    @media (max-width: 600px) {
+      .info-section {
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ZeeHUB • Nutriție & Sfaturi</h1>
+
+    <label for="sportSelect">Alege un sport pentru sfaturi personalizate:</label>
+    <select id="sportSelect" onchange="updateAdvice()">
+      <option value="">-- Selectează sportul --</option>
+      <option value="Box">Box</option>
+      <option value="Calistenice">Calistenice</option>
+      <option value="Fitness">Fitness</option>
+      <option value="Parkour">Parkour</option>
+      <option value="Înot">Înot</option>
+      <option value="Fotbal">Fotbal</option>
+      <option value="Atletism">Atletism</option>
+      <option value="Muay Thai">Muay Thai</option>
+      <option value="Baschet">Baschet</option>
+      <option value="Gimnastică">Gimnastică</option>
+    </select>
+
+    <div class="info-section" id="nutritionAdvice">
+      <h2>🍽️ Alimentație</h2>
+      <p>Selectează un sport pentru a vedea ce alimente sunt potrivite.</p>
+    </div>
+
+    <div class="info-section" id="sleepAdvice">
+      <h2>😴 Somn</h2>
+      <p>Somnul este esențial pentru performanță. Alege un sport pentru detalii.</p>
+    </div>
+
+    <div class="info-section" id="trainingAdvice">
+      <h2>🏋️‍♂️ Timp optim de antrenament</h2>
+      <p>Antrenamentele eficiente au loc la momentul potrivit. Selectează sportul tău.</p>
+    </div>
+
+    <a href="index.html"><button>🏠 Înapoi la pagina principală</button></a>
+  </div>
+
+  <script>
+    const adviceData = {
+      "Box": {
+        nutrition: [
+          "Proteine slabe: pui, curcan, ouă.",
+          "Carbohidrați complecși: orez brun, cartofi dulci.",
+          "Grăsimi sănătoase: avocado, ulei de măsline."
+        ],
+        sleep: "7.5–9 ore pe noapte pentru refacere musculară și neurologică.",
+        training: "Dimineața devreme sau după-amiaza devreme pentru claritate și viteză."
+      },
+      "Calistenice": {
+        nutrition: [
+          "Proteine: ouă, iaurt grecesc, linte.",
+          "Fructe & legume pentru vitamine și fibre.",
+          "Nuci, semințe și apă multă."
+        ],
+        sleep: "8 ore pentru regenerare și mobilitate.",
+        training: "Dimineața sau seara, la greutatea corporală optimă."
+      },
+      "Fitness": {
+        nutrition: [
+          "Shake proteic după antrenament.",
+          "Mese echilibrate: proteine, legume, carbohidrați.",
+          "Evită zahărul procesat și grăsimile trans."
+        ],
+        sleep: "7–8 ore pentru dezvoltare musculară eficientă.",
+        training: "Între 9:00 și 11:00 sau 17:00–19:00."
+      },
+      "Parkour": {
+        nutrition: [
+          "Carbohidrați complecși: ovăz, banane.",
+          "Alimente ușoare înainte de mișcare.",
+          "Proteine pentru recuperare."
+        ],
+        sleep: "8 ore – vital pentru reflexe și prevenirea accidentărilor.",
+        training: "Dimineața devreme sau după apus – pentru temperatură scăzută și focus."
+      },
+      "Înot": {
+        nutrition: [
+          "Paste integrale, legume colorate.",
+          "Pește, lactate, ouă pentru proteine.",
+          "Apă + electroliți pentru hidratare."
+        ],
+        sleep: "8–9 ore – sport solicitant pentru întregul corp.",
+        training: "Dimineața devreme sau după-masă (în sesiuni de 45–90 min)."
+      },
+      "Fotbal": {
+        nutrition: [
+          "Carbohidrați pentru energie: orez, cartofi.",
+          "Proteine post-antrenament: carne slabă, brânză.",
+          "Gustări ușoare înainte de meciuri: banană, baton energetic."
+        ],
+        sleep: "8 ore pentru refacerea articulațiilor și mușchilor.",
+        training: "După-amiaza sau dimineața devreme – în funcție de jocuri."
+      },
+      "Atletism": {
+        nutrition: [
+          "Carbohidrați dominanți: paste, fructe.",
+          "Proteine: ouă, pește, carne slabă.",
+          "Hidratare permanentă înainte și după antrenamente."
+        ],
+        sleep: "8 ore pentru echilibru hormonal și recuperare musculară.",
+        training: "Dimineața devreme pentru sprint, seara pentru anduranță."
+      },
+      "Muay Thai": {
+        nutrition: [
+          "Mese ușoare și frecvente: orez, legume, proteine.",
+          "Evită mâncărurile grele înainte de antrenament.",
+          "Hidratare constantă, inclusiv apă cu lămâie."
+        ],
+        sleep: "8–9 ore – refacere completă după lovituri și efort anaerob.",
+        training: "Dimineața devreme sau seara târziu pentru concentrare maximă."
+      },
+      "Baschet": {
+        nutrition: [
+          "Mese echilibrate: carbohidrați + proteine + legume.",
+          "Shake post-joc/antrenament.",
+          "Evita fast food-ul și sucurile carbogazoase."
+        ],
+        sleep: "7.5–8.5 ore pentru refacere a articulațiilor și a gleznelor.",
+        training: "Seara între 17:00–20:00 când reflexele sunt mai bune."
+      },
+      "Gimnastică": {
+        nutrition: [
+          "Mic dejun bogat: ovăz, lapte, ouă.",
+          "Gustări sănătoase: migdale, fructe uscate.",
+          "Mese cu conținut mic de grăsimi înainte de antrenament."
+        ],
+        sleep: "9 ore – esențiale pentru concentrare și control motor.",
+        training: "Dimineața devreme – când corpul este odihnit și elastic."
+      }
+    };
+
+    function updateAdvice() {
+      const sport = document.getElementById('sportSelect').value;
+
+      if (!sport || !adviceData[sport]) return;
+
+      const data = adviceData[sport];
+
+      document.getElementById('nutritionAdvice').innerHTML = `
+        <h2>🍽️ Alimentație</h2>
+        <ul>${data.nutrition.map(item => `<li>${item}</li>`).join('')}</ul>
+      `;
+
+      document.getElementById('sleepAdvice').innerHTML = `
+        <h2>😴 Somn</h2>
+        <p>${data.sleep}</p>
+      `;
+
+      document.getElementById('trainingAdvice').innerHTML = `
+        <h2>🏋️‍♂️ Timp optim de antrenament</h2>
+        <p>${data.training}</p>
+      `;
+    }
+  </script>
+</body>
+</html>
