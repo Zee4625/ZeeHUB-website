@@ -3,21 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Meniu Principal</title>
+  <title>ZeeHUB | Meniu Principal</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto&display=swap');
 
     body {
       margin: 0;
       background: linear-gradient(135deg, #0f1117, #1a1d24);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Roboto', sans-serif;
       color: #00fff2;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      overflow: hidden;
-      animation: bgPulse 8s ease-in-out infinite alternate;
+      animation: bgPulse 12s ease-in-out infinite alternate;
     }
 
     @keyframes bgPulse {
@@ -26,91 +25,113 @@
     }
 
     .menu-container {
-      background: #1b1e26cc;
+      background: rgba(27, 30, 38, 0.9);
       padding: 50px 40px 60px;
-      border-radius: 25px;
-      box-shadow: 0 0 35px #00fff2cc;
+      border-radius: 30px;
+      box-shadow: 0 0 45px #00fff2cc;
       text-align: center;
-      max-width: 420px;
+      max-width: 500px;
       width: 90%;
-      backdrop-filter: blur(10px);
-      transition: transform 0.3s ease;
+      backdrop-filter: blur(15px);
+      transition: transform 0.4s ease;
     }
+
     .menu-container:hover {
-      transform: scale(1.02);
-      box-shadow: 0 0 55px #39ff14cc;
+      transform: scale(1.015);
+      box-shadow: 0 0 65px #39ff14cc;
     }
 
     h1 {
       font-family: 'Orbitron', sans-serif;
       color: #39ff14;
-      font-size: 36px;
+      font-size: 42px;
       margin-bottom: 40px;
       text-shadow:
-        0 0 8px #39ff14,
-        0 0 15px #00fff2,
-        0 0 25px #00fff2;
+        0 0 10px #39ff14,
+        0 0 20px #00fff2,
+        0 0 35px #00fff2;
+      letter-spacing: 2px;
     }
 
     .menu-button {
       display: block;
-      margin: 15px auto;
-      padding: 18px 30px;
+      margin: 18px auto;
+      padding: 18px 35px;
       background: transparent;
       border: 2.5px solid #00fff2;
-      border-radius: 18px;
-      font-size: 20px;
+      border-radius: 20px;
+      font-size: 21px;
       color: #00fff2;
       text-decoration: none;
       box-shadow:
-        0 0 12px #00fff2aa,
-        inset 0 0 6px #00fff2aa;
+        0 0 14px #00fff2aa,
+        inset 0 0 8px #00fff2aa;
       transition:
         background-color 0.3s ease,
         color 0.3s ease,
         box-shadow 0.3s ease,
-        transform 0.2s ease;
-      user-select: none;
+        transform 0.25s ease;
       font-weight: 600;
       letter-spacing: 0.05em;
-      text-align: center;
+      width: 100%;
+      max-width: 340px;
     }
 
     .menu-button:hover, .menu-button:focus {
       background: #00fff2;
       color: #0f1117;
       box-shadow:
-        0 0 25px #39ff14,
-        inset 0 0 18px #39ff14;
-      transform: scale(1.1);
+        0 0 30px #39ff14,
+        inset 0 0 20px #39ff14;
+      transform: scale(1.07);
       outline: none;
     }
 
     .footer-note {
-      margin-top: 50px;
+      margin-top: 60px;
       font-size: 14px;
-      color: #888;
+      color: #aaa;
       user-select: none;
+      font-style: italic;
+    }
+
+    .brand {
+      position: absolute;
+      top: 20px;
+      left: 30px;
+      font-family: 'Orbitron', sans-serif;
+      color: #00fff2;
+      font-size: 22px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px #00fff2;
     }
 
     @media screen and (max-width: 500px) {
       .menu-button {
         font-size: 18px;
-        padding: 14px 25px;
+        padding: 15px 25px;
       }
 
       h1 {
-        font-size: 28px;
-        margin-bottom: 30px;
+        font-size: 30px;
+        margin-bottom: 35px;
       }
 
       .menu-container {
         padding: 35px 25px 45px;
       }
+
+      .brand {
+        font-size: 18px;
+        top: 10px;
+        left: 20px;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="brand">🚀 ZeeHUB</div>
+
   <div class="menu-container" role="main">
     <h1>🏁 Meniu Principal</h1>
 
@@ -118,8 +139,10 @@
     <a class="menu-button" href="pgs.html" role="button" aria-label="Program de Antrenament">💪 Program de Antrenament</a>
     <a class="menu-button" href="nnt.html" role="button" aria-label="Nutriție și Sfaturi">🧠 Nutriție & Sfaturi</a>
     <a class="menu-button" href="acc.html" role="button" aria-label="Crează propriul antrenament">✍️ Crează Propriul Antrenament</a>
+    <a class="menu-button" href="bll.html" role="button" aria-label="Boli și alergii">🩺 Boli & Alergii</a>
+    <a class="menu-button" href="prg.html" role="button" aria-label="Vezi progresul">📈 Progres</a>
 
-    <div class="footer-note">Versiune Alpha • Creat cu pasiune 🔥</div>
+    <div class="footer-note">Versiune Alpha • Creat cu pasiune de ZeeHUB 🔥</div>
   </div>
 </body>
 </html>
