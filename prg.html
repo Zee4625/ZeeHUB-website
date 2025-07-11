@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Progres Antrenament - ZeeHUB</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+  body {
+    margin: 0;
+    background-color: #000;
+    color: #00fff2;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    user-select: none;
+  }
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    color: #39ff14;
+    font-size: 36px;
+    margin-bottom: 10px;
+    text-shadow:
+      0 0 10px #39ff14,
+      0 0 18px #00fff2,
+      0 0 30px #00fff2;
+  }
+  #container {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 1000px;
+    width: 100%;
+  }
+  /* Left side: muscle buttons */
+  #muscle-list {
+    flex: 1 1 300px;
+    max-width: 320px;
+    background: #111;
+    border-radius: 15px;
+    box-shadow: 0 0 25px #00fff2cc;
+    padding: 20px;
+    overflow-y: auto;
+    max-height: 600px;
+  }
+  #muscle-list h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #39ff14;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 24px;
+    text-align: center;
+    text-shadow:
+      0 0 8px #39ff14,
+      0 0 15px #00fff2;
+  }
+  .muscle-btn {
+    background: transparent;
+    border: 2px solid #00fff2;
+    border-radius: 12px;
+    color: #00fff2;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      box-shadow 0.3s ease;
+    user-select: none;
+  }
+  .muscle-btn:hover,
+  .muscle-btn.active {
+    background-color: #00fff2;
+    color: #000;
+    box-shadow:
+      0 0 15px #39ff14,
+      inset 0 0 10px #39ff14;
+    outline: none;
+  }
+  /* Right side: avatar + info */
+  #avatar-info {
+    flex: 1 1 600px;
+    max-width: 600px;
+    background: #111;
+    border-radius: 15px;
+    box-shadow: 0 0 25px #00fff2cc;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #avatar-container {
+    width: 300px;
+    height: 600px;
+    margin-bottom: 20px;
+    user-select: none;
+  }
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+  #muscle-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 28px;
+    color: #39ff14;
+    margin-bottom: 10px;
+    text-align: center;
+    text-shadow:
+      0 0 10px #39ff14,
+      0 0 15px #00fff2;
+  }
+  #muscle-description {
+    font-size: 16px;
+    color: #00fff2;
+    line-height: 1.4;
+    max-height: 180px;
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+  /* Rank section */
+  #rank-section {
+    background: #000d0d;
+    border: 2px solid #39ff14;
+    border-radius: 12px;
+    margin-top: 30px;
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+    box-shadow:
+      0 0 15px #39ff14;
+  }
+  #rank-section h2 {
+    font-family: 'Orbitron', sans-serif;
+    color: #39ff14;
+    margin-top: 0;
+    margin-bottom: 15px;
+    text-align: center;
+    text-shadow: 0 0 8px #39ff14;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #00fff2;
+    font-size: 14px;
+  }
+  th, td {
+    border: 1px solid #00fff2aa;
+    padding: 8px 10px;
+    text-align: left;
+  }
+  th {
+    background: #003333;
+  }
+  tr:nth-child(even) {
+    background: #001a1a;
+  }
+  /* Back button */
+  #back-btn {
+    margin-top: 30px;
+    background: transparent;
+    border: 2.5px solid #00fff2;
+    border-radius: 20px;
+    color: #00fff2;
+    font-size: 20px;
+    padding: 14px 40px;
+    cursor: pointer;
+    font-weight: 700;
+    user-select: none;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      box-shadow 0.3s ease,
+      transform 0.25s ease;
+    box-shadow:
+      0 0 14px #00fff2aa,
+      inset 0 0 8px #00fff2aa;
+  }
+  #back-btn:hover, #back-btn:focus {
+    background: #00fff2;
+    color: #000;
+    box-shadow:
+      0 0 30px #39ff14,
+      inset 0 0 20px #39ff14;
+    transform: scale(1.1);
+    outline: none;
+  }
+  /* Scrollbar styling */
+  #muscle-list::-webkit-scrollbar,
+  #muscle-description::-webkit-scrollbar {
+    width: 8px;
+  }
+  #muscle-list::-webkit-scrollbar-thumb,
+  #muscle-description::-webkit-scrollbar-thumb {
+    background: #00fff2aa;
+    border-radius: 5px;
+  }
+  #muscle-list::-webkit-scrollbar-track,
+  #muscle-description::-webkit-scrollbar-track {
+    background: #111;
+  }
+</style>
+</head>
+<body>
+  <h1>🏋️ Progres Antrenament ZeeHUB</h1>
+  <div id="container">
+    <!-- Muscles list -->
+    <div id="muscle-list" role="list" aria-label="Grupe musculare">
+      <h2>Grupe Musculare</h2>
+      <!-- Buttons populated by JS -->
+    </div>
+    <!-- Avatar + info -->
+    <div id="avatar-info" aria-live="polite" aria-atomic="true">
+      <div id="avatar-container" aria-label="Avatar scheletic muscular">
+        <svg viewBox="0 0 200 400" role="img" aria-describedby="muscle-name muscle-description">
+          <!-- Skeleton body -->
+          <g id="skeleton" stroke="#00fff2" stroke-width="2" fill="none">
+            <!-- Head -->
+            <circle cx="100" cy="40" r="20"/>
+            <!-- Neck -->
+            <line x1="100" y1="60" x2="100" y2="75"/>
+            <!-- Spine -->
+            <line x1="100" y1="75" x2="100" y2="200"/>
+            <!-- Arms -->
+            <line x1="100" y1="90" x2="60" y2="140"/>
+            <line x1="60" y1="140" x2="40" y2="190"/>
+            <line x1="100" y1="90" x2="140" y2="140"/>
+            <line x1="140" y1="140" x2="160" y2="190"/>
+            <!-- Legs -->
+            <line x1="100" y1="200" x2="70" y2="320"/>
+            <line x1="70" y1="320" x2="70" y2="380"/>
+            <line x1="100" y1="200" x2="130" y2="320"/>
+            <line x1="130" y1="320" x2="130" y2="380"/>
+          </g>
+          <!-- Muscles highlights, default hidden -->
+          <g id="muscles" fill="#39ff14" fill-opacity="0.6" stroke="#00fff2" stroke-width="1.5" style="display:none;">
+            <!-- Chest -->
+            <rect id="pectorals" x="75" y="80" width="50" height="30" rx="10" ry="10"/>
+            <!-- Biceps L -->
+            <ellipse id="biceps-left" cx="55" cy="125" rx="15" ry="25"/>
+            <!-- Biceps R -->
+            <ellipse id="biceps-right" cx="145" cy="125" rx="15" ry="25"/>
+            <!-- Triceps L -->
+            <ellipse id="triceps-left" cx="40" cy="160" rx="12" ry="22"/>
+            <!-- Triceps R -->
+            <ellipse id="triceps-right" cx="160" cy="160" rx="12" ry="22"/>
+            <!-- Abs -->
+            <rect id="abs" x="85" y="115" width="30" height="70" rx="10" ry="10"/>
+            <!-- Quadriceps L -->
+            <rect id="quadriceps-left" x="65" y="210" width="30" height="80" rx="10" ry="10"/>
+            <!-- Quadriceps R -->
+            <rect id="quadriceps-right" x="105" y="210" width="30" height="80" rx="10" ry="10"/>
+            <!-- Calves L -->
+            <ellipse id="calves-left" cx="85" cy="350" rx="15" ry="30"/>
+            <!-- Calves R -->
+            <ellipse id="calves-right" cx="115" cy="350" rx="15" ry="30"/>
+            <!-- Shoulders -->
+            <circle id="deltoids-left" cx="50" cy="90" r="15"/>
+            <circle id="deltoids-right" cx="150" cy="90" r="15"/>
+            <!-- Forearms L -->
+            <rect id="forearms-left" x="25" y="180" width="20" height="40" rx="8" ry="8"/>
+            <!-- Forearms R -->
+            <rect id="forearms-right" x="155" y="180" width="20" height="40" rx="8" ry="8"/>
+            <!-- Trapezius -->
+            <polygon id="trapezius" points="80,65 120,65 100,90" />
+            <!-- Glutes -->
+            <rect id="glutes" x="85" y="190" width="30" height="25" rx="10" ry="10"/>
+            <!-- Hamstrings L -->
+            <rect id="hamstrings-left" x="60" y="290" width="30" height="50" rx="10" ry="10"/>
+            <!-- Hamstrings R -->
+            <rect id="hamstrings-right" x="110" y="290" width="30" height="50" rx="10" ry="10"/>
+          </g>
+        </svg>
+      </div>
+      <div id="muscle-name" aria-live="polite" aria-atomic="true"></div>
+      <div id="muscle-description" aria-live="polite" aria-atomic="true"></div>
+
+      <div id="rank-section" aria-label="Ranguri și descrieri progres">
+        <h2>Ranguri de Progres</h2>
+        <table>
+          <thead>
+            <tr><th>Rang</th><th>Descriere scurtă</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Rookie</td><td>Începător absolut, abia începe</td></tr>
+            <tr><td>Novice</td><td>Învățarea tehnicii, formă în dezvoltare</td></tr>
+            <tr><td>Apprentice</td><td>Familiar cu exercițiile, progres ușor</td></tr>
+            <tr><td>Lifter</td><td>Începe să progreseze în mod constant</td></tr>
+            <tr><td>Competitor</td><td>Antrenamente regulate, rezultate bune</td></tr>
+            <tr><td>Pro</td><td>Nivel avansat, disciplină serioasă</td></tr>
+            <tr><td>Elite</td><td>Performanțe notabile, tehnică excelentă</td></tr>
+            <tr><td>Champion</td><td>Rezultate competitive, forță ridicată</td></tr>
+            <tr><td>Legend</td><td>Eficiență maximă, constanță ridicată</td></tr>
+            <tr><td>Mythic</td><td>Performanță la nivel foarte avansat</td></tr>
+            <tr><td>God Mode</td><td>Elite absolut, aproape de nivel profesional</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <button id="back-btn" aria-label="Înapoi la meniul principal">⬅️ Înapoi la Meniu Principal</button>
+
+<script>
+  const muscles = [
+    {
+      id: "pectorals",
+      name: "Mușchii Pectorali (Piept)",
+      description: `Acești mușchi se află în partea frontală a pieptului. Antrenamentul acestora ajută la dezvoltarea forței în împins și la stabilizarea umerilor. Exerciții recomandate: flotări, împins cu bara la bancă, fluturări cu gantere.`,
+      ranksInfo: "Pentru pectorali, focusul trebuie pe tehnică corectă și progres gradual la greutăți."
+    },
+    {
+      id: "biceps-left",
+      name: "Biceps Brachial (Braț stâng)",
+      description: `Bicepsul brahial este mușchiul din fața brațului superior, responsabil pentru flexia cotului. Exerciții: flexii cu gantere, flexii cu bara, tracțiuni.`,
+      ranksInfo: "Bicepsul răspunde bine la volum și repetări moderate."
+    },
+    {
+      id: "biceps-right",
+      name: "Biceps Brachial (Braț drept)",
+      description: `Similar cu brațul stâng, important să lucrezi simetric pentru echilibru muscular.`,
+      ranksInfo: "Menține echilibrul între brațe și formează o rutină consistentă."
+    },
+    {
+      id: "triceps-left",
+      name: "Triceps (Braț stâng)",
+      description: `Mușchiul mare din spatele brațului, esențial pentru extensia cotului și stabilitatea brațului. Exerciții: flotări la paralele, extensii cu gantera, împins jos la cablu.`,
+      ranksInfo: "Tricepsul lucrează bine cu greutăți medii și execuție lentă controlată."
+    },
+    {
+      id: "triceps-right",
+      name: "Triceps (Braț drept)",
+      description: `Același ca stângul, antrenarea simetrică este cheia.`,
+      ranksInfo: "Echilibrul între biceps și triceps este important pentru stabilitate."
+    },
+    {
+      id: "abs",
+      name: "Abdomene (Mușchii abdominali)",
+      description: `Mușchii centrali ai corpului care sprijină postura și stabilizează coloana. Exerciții: plank, crunch, ridicări picioare.`,
+      ranksInfo: "Corectitudinea posturii și respirarea sunt cruciale pentru antrenamentul eficient al abdominalilor."
+    },
+    {
+      id: "quadriceps-left",
+      name: "Cvadriceps (Coapsa stângă)",
+      description: `Mușchiul frontal al coapsei, implicat în extensia genunchiului. Exerciții: genuflexiuni, fandări, presa pentru picioare.`,
+      ranksInfo: "Lucrează progresiv și nu neglija întinderea pentru prevenirea accidentărilor."
+    },
+    {
+      id: "quadriceps-right",
+      name: "Cvadriceps (Coapsa dreaptă)",
+      description: `Simetric cu coapsa stângă, important pentru echilibru și mobilitate.`,
+      ranksInfo: "Menține echilibrul muscular între picioare."
+    },
+    {
+      id: "calves-left",
+      name: "Gambă (Coapsa stângă - mușchi gambe)",
+      description: `Mușchiul de jos pe partea din spate a piciorului, esențial pentru sărituri și mers. Exerciții: ridicări pe vârfuri, sărituri cu coarda.`,
+      ranksInfo: "Gambele răspund bine la volume mai mari de repetări."
+    },
+    {
+      id: "calves-right",
+      name: "Gambă (Coapsa dreaptă - mușchi gambe)",
+      description: `Același ca la stângă, important pentru stabilitate și echilibru.`,
+      ranksInfo: "Exerciții consistente, dar fără exagerare, sunt eficiente."
+    },
+    {
+      id: "deltoids-left",
+      name: "Deltoizi (Umărul stâng)",
+      description: `Mușchi rotunzi ce acoperă umărul, esențiali pentru ridicări și stabilitate. Exerciții: ridicări laterale, împins militar.`,
+      ranksInfo: "Lucrează toate părțile deltoizilor pentru un aspect echilibrat."
+    },
+    {
+      id: "deltoids-right",
+      name: "Deltoizi (Umărul drept)",
+      description: `Simetric cu stângul, important să fie lucrat uniform.`,
+      ranksInfo: "Asigură-te că nu favorizezi un umăr față de celălalt."
+    },
+    {
+      id: "forearms-left",
+      name: "Antebraț (Braț stâng)",
+      description: `Mușchii antebrațului controlează prinderea și dexteritatea. Exerciții: flexii și extensii ale încheieturii, prindere cu greutăți.`,
+      ranksInfo: "Lucrează antebrațele pentru a preveni accidentările și a crește performanța."
+    },
+    {
+      id: "forearms-right",
+      name: "Antebraț (Braț drept)",
+      description: `Simetric cu brațul stâng.`,
+      ranksInfo: "Echilibru și regularitate în antrenamente."
+    },
+    {
+      id: "trapezius",
+      name: "Trapez (Zona superioară spate)",
+      description: `Mușchi ce se întinde de la gât spre umeri și partea superioară a spatelui. Exerciții: ridicări de umeri, ramat.`,
+      ranksInfo: "Important pentru postura și ridicarea greutăților."
+    },
+    {
+      id: "glutes",
+      name: "Mușchii Gluteali (Fese)",
+      description: `Mușchii mari ai posteriorului, esențiali pentru stabilitate și forță la picioare. Exerciții: genuflexiuni, fandări, hip thrust.`,
+      ranksInfo: "Implică gluteii în majoritatea exercițiilor pentru picioare."
+    },
+    {
+      id: "hamstrings-left",
+      name: "Ischiogambieri (Spatele coapsei stângi)",
+      description: `Mușchii din spatele coapsei, implicați în flexia genunchiului. Exerciții: îndreptări cu picioarele drepte, fandări.`,
+      ranksInfo: "Echilibru între ischiogambieri și cvadricepși previne accidentările."
+    },
+    {
+      id: "hamstrings-right",
+      name: "Ischiogambieri (Spatele coapsei drepte)",
+      description: `Simetric cu partea stângă.`,
+      ranksInfo: "Important să lucrezi ambele părți în mod egal."
+    }
+  ];
+
+  // Referință DOM
+  const muscleListEl = document.getElementById('muscle-list');
+  const muscleNameEl = document.getElementById('muscle-name');
+  const muscleDescEl = document.getElementById('muscle-description');
+  const musclesGroup = document.getElementById('muscles');
+  const backBtn = document.getElementById('back-btn');
+
+  // Creează butoane pentru mușchi
+  muscles.forEach(({id, name}) => {
+    const btn = document.createElement('button');
+    btn.classList.add('muscle-btn');
+    btn.textContent = name;
+    btn.setAttribute('data-id', id);
+    btn.type = 'button';
+    btn.setAttribute('aria-pressed', 'false');
+    muscleListEl.appendChild(btn);
+  });
+
+  let activeMuscleId = null;
+
+  // Funcție de afișare mușchi selectat
+  function showMuscle(id) {
+    if (activeMuscleId === id) return; // deja selectat
+
+    // Dezactivează vechiul buton
+    if (activeMuscleId) {
+      const oldBtn = muscleListEl.querySelector(`button[data-id="${activeMuscleId}"]`);
+      if(oldBtn){
+        oldBtn.classList.remove('active');
+        oldBtn.setAttribute('aria-pressed', 'false');
+      }
+    }
+
+    // Ascunde toate zonele musculare
+    musclesGroup.style.display = 'block';
+    musclesGroup.querySelectorAll('rect, ellipse, circle, polygon').forEach(el => {
+      el.style.display = 'none';
+    });
+
+    // Activează buton nou
+    const newBtn = muscleListEl.querySelector(`button[data-id="${id}"]`);
+    if(newBtn){
+      newBtn.classList.add('active');
+      newBtn.setAttribute('aria-pressed', 'true');
+    }
+
+    // Afișează zona musculară selectată
+    const muscleZone = musclesGroup.querySelector(`#${id}`);
+    if(muscleZone){
+      muscleZone.style.display = 'block';
+    }
+
+    // Afișează textul și descrierea
+    const muscleData = muscles.find(m => m.id === id);
+    if(muscleData){
+      muscleNameEl.textContent = muscleData.name;
+      muscleDescEl.textContent = muscleData.description + "\n\n" + muscleData.ranksInfo;
+    } else {
+      muscleNameEl.textContent = '';
+      muscleDescEl.textContent = '';
+    }
+
+    activeMuscleId = id;
+  }
+
+  // Setăm primul mușchi la start
+  if(muscles.length > 0){
+    showMuscle(muscles[0].id);
+  }
+
+  // Ascultăm click pe butoane
+  muscleListEl.addEventListener('click', (e) => {
+    if(e.target.matches('button.muscle-btn')){
+      showMuscle(e.target.getAttribute('data-id'));
+    }
+  });
+
+  // Buton înapoi la index.html
+  backBtn.addEventListener('click', () => {
+    window.location.href = 'index.html';
+  });
+</script>
+</body>
+</html>
