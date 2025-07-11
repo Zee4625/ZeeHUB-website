@@ -2,138 +2,169 @@
 <html lang="ro">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Program Antrenamente - ZeeHUB</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ZeeHUB | Alege Antrenament</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto&display=swap');
+
     body {
-      margin: 0; padding: 0;
+      margin: 0;
       background: linear-gradient(135deg, #0f1117, #1a1d24);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Roboto', sans-serif;
       color: #00fff2;
-      min-height: 100vh;
       display: flex;
-      flex-direction: column;
-    }
-    header {
-      background: #0c0e13;
-      display: flex;
-      align-items: center;
-      padding: 15px 30px;
-      box-shadow: 0 0 15px #00fff2aa;
-    }
-    .logo {
-      font-weight: 900;
-      font-size: 28px;
-      color: #39ff14;
-      letter-spacing: 3px;
-      user-select: none;
-      flex-shrink: 0;
-    }
-    main {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 40px 20px;
+      height: 100vh;
+      animation: bgPulse 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgPulse {
+      0% {background-position: 0% 50%;}
+      100% {background-position: 100% 50%;}
+    }
+
+    .menu-container {
+      background: rgba(27, 30, 38, 0.9);
+      padding: 50px 40px 60px;
+      border-radius: 30px;
+      box-shadow: 0 0 45px #00fff2cc;
       text-align: center;
+      max-width: 600px;
+      width: 90%;
+      backdrop-filter: blur(15px);
+      transition: transform 0.4s ease;
     }
+
+    .menu-container:hover {
+      transform: scale(1.015);
+      box-shadow: 0 0 65px #39ff14cc;
+    }
+
     h1 {
-      font-size: 2.8rem;
-      margin-bottom: 50px;
+      font-family: 'Orbitron', sans-serif;
       color: #39ff14;
-      text-shadow: 0 0 10px #39ff14;
+      font-size: 36px;
+      margin-bottom: 30px;
+      text-shadow:
+        0 0 10px #39ff14,
+        0 0 20px #00fff2,
+        0 0 35px #00fff2;
+      letter-spacing: 1.5px;
     }
-    .menu {
-      display: flex;
-      gap: 30px;
-      flex-wrap: wrap;
-      justify-content: center;
-      max-width: 700px;
+
+    .menu-button {
+      display: block;
+      margin: 16px auto;
+      padding: 16px 32px;
+      background: transparent;
+      border: 2.5px solid #00fff2;
+      border-radius: 20px;
+      font-size: 20px;
+      color: #00fff2;
+      text-decoration: none;
+      box-shadow:
+        0 0 14px #00fff2aa,
+        inset 0 0 8px #00fff2aa;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.25s ease;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      max-width: 350px;
       width: 100%;
     }
-    .menu a {
+
+    .menu-button:hover, .menu-button:focus {
       background: #00fff2;
       color: #0f1117;
-      flex: 1 1 180px;
-      padding: 25px 0;
-      font-size: 1.5rem;
-      font-weight: 700;
-      border-radius: 15px;
-      text-decoration: none;
-      box-shadow: 0 0 25px #00fff2;
-      transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-      user-select: none;
+      box-shadow:
+        0 0 30px #39ff14,
+        inset 0 0 20px #39ff14;
+      transform: scale(1.07);
+      outline: none;
     }
-    .menu a:hover {
-      background: #39ff14;
-      color: #0a0b0c;
-      box-shadow: 0 0 35px #39ff14;
-    }
-    .back-button {
-      margin-top: 60px;
-      padding: 12px 35px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      background: #ff0044;
-      color: white;
-      border: none;
-      border-radius: 15px;
-      cursor: pointer;
-      box-shadow: 0 0 20px #ff0044;
-      transition: background-color 0.3s ease;
-      user-select: none;
-      text-decoration: none;
-      display: inline-block;
-    }
-    .back-button:hover {
-      background: #cc0033;
-      box-shadow: 0 0 25px #cc0033;
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
+
+    .footer-note {
+      margin-top: 50px;
       font-size: 14px;
-      color: #00fff2aa;
+      color: #aaa;
       user-select: none;
+      font-style: italic;
     }
-    @media (max-width: 480px) {
+
+    .brand {
+      position: absolute;
+      top: 20px;
+      left: 30px;
+      font-family: 'Orbitron', sans-serif;
+      color: #00fff2;
+      font-size: 22px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px #00fff2;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 16px;
+      padding: 10px 20px;
+      border-radius: 15px;
+      border: 2px solid #00fff2;
+      background: transparent;
+      color: #00fff2;
+      text-decoration: none;
+      transition: 0.3s ease;
+      font-weight: 600;
+    }
+
+    .back-button:hover {
+      background: #00fff2;
+      color: #0f1117;
+      box-shadow: 0 0 20px #39ff14;
+    }
+
+    @media screen and (max-width: 500px) {
       h1 {
-        font-size: 2rem;
+        font-size: 28px;
+        margin-bottom: 25px;
       }
-      .menu a {
-        flex: 1 1 100%;
-        font-size: 1.3rem;
-        padding: 20px 0;
+
+      .menu-button {
+        font-size: 18px;
+        padding: 14px 25px;
       }
+
+      .brand {
+        font-size: 18px;
+        top: 10px;
+        left: 20px;
+      }
+
       .back-button {
-        margin-top: 40px;
-        width: 100%;
+        font-size: 14px;
+        top: 10px;
+        right: 20px;
+        padding: 8px 16px;
       }
     }
   </style>
 </head>
 <body>
+  <div class="brand">💥 ZeeHUB</div>
+  <a class="back-button" href="index.html">⬅ Înapoi</a>
 
-<header>
-  <div class="logo">ZeeHUB</div>
-</header>
+  <div class="menu-container" role="main">
+    <h1>🔍 Alege Tipul de Antrenament</h1>
 
-<main>
-  <h1>Alege Programul de Antrenament</h1>
-  <div class="menu">
-    <a href="usor.html" title="Antrenament Ușor">Ușor</a>
-    <a href="mediu.html" title="Antrenament Mediu">Mediu</a>
-    <a href="greu.html" title="Antrenament Greu">Greu</a>
-    <a href="extrem.html" title="Antrenament Extrem">Extrem</a>
+    <a class="menu-button" href="greutati.html" role="button">🏋️‍♂️ Cu Greutăți</a>
+    <a class="menu-button" href="bodyweight.html" role="button">🤸‍♂️ Bodyweight</a>
+    <a class="menu-button" href="martial.html" role="button">🥋 Arte Marțiale</a>
+
+    <div class="footer-note">Antrenamente personalizate în stil ZeeHUB • Fii în formă! ⚡</div>
   </div>
-
-  <a href="index.html" class="back-button" title="Înapoi la Meniul Principal">⬅ Înapoi la Meniul Principal</a>
-</main>
-
-<footer>
-  © 2025 ZeeHUB - Performanță & Stil Futuristic ⚡
-</footer>
-
 </body>
 </html>
