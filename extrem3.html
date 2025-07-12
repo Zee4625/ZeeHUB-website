@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Antrenament Extrem – Arte Marțiale | ZeeHUB</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0a0a0a;
+      color: #ff4d4d;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      background-color: #1a1a1a;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 15px #ff1a1a;
+    }
+    .navbar .logo {
+      color: #ff0000;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .navbar a {
+      color: #ff4d4d;
+      text-decoration: none;
+      background: #262626;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+    .navbar a:hover {
+      background-color: #ff4d4d;
+      color: black;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 25px #ff1a1a;
+    }
+    h1, h2 {
+      color: #ff1a1a;
+      text-align: center;
+    }
+    .day {
+      margin-bottom: 30px;
+    }
+    .day h2 {
+      background: #b30000;
+      color: #fff;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      background: #2a2a2a;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .check {
+      margin-left: 10px;
+      transform: scale(1.5);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 14px;
+      color: #777;
+    }
+    .reset-btn {
+      display: block;
+      margin: 40px auto 0;
+      padding: 15px 30px;
+      font-size: 16px;
+      background: #e60000;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 15px #e60000;
+    }
+    .reset-btn:hover {
+      background: #cc0000;
+    }
+    @media (max-width: 600px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="logo">ZeeHUB</div>
+    <a href="mmm.html">Înapoi</a>
+  </div>
+
+  <div class="container">
+    <h1>Antrenament Arte Marțiale – Nivel EXTREM</h1>
+
+    <div class="day">
+      <h2>Luni – Lovituri Brutale</h2>
+      <ul>
+        <li>5 seturi | Flotări pe pumni – 25 rep <input type="checkbox" class="check"></li>
+        <li>4 seturi | Low kicks pe sac – 40 rep/picior <input type="checkbox" class="check"></li>
+        <li>4 seturi | Uppercut sac greu – 50 rep <input type="checkbox" class="check"></li>
+        <li>3 seturi | Genuflexiuni explozive – 20 rep <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Marți – Conditioning Hardcore</h2>
+      <ul>
+        <li>20 min | HIIT sprinturi în pantă – 30/30s <input type="checkbox" class="check"></li>
+        <li>4 runde | Burpees + flotare explozivă – 20 rep <input type="checkbox" class="check"></li>
+        <li>3 seturi | Tracțiuni cu greutate – 10 rep <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Miercuri – Full Contact & Reacție</h2>
+      <ul>
+        <li>3 runde | Sparring full – 3 min <input type="checkbox" class="check"></li>
+        <li>3 seturi | Reflex bag sau partener rapid – 2 min <input type="checkbox" class="check"></li>
+        <li>3 seturi | Lovituri combinate în oglindă – 2 min <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Joi – Tehnică sub stres</h2>
+      <ul>
+        <li>4 runde | Shadow boxing cu greutăți (1kg) – 2 min <input type="checkbox" class="check"></li>
+        <li>3 seturi | Contră în oboseală (lovituri după sprint) <input type="checkbox" class="check"></li>
+        <li>2 seturi | Trageri & scăpări din prinderi – 10 min <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Vineri – Sesiune de șoc</h2>
+      <ul>
+        <li>10 runde | 3 min de lucru – 1 min pauză <input type="checkbox" class="check"></li>
+        <li>2 seturi | 100 de abdomene rapide <input type="checkbox" class="check"></li>
+        <li>2 seturi | 50 flotări în 1 min <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Sâmbătă – Mentalitate de oțel</h2>
+      <ul>
+        <li>30 min | Meditație stoică în poziție statică (zen/kiba dachi) <input type="checkbox" class="check"></li>
+        <li>10 min | Respirație diafragmatică intensă <input type="checkbox" class="check"></li>
+        <li>5 min | Vizualizare lupte + mindset victorie <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Duminică – Doar dacă mai poți...</h2>
+      <ul>
+        <li>30 min | Înot, alergare sau bicicletă la limită <input type="checkbox" class="check"></li>
+        <li>3 seturi | Stretching hardcore + foam roller <input type="checkbox" class="check"></li>
+        <li>Autoevaluare: Ce am depășit în mine săptămâna asta? <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <button class="reset-btn" onclick="resetCheckboxes()">🔁 Resetează Bifele</button>
+
+    <div class="footer">
+      ZeeHUB – Pregătit pentru orice luptă. Fără scuze. 🔥🥋
+    </div>
+  </div>
+
+  <script>
+    function resetCheckboxes() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = false);
+    }
+  </script>
+</body>
+</html>

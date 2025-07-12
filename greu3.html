@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Antrenament Arte Marțiale – Avansat | ZeeHUB</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0f0f0f;
+      color: #00ffc3;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      background-color: #1a1a1a;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 10px #00ffc3;
+    }
+    .navbar .logo {
+      color: #39ff14;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .navbar a {
+      color: #00ffc3;
+      text-decoration: none;
+      background: #262626;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+    .navbar a:hover {
+      background-color: #00ffc3;
+      color: black;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #00ffc3;
+    }
+    h1, h2 {
+      color: #00ff88;
+      text-align: center;
+    }
+    .day {
+      margin-bottom: 30px;
+    }
+    .day h2 {
+      background: #00bfa5;
+      color: #fff;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      background: #262626;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .check {
+      margin-left: 10px;
+      transform: scale(1.5);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 14px;
+      color: #999;
+    }
+    .reset-btn {
+      display: block;
+      margin: 40px auto 0;
+      padding: 15px 30px;
+      font-size: 16px;
+      background: #ff0033;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff0033;
+    }
+    .reset-btn:hover {
+      background: #cc002a;
+    }
+    @media (max-width: 600px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="logo">ZeeHUB</div>
+    <a href="mmm.html">Înapoi</a>
+  </div>
+
+  <div class="container">
+    <h1>Antrenament Arte Marțiale – Nivel Avansat</h1>
+
+    <div class="day">
+      <h2>Luni – Forță Maximă</h2>
+      <ul>
+        <li>5 seturi | Flotări cu palmă bătută – 10 rep <input type="checkbox" class="check"></li>
+        <li>4 seturi | Genuflexiuni pistol – 10 rep/picior <input type="checkbox" class="check"></li>
+        <li>4 seturi | Tracțiuni pronate – 8 rep <input type="checkbox" class="check"></li>
+        <li>3 seturi | Abdomene în V cu greutate – 20 rep <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Marți – Viteză & Reacție</h2>
+      <ul>
+        <li>3 runde | Sfoară – 3 min <input type="checkbox" class="check"></li>
+        <li>4 seturi | Lovituri directe rapide – 1 min <input type="checkbox" class="check"></li>
+        <li>4 seturi | Drill cu partener (apără-atacă) – 2 min <input type="checkbox" class="check"></li>
+        <li>3 seturi | Lovituri circulare în viteză – 15 rep/picior <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Miercuri – Tehnică Avansată</h2>
+      <ul>
+        <li>3 seturi | Combinații 5+ lovituri (cu partener sau sac) <input type="checkbox" class="check"></li>
+        <li>3 seturi | Evadări și contralovituri – 2 min <input type="checkbox" class="check"></li>
+        <li>3 seturi | Sparring light – 3 min/rundă <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Joi – Mobilitate & Flexibilitate</h2>
+      <ul>
+        <li>3 seturi | Mobilitate șolduri – 10 min <input type="checkbox" class="check"></li>
+        <li>3 seturi | Stretching avansat picioare – 2 min/poziție <input type="checkbox" class="check"></li>
+        <li>2 seturi | Poduri + coborâre lentă – 10 rep <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Vineri – Rezistență Cardio</h2>
+      <ul>
+        <li>4 runde | HIIT: 20s lucru / 10s pauză – 8 exerciții <input type="checkbox" class="check"></li>
+        <li>3 seturi | Sprinturi 30m – 6 rep <input type="checkbox" class="check"></li>
+        <li>3 seturi | Burpees – 15 rep <input type="checkbox" class="check"></li>
+        <li>3 seturi | Plank cu ridicări alternate – 1 min <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Sâmbătă – Sparring & Strategie</h2>
+      <ul>
+        <li>3 runde | Sparring intens – 3 min/rundă <input type="checkbox" class="check"></li>
+        <li>2 seturi | Tehnici de apărare – 10 min <input type="checkbox" class="check"></li>
+        <li>1 sesiune | Analiză video lupte proprii – 20 min <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Duminică – Refacere Activă</h2>
+      <ul>
+        <li>20 min | Stretching total + yoga <input type="checkbox" class="check"></li>
+        <li>10 min | Respirație 4-7-8 + meditație <input type="checkbox" class="check"></li>
+        <li>Jurnal mental: Ce am învățat săptămâna aceasta? <input type="checkbox" class="check"></li>
+      </ul>
+    </div>
+
+    <button class="reset-btn" onclick="resetCheckboxes()">🔁 Resetează Bifele</button>
+
+    <div class="footer">
+      ZeeHUB – Antrenamente pentru luptători adevărați 🥋
+    </div>
+  </div>
+
+  <script>
+    function resetCheckboxes() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = false);
+    }
+  </script>
+</body>
+</html>
