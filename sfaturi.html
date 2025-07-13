@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ZeeHUB | Sfaturi Utile</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto&display=swap');
+
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #0f1117, #1a1d24);
+      font-family: 'Roboto', sans-serif;
+      color: #00fff2;
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      text-align: center;
+      font-size: 36px;
+      color: #39ff14;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px #00fff2;
+    }
+
+    .tips-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 25px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .tip-card {
+      background: rgba(20, 22, 30, 0.95);
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 0 18px #00fff2aa;
+      position: relative;
+      transition: 0.3s ease;
+    }
+
+    .tip-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 25px #39ff14aa;
+    }
+
+    .tip-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 20px;
+      color: #39ff14;
+      margin-bottom: 10px;
+    }
+
+    .tip-text {
+      font-size: 16px;
+      line-height: 1.5;
+      color: #ccc;
+    }
+
+    .refresh-btn {
+      margin-top: 15px;
+      background: linear-gradient(90deg, #00fff2, #39ff14);
+      color: #000;
+      font-weight: bold;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    .refresh-btn:hover {
+      background: #39ff14;
+      color: #0f1117;
+    }
+
+    .brand {
+      position: absolute;
+      top: 20px;
+      left: 30px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 20px;
+      color: #00fff2;
+      text-shadow: 0 0 10px #00fff2;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="brand">💡 ZeeHUB</div>
+  <h1>🔍 Sfaturi Utile pentru Regenerare</h1>
+
+  <div class="tips-section">
+    <!-- Energetice -->
+    <div class="tip-card">
+      <div class="tip-title">⚡ Energie</div>
+      <div class="tip-text" id="energie-tip">Bea apă și fă mișcare ușoară dimineața.</div>
+      <button class="refresh-btn" onclick="refreshTip('energie')">🔁 Alt sfat</button>
+    </div>
+
+    <!-- Somn -->
+    <div class="tip-card">
+      <div class="tip-title">😴 Somn</div>
+      <div class="tip-text" id="somn-tip">Evită ecranele cu 1 oră înainte de somn.</div>
+      <button class="refresh-btn" onclick="refreshTip('somn')">🔁 Alt sfat</button>
+    </div>
+
+    <!-- Nutriție -->
+    <div class="tip-card">
+      <div class="tip-title">🥗 Nutriție</div>
+      <div class="tip-text" id="nutritie-tip">Consumă alimente bogate în antioxidanți.</div>
+      <button class="refresh-btn" onclick="refreshTip('nutritie')">🔁 Alt sfat</button>
+    </div>
+
+    <!-- Mental -->
+    <div class="tip-card">
+      <div class="tip-title">🧠 Mental</div>
+      <div class="tip-text" id="mental-tip">Fă o pauză de 10 minute fără telefon sau ecrane.</div>
+      <button class="refresh-btn" onclick="refreshTip('mental')">🔁 Alt sfat</button>
+    </div>
+
+    <!-- Relaxare -->
+    <div class="tip-card">
+      <div class="tip-title">🧘‍♂️ Relaxare</div>
+      <div class="tip-text" id="relax-tip">Ascultă muzică liniștitoare timp de 10 minute.</div>
+      <button class="refresh-btn" onclick="refreshTip('relax')">🔁 Alt sfat</button>
+    </div>
+
+    <!-- Refacere musculară -->
+    <div class="tip-card">
+      <div class="tip-title">💪 Refacere</div>
+      <div class="tip-text" id="refacere-tip">Folosește o rolă de spumă după antrenament.</div>
+      <button class="refresh-btn" onclick="refreshTip('refacere')">🔁 Alt sfat</button>
+    </div>
+  </div>
+
+  <script>
+    const tips = {
+      energie: [
+        "Bea apă și fă mișcare ușoară dimineața.",
+        "Expune-te la lumină naturală 10 minute după trezire.",
+        "Fă 3-5 respirații profunde și întinderi ușoare.",
+        "Mănâncă un mic dejun bogat în proteine."
+      ],
+      somn: [
+        "Stabilește o rutină de somn constantă.",
+        "Evită cafeaua cu 6 ore înainte de culcare.",
+        "Meditează sau respiră adânc înainte de somn.",
+        "Folosește lumină caldă seara, evită LED albastre."
+      ],
+      nutritie: [
+        "Consumă fructe de pădure, broccoli, spanac.",
+        "Hidratează-te constant – cel puțin 2L pe zi.",
+        "Include grăsimi bune: avocado, nuci, ulei de măsline.",
+        "Evită zahărul rafinat cât de des poți."
+      ],
+      mental: [
+        "Scrie 3 lucruri pentru care ești recunoscător.",
+        "Fă o pauză fără ecrane la fiecare 90 min.",
+        "Spune NU multitasking-ului haotic.",
+        "Petrece timp cu oameni pozitivi."
+      ],
+      relax: [
+        "Fă o baie caldă sau duș lung cu lumină difuză.",
+        "Ascultă muzică ambientală timp de 10 minute.",
+        "Aprinde o lumânare parfumată cu lavandă.",
+        "Fă un exercițiu de mindfulness simplu."
+      ],
+      refacere: [
+        "Folosește o rolă de spumă după antrenament.",
+        "Stai 5 minute cu picioarele ridicate pe perete.",
+        "Hidratează-te imediat după efort.",
+        "Fă stretching pentru grupele lucrate."
+      ]
+    };
+
+    function refreshTip(category) {
+      const tipList = tips[category];
+      const randomTip = tipList[Math.floor(Math.random() * tipList.length)];
+      document.getElementById(`${category}-tip`).innerText = randomTip;
+    }
+  </script>
+</body>
+</html>
