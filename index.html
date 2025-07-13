@@ -19,10 +19,8 @@
       animation: bgFlow 30s ease infinite;
       color: #00fff2;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px 20px;
+      padding: 100px 20px 40px;
+      transition: background 0.4s, color 0.4s;
     }
 
     @keyframes bgFlow {
@@ -31,18 +29,49 @@
       100% { background-position: 0% 50%; }
     }
 
-    .brand {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 26px;
-      color: #00fff2;
-      text-shadow: 0 0 12px #00fff2;
-      margin-bottom: 40px;
-      animation: flicker 2s infinite alternate;
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: #000000aa;
+      backdrop-filter: blur(12px);
+      padding: 18px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      border-bottom: 1px solid #00fff220;
     }
 
-    @keyframes flicker {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
+    .navbar .brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 20px;
+      color: #00fff2;
+      text-shadow: 0 0 12px #00fff2;
+    }
+
+    .navbar .clock {
+      font-family: monospace;
+      font-size: 16px;
+      color: #39ff14;
+    }
+
+    .navbar .theme-toggle {
+      background: transparent;
+      border: 2px solid #00fff2;
+      color: #00fff2;
+      padding: 6px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      margin-left: 10px;
+    }
+
+    .navbar .theme-toggle:hover {
+      background: #00fff2;
+      color: #0f1117;
     }
 
     h1 {
@@ -50,6 +79,7 @@
       font-size: 36px;
       color: #39ff14;
       margin-bottom: 30px;
+      text-align: center;
       text-shadow: 0 0 15px #39ff14, 0 0 30px #00fff2;
     }
 
@@ -59,6 +89,7 @@
       gap: 30px;
       width: 100%;
       max-width: 1100px;
+      margin: auto;
     }
 
     .card {
@@ -115,6 +146,53 @@
       text-align: center;
     }
 
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #00fff2;
+      color: #0f1117;
+      padding: 14px 20px;
+      border-radius: 14px;
+      box-shadow: 0 0 20px #00fff2a0;
+      font-weight: bold;
+      opacity: 0;
+      animation: toastIn 0.5s forwards;
+    }
+
+    @keyframes toastIn {
+      to {
+        opacity: 1;
+        transform: translateY(-10px);
+      }
+    }
+
+    .light {
+      background: #ffffff;
+      color: #000;
+    }
+
+    .light .card {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: #00d4ff40;
+    }
+
+    .light .card h2, .light .navbar .brand {
+      color: #00c0d4;
+    }
+
+    .light .card a {
+      background: linear-gradient(90deg, #00d4ff, #39ff14);
+      color: #000;
+    }
+
+    .light .navbar {
+      background: #eaeaea99;
+      color: #000;
+      border-bottom: 1px solid #00d4ff30;
+    }
+
     @media (max-width: 600px) {
       h1 {
         font-size: 28px;
@@ -122,18 +200,29 @@
 
       .brand {
         font-size: 20px;
-        margin-bottom: 20px;
+      }
+
+      .navbar {
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="brand">🚀 ZeeHUB</div>
+  <div class="navbar">
+    <div class="brand">🚀 ZeeHUB</div>
+    <div>
+      <span class="clock">00:00:00</span>
+      <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    </div>
+  </div>
+
   <h1>🏁 Panou Principal</h1>
 
   <div class="dashboard">
-    <!-- CARD: SPORTIV -->
     <div class="card">
       <h2>🏋️‍♂️ Secțiunea Sportivă</h2>
       <a href="pgs.html">💪 Program Antrenament</a>
@@ -141,14 +230,12 @@
       <a href="prg.html">📈 Vezi Progresul</a>
     </div>
 
-    <!-- CARD: MEDICAL -->
     <div class="card">
       <h2>🩺 Informații Medicale</h2>
       <a href="drg.html">📊 Profil Medical</a>
       <a href="bll.html">🧬 Boli & Alergii</a>
     </div>
 
-    <!-- CARD: NUTRIȚIE / SFATURI -->
     <div class="card">
       <h2>🥗 Nutriție & Sfaturi</h2>
       <a href="nnt.html">🧠 Recomandări Nutriționale</a>
@@ -159,5 +246,37 @@
   <div class="footer-note">
     Versiune Alpha • Creat cu pasiune de ZeeHUB 🔥
   </div>
+
+  <div class="toast" id="toast">👋 Salutare! Bine ai revenit în ZeeHUB!</div>
+
+  <script>
+    // Oră live
+    function updateClock() {
+      const now = new Date();
+      document.querySelector('.clock').textContent =
+        now.toLocaleTimeString('ro-RO');
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Toast show
+    setTimeout(() => {
+      document.getElementById("toast").style.opacity = "1";
+    }, 600);
+
+    // Theme toggle
+    function toggleTheme() {
+      document.body.classList.toggle('light');
+      localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
+    }
+
+    // Load saved theme
+    window.onload = () => {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'light') {
+        document.body.classList.add('light');
+      }
+    };
+  </script>
 </body>
 </html>
