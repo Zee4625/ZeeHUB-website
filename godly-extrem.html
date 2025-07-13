@@ -1,181 +1,271 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Program Antrenamente - ZeeHUB</title>
-  <style>
-    body {
-      margin: 0; padding: 0;
-      background: linear-gradient(135deg, #0f1117, #1a1d24);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #00fff2;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    header {
-      background: #0c0e13;
-      display: flex;
-      align-items: center;
-      padding: 15px 30px;
-      box-shadow: 0 0 15px #00fff2aa;
-    }
-    .logo {
-      font-weight: 900;
-      font-size: 28px;
-      color: #39ff14;
-      letter-spacing: 3px;
-      user-select: none;
-      flex-shrink: 0;
-    }
-    main {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 40px 20px;
-      text-align: center;
-    }
-    h1 {
-      font-size: 2.8rem;
-      margin-bottom: 50px;
-      color: #39ff14;
-      text-shadow: 0 0 10px #39ff14;
-    }
-    .menu {
-      display: flex;
-      gap: 30px;
-      flex-wrap: wrap;
-      justify-content: center;
-      max-width: 700px;
-      width: 100%;
-    }
-    .menu a {
-      background: #00fff2;
-      color: #0f1117;
-      flex: 1 1 180px;
-      padding: 25px 0;
-      font-size: 1.5rem;
-      font-weight: 700;
-      border-radius: 15px;
-      text-decoration: none;
-      box-shadow: 0 0 25px #00fff2;
-      transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-      user-select: none;
-    }
-    .menu a:hover {
-      background: #39ff14;
-      color: #0a0b0c;
-      box-shadow: 0 0 35px #39ff14;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>GOD RANK ULTRA INSANE ++ – ZeeHUB</title>
+<style>
+  /* Reset & base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0; padding: 30px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #330000, #660000);
+    color: #fff;
+    user-select: none;
+  }
 
-    /* Buton GODLY EXTREM */
-    .menu a.godly {
-      background: linear-gradient(45deg, #ff0000, #ffa500, #ffff00, #ffffff);
-      color: #330000;
-      font-weight: 900;
-      font-size: 1.6rem;
-      box-shadow: 0 0 45px #ffbf00, 0 0 25px #ff4500;
-      text-shadow: 0 0 10px #ff8c00;
-      border-radius: 25px;
-      flex: 1 1 220px;
-      position: relative;
-      overflow: hidden;
-      user-select: none;
-    }
-    .menu a.godly::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.6) 20%, transparent 70%);
-      animation: shine 3s linear infinite;
-      transform: rotate(45deg);
-      pointer-events: none;
-      filter: drop-shadow(0 0 6px #fff);
-      border-radius: 25px;
-    }
-    @keyframes shine {
-      0% { transform: rotate(45deg) translateX(-100%); }
-      100% { transform: rotate(45deg) translateX(100%); }
-    }
-    .menu a.godly:hover {
-      background: linear-gradient(45deg, #ffffff, #ffff00, #ff4500, #ff0000);
-      color: #330000;
-      box-shadow: 0 0 70px #ffbf00, 0 0 50px #ff4500;
-      text-shadow: 0 0 15px #ff8c00;
-      transform: scale(1.07);
-    }
+  /* Navbar */
+  .navbar {
+    background: linear-gradient(90deg, #ff0000, #ffa500, #ffff00);
+    padding: 30px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 900;
+    font-size: 32px;
+    letter-spacing: 3px;
+    border-radius: 20px;
+    box-shadow: 0 0 70px #ffbf00aa;
+    color: #330000;
+    text-shadow: 0 0 15px #660000cc;
+  }
+  .back-btn {
+    background: #fff;
+    color: #660000;
+    border-radius: 30px;
+    padding: 18px 45px;
+    font-weight: 900;
+    font-size: 22px;
+    box-shadow: 0 0 60px #ffbf00cc;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    user-select: none;
+  }
+  .back-btn:hover {
+    background: #ff9000;
+    color: #330000;
+    box-shadow: 0 0 90px #ffbf00ff;
+    transform: scale(1.12);
+  }
 
-    .back-button {
-      margin-top: 60px;
-      padding: 12px 35px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      background: #ff0044;
-      color: white;
-      border: none;
-      border-radius: 15px;
-      cursor: pointer;
-      box-shadow: 0 0 20px #ff0044;
-      transition: background-color 0.3s ease;
-      user-select: none;
-      text-decoration: none;
-      display: inline-block;
+  /* Container */
+  .container {
+    max-width: 1300px;
+    margin: auto;
+    background: #440000;
+    padding: 60px 80px;
+    border-radius: 30px;
+    box-shadow: 0 0 100px #ffbf0055;
+  }
+
+  h1 {
+    font-size: 52px;
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 90px;
+    background: linear-gradient(90deg, #ff0000, #ffa500, #ffff00, #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 5px;
+    text-shadow: 0 0 20px #ffbf00cc;
+    user-select: text;
+  }
+
+  /* Day Sections */
+  .day {
+    border-left: 15px solid;
+    border-image-slice: 1;
+    border-image-source: linear-gradient(180deg, #ff0000, #ffa500, #ffff00, #fff);
+    margin-bottom: 80px;
+    padding-left: 40px;
+    box-shadow: 0 0 60px #ffbf00cc inset;
+    border-radius: 20px;
+    background: #550000cc;
+  }
+  .day h2 {
+    font-weight: 900;
+    font-size: 30px;
+    margin-bottom: 40px;
+    color: #fff;
+    text-shadow: 0 0 40px #ffbf00cc;
+    letter-spacing: 2px;
+  }
+
+  /* List */
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  li {
+    background: linear-gradient(90deg, #ff1a1a, #ff751a, #ffd11a);
+    margin: 22px 0;
+    padding: 24px 36px;
+    border-radius: 15px;
+    font-weight: 700;
+    font-size: 21px;
+    color: #330000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 0 20px #ffb300cc;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    user-select: none;
+  }
+  li:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 45px #ffec7dcc;
+    color: #fff;
+  }
+
+  /* Checkbox */
+  .check {
+    width: 26px;
+    height: 26px;
+    accent-color: #ffbf00;
+    cursor: pointer;
+    margin-left: 30px;
+    transition: transform 0.3s ease;
+  }
+  .check:hover {
+    transform: scale(1.4);
+  }
+
+  /* Reset button */
+  .reset-btn {
+    display: block;
+    margin: 100px auto 0;
+    padding: 26px 70px;
+    font-size: 26px;
+    font-weight: 900;
+    background: linear-gradient(90deg, #ff0000, #ffb300, #ffff00);
+    border: none;
+    border-radius: 35px;
+    color: #330000;
+    cursor: pointer;
+    box-shadow: 0 0 90px #ffbf00cc;
+    transition: all 0.4s ease;
+    user-select: none;
+  }
+  .reset-btn:hover {
+    background: linear-gradient(90deg, #ffa500, #ffff00, #ffffff);
+    color: #660000;
+    box-shadow: 0 0 130px #fffacdcc;
+    transform: scale(1.1);
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 100px;
+    text-align: center;
+    font-weight: 900;
+    font-size: 20px;
+    color: #ffbf00cc;
+    text-shadow: 0 0 30px #ffbf00bb;
+    user-select: none;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .container {
+      padding: 40px 25px;
     }
-    .back-button:hover {
-      background: #cc0033;
-      box-shadow: 0 0 25px #cc0033;
+    li {
+      flex-direction: column;
+      align-items: flex-start;
+      font-size: 18px;
+      padding: 18px 25px;
     }
-    footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 14px;
-      color: #00fff2aa;
-      user-select: none;
+    .day h2 {
+      font-size: 26px;
     }
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 2rem;
-      }
-      .menu a {
-        flex: 1 1 100%;
-        font-size: 1.3rem;
-        padding: 20px 0;
-      }
-      .back-button {
-        margin-top: 40px;
-        width: 100%;
-      }
+    .reset-btn {
+      font-size: 22px;
+      padding: 22px 55px;
     }
-  </style>
+  }
+</style>
 </head>
 <body>
 
-<header>
-  <div class="logo">ZeeHUB</div>
-</header>
-
-<main>
-  <h1>Alege Programul de Antrenament</h1>
-  <div class="menu">
-    <a href="usor.html" title="Antrenament Ușor">Ușor</a>
-    <a href="mediu.html" title="Antrenament Mediu">Mediu</a>
-    <a href="greu.html" title="Antrenament Greu">Greu</a>
-    <a href="extrem.html" title="Antrenament Extrem">Extrem</a>
-    <a href="godly-extrem.html" class="godly" title="Antrenament Godly Extrem">GODLY EXTREM</a>
+  <div class="navbar">
+    GOD RANK ULTRA INSANE ++ – ZeeHUB
+    <a href="index.html" class="back-btn">🏠 Acasă</a>
   </div>
 
-  <a href="pgs.html" class="back-button" title="Înapoi">⬅ Înapoi</a>
-</main>
+  <div class="container">
+    <h1>PROGRAM GOD RANK ULTRA INSANE ++</h1>
 
-<footer>
-  © 2025 ZeeHUB - Performanță & Stil Futuristic ⚡
-</footer>
+    <div class="day">
+      <h2>Luni – PUSH & PLANȘĂ EXTREM</h2>
+      <ul>
+        <li>10x 35 pseudo planche push-ups ultra lente cu pauză izometrică 15s <input type="checkbox" class="check" /></li>
+        <li>8x 25 handstand push-ups asistate + hold izometric 15s <input type="checkbox" class="check" /></li>
+        <li>8x 40 diamond slow push-ups + pauză 10s în partea de jos <input type="checkbox" class="check" /></li>
+        <li>7x plank walkouts 90 sec + plank iso 60 sec <input type="checkbox" class="check" /></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Marți – TRACTIUNI & MUSCLE-UP EXTREME</h2>
+      <ul>
+        <li>10x 30 pull-ups lente + 20 explozive, pauză <12s <input type="checkbox" class="check" /></li>
+        <li>9x 25 negative muscle-ups ultra controlate + pauză izometrică 15s <input type="checkbox" class="check" /></li>
+        <li>8x 40 scapular pull-ups + pauză izometrică 10s <input type="checkbox" class="check" /></li>
+        <li>7x hanging L-sit 150 sec picioare perfect drepte <input type="checkbox" class="check" /></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Miercuri – CORE & ABS DEMONSTRATIVE</h2>
+      <ul>
+        <li>9x 50 hanging leg raises lent + pauză izometrică 15s <input type="checkbox" class="check" /></li>
+        <li>8x 70 V-ups explosive cu pauză minimă <input type="checkbox" class="check" /></li>
+        <li>7x hollow hold 4 minute maxim tensiune <input type="checkbox" class="check" /></li>
+        <li>7x plank to push-up 80 reps fără pauză reală <input type="checkbox" class="check" /></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Joi – SUPERSET & CIRCUIT GOD MODE</h2>
+      <ul>
+        <li>10x (25 dips + 35 pull-ups) pauză <12s <input type="checkbox" class="check" /></li>
+        <li>9x (50 push-ups + 60 rows) pauză <15s <input type="checkbox" class="check" /></li>
+        <li>8x (planche hold 90s + 50 bodyweight curls) pauză minimă <input type="checkbox" class="check" /></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Vineri – PIEDRA PENTRU PICIOARE</h2>
+      <ul>
+        <li>10x (15 pistol squats/parte + 40 jump lunges + 35 box jumps) fără pauză <input type="checkbox" class="check" /></li>
+        <li>8x wall sit 210 sec cu concentrație maximă <input type="checkbox" class="check" /></li>
+        <li>20x sprinturi 60m <input type="checkbox" class="check" /></li>
+      </ul>
+    </div>
+
+    <div class="day">
+      <h2>Sâmbătă – AMRAP GOD MODE 90 MIN</h2>
+      <ul>
+        <li>AMRAP 90 min: 30 muscle-ups / 50 pull-ups + 90 push-ups + 90 squats + 60 burpees + plank 180 sec <input type="checkbox" class="check" /></li>
+      </ul>
+    </div>
+
+    <button class="reset-btn" onclick="resetCheckboxes()">🔁 RESET BIFE</button>
+
+    <div class="footer">
+      ZeeHUB GOD RANK ULTRA INSANE ++ – Doar pentru cei care sfidează limitele. Durerea? Doar un combustibil. 🔥💥
+    </div>
+  </div>
+
+  <script>
+    function resetCheckboxes() {
+      document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+    }
+  </script>
 
 </body>
 </html>
