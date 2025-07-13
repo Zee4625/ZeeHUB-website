@@ -13,6 +13,8 @@
       background: linear-gradient(135deg, #0f1117, #1a1d24);
       font-family: 'Roboto', sans-serif;
       color: #00fff2;
+      position: relative;
+      min-height: 100vh;
     }
 
     h1 {
@@ -85,17 +87,55 @@
       font-size: 20px;
       color: #00fff2;
       text-shadow: 0 0 10px #00fff2;
+      user-select: none;
+    }
+
+    .home-button {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      background: linear-gradient(90deg, #00fff2, #39ff14);
+      color: #0f1117;
+      font-weight: bold;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      box-shadow: 0 0 20px #00fff2;
+      transition: 0.3s ease;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .home-button:hover {
+      background: #39ff14;
+      box-shadow: 0 0 30px #39ff14;
+      color: #0f1117;
     }
 
     @media (max-width: 600px) {
       h1 {
         font-size: 28px;
       }
+
+      .home-button {
+        top: 15px;
+        right: 20px;
+        padding: 8px 14px;
+        font-size: 14px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="brand">💡 ZeeHUB</div>
+
+  <a href="index.html" class="home-button" aria-label="Acasă">🏠 Acasă</a>
+
   <h1>🔍 Sfaturi Utile pentru Regenerare</h1>
 
   <div class="tips-section">
