@@ -1,282 +1,215 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ZeeHUB | Dashboard Principal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Roboto&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #0f1117, #1a1d24);
-      background-size: 300% 300%;
-      animation: bgFlow 30s ease infinite;
-      color: #00fff2;
-      min-height: 100vh;
-      padding: 100px 20px 40px;
-      transition: background 0.4s, color 0.4s;
-    }
-
-    @keyframes bgFlow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background: #000000aa;
-      backdrop-filter: blur(12px);
-      padding: 18px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 100;
-      border-bottom: 1px solid #00fff220;
-    }
-
-    .navbar .brand {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 20px;
-      color: #00fff2;
-      text-shadow: 0 0 12px #00fff2;
-    }
-
-    .navbar .clock {
-      font-family: monospace;
-      font-size: 16px;
-      color: #39ff14;
-    }
-
-    .navbar .theme-toggle {
-      background: transparent;
-      border: 2px solid #00fff2;
-      color: #00fff2;
-      padding: 6px 14px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.3s ease;
-      margin-left: 10px;
-    }
-
-    .navbar .theme-toggle:hover {
-      background: #00fff2;
-      color: #0f1117;
-    }
-
-    h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 36px;
-      color: #39ff14;
-      margin-bottom: 30px;
-      text-align: center;
-      text-shadow: 0 0 15px #39ff14, 0 0 30px #00fff2;
-    }
-
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 30px;
-      width: 100%;
-      max-width: 1100px;
-      margin: auto;
-    }
-
-    .card {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid #00fff220;
-      backdrop-filter: blur(15px);
-      border-radius: 20px;
-      box-shadow: 0 0 20px #00fff220;
-      padding: 30px 25px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 30px #00fff250, inset 0 0 10px #39ff1440;
-    }
-
-    .card h2 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 22px;
-      color: #00fff2;
-      margin-bottom: 20px;
-      text-shadow: 0 0 10px #00fff2;
-    }
-
-    .card a {
-      display: block;
-      margin: 10px 0;
-      padding: 12px 20px;
-      background: linear-gradient(90deg, #00fff2, #39ff14);
-      color: #0f1117;
-      font-weight: bold;
-      border-radius: 14px;
-      text-decoration: none;
-      font-size: 16px;
-      box-shadow: 0 0 10px #00fff2a0, inset 0 0 5px #39ff14a0;
-      transition: all 0.3s ease;
-    }
-
-    .card a:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 25px #39ff14, 0 0 35px #00fff2 inset;
-    }
-
-    .footer-note {
-      margin-top: 60px;
-      font-size: 13px;
-      color: #aaa;
-      font-style: italic;
-      text-align: center;
-    }
-
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: #00fff2;
-      color: #0f1117;
-      padding: 14px 20px;
-      border-radius: 14px;
-      box-shadow: 0 0 20px #00fff2a0;
-      font-weight: bold;
-      opacity: 0;
-      animation: toastIn 0.5s forwards;
-    }
-
-    @keyframes toastIn {
-      to {
-        opacity: 1;
-        transform: translateY(-10px);
-      }
-    }
-
-    .light {
-      background: #ffffff;
-      color: #000;
-    }
-
-    .light .card {
-      background: rgba(0, 0, 0, 0.04);
-      border-color: #00d4ff40;
-    }
-
-    .light .card h2, .light .navbar .brand {
-      color: #00c0d4;
-    }
-
-    .light .card a {
-      background: linear-gradient(90deg, #00d4ff, #39ff14);
-      color: #000;
-    }
-
-    .light .navbar {
-      background: #eaeaea99;
-      color: #000;
-      border-bottom: 1px solid #00d4ff30;
-    }
-
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 28px;
-      }
-
-      .brand {
-        font-size: 20px;
-      }
-
-      .navbar {
-        flex-direction: column;
-        gap: 8px;
-        padding: 12px;
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ZeeHUB | Dashboard Principal</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Roboto&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent: #00fff2;
+    --glow: #39ff14;
+    --bg-dark: #0f1117;
+    --bg-light: #fdfdfd;
+    --txt-dark: #fff;
+    --txt-light: #000;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Roboto', sans-serif;
+    overflow-x:hidden;
+    background: var(--bg-dark);
+    color: var(--txt-dark);
+    transition: background 0.5s, color 0.5s;
+  }
+  canvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-2; }
+  .navbar {
+    position:fixed; top:0; width:100%; display:flex;
+    justify-content:space-between; align-items:center;
+    background:rgba(0,0,0,0.6); padding:16px 32px;
+    box-shadow: 0 0 20px var(--accent);
+    animation: neon 2s ease-in-out infinite alternate;
+    z-index:10;
+  }
+  @keyframes neon {
+    from { box-shadow: 0 0 20px var(--accent); }
+    to { box-shadow: 0 0 50px var(--glow); }
+  }
+  .navbar .brand {
+    font-family:'Orbitron'; font-size:24px;
+    text-shadow:0 0 10px var(--accent),0 0 20px var(--glow);
+  }
+  .navbar .controls { display:flex; gap:12px; align-items:center; }
+  .navbar button {
+    background:transparent; border:2px solid var(--accent);
+    color:var(--accent); padding:6px 16px; border-radius:8px;
+    cursor:pointer; transition: all 0.3s ease;
+  }
+  .navbar button:hover { background:var(--accent); color:var(--bg-dark); }
+  .clock { font-family:monospace; font-size:16px; }
+  h1 {
+    margin-top:100px; text-align:center;
+    font-family:'Orbitron'; font-size:48px;
+    text-shadow:0 0 20px var(--glow),0 0 40px var(--accent);
+    animation: titleGrow 1.5s ease-out;
+  }
+  @keyframes titleGrow {
+    from { opacity:0; transform: scale(0.8); }
+    to { opacity:1; transform: scale(1); }
+  }
+  .dashboard {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:32px; width:90%; max-width:1200px;
+    margin:40px auto;
+  }
+  .card {
+    background:rgba(255,255,255,0.05); backdrop-filter:blur(10px);
+    border:1px solid var(--accent); border-radius:20px;
+    padding:32px; text-align:center; position:relative;
+    overflow:hidden; transform-style:preserve-3d;
+    transition:transform 0.5s, box-shadow 0.5s;
+  }
+  .card::after {
+    content:''; position:absolute; top:-50%; left:-50%;
+    width:200%; height:200%;
+    background:radial-gradient(circle,#00fff240,#0000);
+    transform:scale(0) rotate(45deg);
+    transition:transform 0.5s;
+  }
+  .card:hover {
+    box-shadow:0 0 30px var(--accent), inset 0 0 15px var(--glow);
+    transform: translateZ(50px) rotateX(5deg);
+  }
+  .card:hover::after { transform:scale(1) rotate(45deg); }
+  .card h2 { font-family:'Orbitron'; margin-bottom:16px; }
+  .card a {
+    display:block; margin:12px auto; padding:14px 24px;
+    border-radius:12px; background:linear-gradient(90deg,var(--accent),var(--glow));
+    color:var(--bg-dark); font-weight:600; font-size:16px;
+    text-decoration:none; position:relative;
+    transition:transform 0.3s, box-shadow 0.3s;
+  }
+  .card a::after {
+    content:''; position:absolute; top:0; left:0;
+    width:100%; height:100%; background:var(--bg-dark); opacity:0;
+    transition:opacity 0.3s;
+  }
+  .card a:hover {
+    transform:translateY(-3px);
+    box-shadow:0 0 20px var(--glow);
+  }
+  .card a:hover::after { opacity:0.1; }
+  .footer {
+    margin:60px 0 30px; text-align:center;
+    color:var(--txt-light); opacity:0.7;
+  }
+  .light {
+    background:var(--bg-light); color:var(--txt-light);
+  }
+  .light .navbar { background:rgba(255,255,255,0.8); }
+  .light canvas { display:none; }
+  .toast {
+    position:fixed; bottom:40px; right:40px;
+    background:var(--accent); color:var(--bg-dark);
+    padding:16px 24px; border-radius:12px; box-shadow:0 0 20px var(--accent);
+    opacity:0; transform:translateY(20px);
+    animation:toastIn 0.6s forwards;
+  }
+  @keyframes toastIn {
+    0% { opacity:0; transform:translateY(20px); }
+    100% { opacity:1; transform:translateY(0); }
+  }
+</style>
 </head>
 <body>
 
-  <div class="navbar">
-    <div class="brand">🚀 ZeeHUB</div>
-    <div>
-      <span class="clock">00:00:00</span>
-      <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
-    </div>
+<canvas id="c"></canvas>
+
+<nav class="navbar">
+  <div class="brand">🚀 ZeeHUB</div>
+  <div class="controls">
+    <span class="clock">00:00:00</span>
+    <button onclick="toggleTheme()">🌙 Theme</button>
+    <button onclick="muteAudio()">🔇 Sound</button>
   </div>
+</nav>
 
-  <h1>🏁 Panou Principal</h1>
+<h1>🏁 Panou Principal</h1>
 
-  <div class="dashboard">
-    <div class="card">
-      <h2>🏋️‍♂️ Secțiunea Sportivă</h2>
-      <a href="pgs.html">💪 Program Antrenament</a>
-      <a href="acc.html">✍️ Creează Antrenament</a>
-      <a href="prg.html">📈 Vezi Progresul</a>
-    </div>
-
-    <div class="card">
-      <h2>🩺 Informații Medicale</h2>
-      <a href="drg.html">📊 Profil Medical</a>
-      <a href="bll.html">🧬 Boli & Alergii</a>
-    </div>
-
-    <div class="card">
-      <h2>🥗 Nutriție & Sfaturi</h2>
-      <a href="nnt.html">🧠 Recomandări Nutriționale</a>
-      <a href="sfaturi.html">📚 Sfaturi Personalizate</a>
-    </div>
+<div class="dashboard">
+  <div class="card"><h2>🏋️‍♂️ Sport</h2>
+    <a href="pgs.html" data-snd>Program Antrenament</a>
+    <a href="acc.html" data-snd>Creează Antrenament</a>
+    <a href="prg.html" data-snd>Vezi Progresul</a>
   </div>
-
-  <div class="footer-note">
-    Versiune Alpha • Creat cu pasiune de ZeeHUB 🔥
+  <div class="card"><h2>🩺 Medical</h2>
+    <a href="drg.html" data-snd>Profil Medical</a>
+    <a href="bll.html" data-snd>Boli & Alergii</a>
   </div>
+  <div class="card"><h2>🥗 Nutriție</h2>
+    <a href="nnt.html" data-snd>Recomandări Nutriționale</a>
+    <a href="sfaturi.html" data-snd>Sfaturi Personalizate</a>
+  </div>
+</div>
 
-  <div class="toast" id="toast">👋 Salutare! Bine ai revenit în ZeeHUB!</div>
+<div class="footer">🔥 Versiune Alpha • Creat cu pasiune de ZeeHUB 🔥</div>
+<div class="toast">👋 Salutare! Bine ai revenit în ZeeHUB!</div>
 
-  <script>
-    // Oră live
-    function updateClock() {
-      const now = new Date();
-      document.querySelector('.clock').textContent =
-        now.toLocaleTimeString('ro-RO');
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
+<audio id="hoversound" src="https://assets.mixkit.co/sfx/preview/mixkit-button-click-1111.mp3"></audio>
 
-    // Toast show
-    setTimeout(() => {
-      document.getElementById("toast").style.opacity = "1";
-    }, 600);
+<script>
+// Canvas particule
+const c = document.getElementById('c'), ctx = c.getContext('2d');
+let w, h, particles = [];
+function initParticles(){
+  w = c.width = innerWidth; h = c.height = innerHeight;
+  particles = Array.from({length:100}, () => ({
+    x: Math.random()*w,
+    y: Math.random()*h,
+    vx: (Math.random()-0.5)*0.5,
+    vy: (Math.random()-0.5)*0.5,
+    r: Math.random()*2+1
+  }));
+}
+function animate(){
+  ctx.clearRect(0,0,w,h);
+  particles.forEach(p=>{
+    p.x += p.vx; p.y += p.vy;
+    if(p.x<0||p.x>w) p.vx*=-1;
+    if(p.y<0||p.y>h) p.vy*=-1;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,6.28);
+    ctx.fillStyle='rgba(0,255,242,0.7)'; ctx.fill();
+  });
+  requestAnimationFrame(animate);
+}
+initParticles(); animate();
+window.onresize = initParticles;
 
-    // Theme toggle
-    function toggleTheme() {
-      document.body.classList.toggle('light');
-      localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
-    }
+// Clock
+function updateClock(){
+  document.querySelector('.clock').textContent = new Date().toLocaleTimeString('ro-RO');
+}
+setInterval(updateClock, 1000); updateClock();
 
-    // Load saved theme
-    window.onload = () => {
-      const theme = localStorage.getItem('theme');
-      if (theme === 'light') {
-        document.body.classList.add('light');
-      }
-    };
-  </script>
+// Toast + Confetti
+setTimeout(()=>document.querySelector('.toast').style.opacity=1,500);
+
+// Theme toggle
+function toggleTheme(){
+  document.body.classList.toggle('light');
+  localStorage.theme = document.body.classList.contains('light')?'light':'dark';
+}
+if(localStorage.theme==='light') document.body.classList.add('light');
+
+// Hover sound
+const snd = document.getElementById('hoversound');
+let muted=false;
+function muteAudio(){ muted=!muted; alert(muted?'Sunet oprit':'Sunet activat'); }
+document.querySelectorAll('[data-snd]').forEach(el=>
+  el.addEventListener('mouseover', ()=>{ if(!muted) snd.currentTime=0, snd.play(); })
+);
+</script>
+
 </body>
 </html>
