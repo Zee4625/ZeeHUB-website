@@ -4,94 +4,131 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ZeeHUB | Alege Antrenament</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto&display=swap');
-
-    body {
+    * {
+      box-sizing: border-box;
       margin: 0;
-      background: linear-gradient(135deg, #0f1117, #1a1d24);
-      font-family: 'Roboto', sans-serif;
-      color: #00fff2;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      animation: bgPulse 12s ease-in-out infinite alternate;
+      padding: 0;
     }
 
-    @keyframes bgPulse {
-      0% {background-position: 0% 50%;}
-      100% {background-position: 100% 50%;}
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #090d13, #1a1d24);
+      overflow: hidden;
+      color: #00fff2;
+      position: relative;
+    }
+
+    /* Fundal animat - nebuloasă futuristă */
+    body::before, body::after {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: radial-gradient(ellipse at center, #00fff230 0%, transparent 70%), repeating-radial-gradient(circle, #39ff1430 1px, transparent 2px);
+      animation: pulseNebula 25s ease-in-out infinite;
+      z-index: -2;
+      opacity: 0.08;
+      mix-blend-mode: screen;
+    }
+
+    @keyframes pulseNebula {
+      0% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.2) rotate(180deg); }
+      100% { transform: scale(1) rotate(360deg); }
+    }
+
+    .scanline::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: repeating-linear-gradient(to bottom, transparent 0px, #00fff208 1px, transparent 2px);
+      pointer-events: none;
+      animation: scan 10s linear infinite;
+      z-index: 3;
+    }
+
+    @keyframes scan {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 100%; }
     }
 
     .menu-container {
-      background: rgba(27, 30, 38, 0.9);
-      padding: 50px 40px 60px;
-      border-radius: 30px;
-      box-shadow: 0 0 45px #00fff2cc;
+      position: relative;
+      z-index: 1;
+      background: rgba(20, 22, 30, 0.7);
+      backdrop-filter: blur(15px);
+      padding: 60px 40px 70px;
+      border-radius: 25px;
+      box-shadow: 0 0 40px #00fff222, inset 0 0 15px #00fff222;
       text-align: center;
       max-width: 600px;
       width: 90%;
-      backdrop-filter: blur(15px);
-      transition: transform 0.4s ease;
+      margin: 12vh auto;
+      animation: fadeIn 1.2s ease-out;
     }
 
-    .menu-container:hover {
-      transform: scale(1.015);
-      box-shadow: 0 0 65px #39ff14cc;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h1 {
       font-family: 'Orbitron', sans-serif;
-      color: #39ff14;
       font-size: 36px;
       margin-bottom: 30px;
-      text-shadow:
-        0 0 10px #39ff14,
-        0 0 20px #00fff2,
-        0 0 35px #00fff2;
-      letter-spacing: 1.5px;
+      color: #39ff14;
+      text-shadow: 0 0 10px #39ff14, 0 0 25px #00fff2;
     }
 
     .menu-button {
       display: block;
-      margin: 16px auto;
+      margin: 18px auto;
       padding: 16px 32px;
-      background: transparent;
-      border: 2.5px solid #00fff2;
-      border-radius: 20px;
+      border: 2px solid #00fff2;
+      border-radius: 18px;
+      background: rgba(0, 255, 242, 0.05);
       font-size: 20px;
       color: #00fff2;
       text-decoration: none;
-      box-shadow:
-        0 0 14px #00fff2aa,
-        inset 0 0 8px #00fff2aa;
-      transition:
-        background-color 0.3s ease,
-        color 0.3s ease,
-        box-shadow 0.3s ease,
-        transform 0.25s ease;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      max-width: 350px;
+      font-weight: bold;
+      letter-spacing: 0.07em;
       width: 100%;
+      max-width: 350px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 15px #00fff280;
     }
 
-    .menu-button:hover, .menu-button:focus {
+    .menu-button::before {
+      content: "";
+      position: absolute;
+      top: 0; left: -100%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(120deg, transparent, #00fff255, transparent);
+      transform: skewX(-20deg);
+      transition: left 0.4s ease;
+    }
+
+    .menu-button:hover::before {
+      left: 100%;
+    }
+
+    .menu-button:hover {
       background: #00fff2;
       color: #0f1117;
-      box-shadow:
-        0 0 30px #39ff14,
-        inset 0 0 20px #39ff14;
+      box-shadow: 0 0 25px #00fff2, inset 0 0 10px #39ff14;
       transform: scale(1.07);
-      outline: none;
     }
 
     .footer-note {
       margin-top: 50px;
       font-size: 14px;
       color: #aaa;
-      user-select: none;
       font-style: italic;
     }
 
@@ -100,42 +137,42 @@
       top: 20px;
       left: 30px;
       font-family: 'Orbitron', sans-serif;
-      color: #00fff2;
       font-size: 22px;
-      letter-spacing: 1px;
-      text-shadow: 0 0 10px #00fff2;
+      color: #00fff2;
+      text-shadow: 0 0 12px #00fff2;
+      z-index: 10;
     }
 
     .back-button {
       position: absolute;
       top: 20px;
       right: 30px;
-      font-size: 16px;
       padding: 10px 20px;
-      border-radius: 15px;
+      font-size: 16px;
+      border-radius: 12px;
       border: 2px solid #00fff2;
       background: transparent;
       color: #00fff2;
       text-decoration: none;
-      transition: 0.3s ease;
       font-weight: 600;
+      transition: 0.3s ease;
+      z-index: 10;
     }
 
     .back-button:hover {
       background: #00fff2;
       color: #0f1117;
-      box-shadow: 0 0 20px #39ff14;
+      box-shadow: 0 0 18px #39ff14;
     }
 
     @media screen and (max-width: 500px) {
       h1 {
-        font-size: 28px;
-        margin-bottom: 25px;
+        font-size: 26px;
       }
 
       .menu-button {
-        font-size: 18px;
-        padding: 14px 25px;
+        font-size: 17px;
+        padding: 14px 24px;
       }
 
       .brand {
@@ -148,22 +185,20 @@
         font-size: 14px;
         top: 10px;
         right: 20px;
-        padding: 8px 16px;
+        padding: 8px 14px;
       }
     }
   </style>
 </head>
-<body>
+<body class="scanline">
   <div class="brand">💥 ZeeHUB</div>
   <a class="back-button" href="index.html">⬅ Înapoi</a>
 
-  <div class="menu-container" role="main">
+  <div class="menu-container">
     <h1>🔍 Alege Tipul de Antrenament</h1>
-
-    <a class="menu-button" href="aaa.html" role="button">🏋️‍♂️ Cu Greutăți</a>
-    <a class="menu-button" href="ppp.html" role="button">🤸‍♂️ Bodyweight</a>
-    <a class="menu-button" href="mmm.html" role="button">🥋 Arte Marțiale</a>
-
+    <a class="menu-button" href="aaa.html">🏋️‍♂️ Cu Greutăți</a>
+    <a class="menu-button" href="ppp.html">🤸‍♂️ Bodyweight</a>
+    <a class="menu-button" href="mmm.html">🥋 Arte Marțiale</a>
     <div class="footer-note">Antrenamente personalizate în stil ZeeHUB • Fii în formă! ⚡</div>
   </div>
 </body>
