@@ -3,154 +3,161 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ZeeHUB | Meniu Principal</title>
+  <title>ZeeHUB | Dashboard Principal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Roboto&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto&display=swap');
-
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
 
     body {
-      height: 100vh;
-      background: linear-gradient(135deg, #0f1117, #1a1d24);
       font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #0f1117, #1a1d24);
+      background-size: 300% 300%;
+      animation: bgFlow 30s ease infinite;
       color: #00fff2;
+      min-height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      overflow: hidden;
-      animation: bgMove 20s infinite alternate linear;
+      padding: 40px 20px;
     }
 
-    @keyframes bgMove {
+    @keyframes bgFlow {
       0% { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
-    .menu-container {
-      background: rgba(20, 22, 30, 0.95);
-      padding: 50px 40px;
-      border-radius: 30px;
-      box-shadow: 0 0 30px #00fff2a6;
-      backdrop-filter: blur(15px);
-      text-align: center;
-      max-width: 550px;
-      width: 90%;
-      transition: transform 0.4s ease;
+    .brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 26px;
+      color: #00fff2;
+      text-shadow: 0 0 12px #00fff2;
+      margin-bottom: 40px;
+      animation: flicker 2s infinite alternate;
     }
 
-    .menu-container:hover {
-      transform: scale(1.02);
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
     }
 
     h1 {
       font-family: 'Orbitron', sans-serif;
+      font-size: 36px;
       color: #39ff14;
-      font-size: 42px;
-      margin-bottom: 40px;
-      text-shadow:
-        0 0 10px #39ff14,
-        0 0 20px #00fff2,
-        0 0 35px #00fff2;
-      letter-spacing: 2px;
+      margin-bottom: 30px;
+      text-shadow: 0 0 15px #39ff14, 0 0 30px #00fff2;
     }
 
-    .menu-button {
-      display: block;
-      margin: 20px auto;
-      padding: 18px 35px;
-      background: linear-gradient(90deg, #00fff2, #39ff14);
-      border: none;
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid #00fff220;
+      backdrop-filter: blur(15px);
       border-radius: 20px;
-      font-size: 20px;
+      box-shadow: 0 0 20px #00fff220;
+      padding: 30px 25px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 30px #00fff250, inset 0 0 10px #39ff1440;
+    }
+
+    .card h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 22px;
+      color: #00fff2;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #00fff2;
+    }
+
+    .card a {
+      display: block;
+      margin: 10px 0;
+      padding: 12px 20px;
+      background: linear-gradient(90deg, #00fff2, #39ff14);
       color: #0f1117;
       font-weight: bold;
-      letter-spacing: 1px;
+      border-radius: 14px;
       text-decoration: none;
-      box-shadow:
-        0 0 12px #00fff2,
-        0 0 20px #39ff14 inset;
+      font-size: 16px;
+      box-shadow: 0 0 10px #00fff2a0, inset 0 0 5px #39ff14a0;
       transition: all 0.3s ease;
-      cursor: pointer;
-      max-width: 340px;
-      width: 100%;
     }
 
-    .menu-button:hover {
-      transform: scale(1.08);
-      box-shadow:
-        0 0 25px #39ff14,
-        0 0 35px #00fff2 inset;
-      color: #000;
+    .card a:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px #39ff14, 0 0 35px #00fff2 inset;
     }
 
     .footer-note {
       margin-top: 60px;
       font-size: 13px;
-      color: #ccc;
+      color: #aaa;
       font-style: italic;
+      text-align: center;
     }
 
-    .brand {
-      position: absolute;
-      top: 20px;
-      left: 30px;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 22px;
-      color: #00fff2;
-      letter-spacing: 1px;
-      text-shadow: 0 0 10px #00fff2;
-      animation: flicker 2s infinite alternate;
-    }
-
-    @keyframes flicker {
-      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-        opacity: 1;
-      }
-      20%, 22%, 24%, 55% {
-        opacity: 0.6;
-      }
-    }
-
-    @media (max-width: 550px) {
-      .menu-container {
-        padding: 35px 25px;
-      }
-
-      .menu-button {
-        font-size: 18px;
-        padding: 15px 25px;
-      }
-
+    @media (max-width: 600px) {
       h1 {
-        font-size: 32px;
+        font-size: 28px;
       }
 
       .brand {
-        font-size: 18px;
-        left: 20px;
-        top: 15px;
+        font-size: 20px;
+        margin-bottom: 20px;
       }
     }
   </style>
 </head>
 <body>
+
   <div class="brand">🚀 ZeeHUB</div>
+  <h1>🏁 Panou Principal</h1>
 
-  <div class="menu-container" role="main">
-    <h1>🏁 Meniu Principal</h1>
+  <div class="dashboard">
+    <!-- CARD: SPORTIV -->
+    <div class="card">
+      <h2>🏋️‍♂️ Secțiunea Sportivă</h2>
+      <a href="pgs.html">💪 Program Antrenament</a>
+      <a href="acc.html">✍️ Creează Antrenament</a>
+      <a href="prg.html">📈 Vezi Progresul</a>
+    </div>
 
-    <a class="menu-button" href="drg.html" role="button" aria-label="Profil Sportiv">📊 Profil Sportiv</a>
-    <a class="menu-button" href="pgs.html" role="button" aria-label="Program de Antrenament">💪 Program de Antrenament</a>
-    <a class="menu-button" href="nnt.html" role="button" aria-label="Nutriție și Sfaturi">🧠 Nutriție & Sfaturi</a>
-    <a class="menu-button" href="acc.html" role="button" aria-label="Crează propriul antrenament">✍️ Crează Propriul Antrenament</a>
-    <a class="menu-button" href="bll.html" role="button" aria-label="Boli și alergii">🩺 Boli & Alergii</a>
-    <a class="menu-button" href="prg.html" role="button" aria-label="Vezi progresul">📈 Progres</a>
+    <!-- CARD: MEDICAL -->
+    <div class="card">
+      <h2>🩺 Informații Medicale</h2>
+      <a href="drg.html">📊 Profil Medical</a>
+      <a href="bll.html">🧬 Boli & Alergii</a>
+    </div>
 
-    <div class="footer-note">Versiune Alpha • Creat cu pasiune de ZeeHUB 🔥</div>
+    <!-- CARD: NUTRIȚIE / SFATURI -->
+    <div class="card">
+      <h2>🥗 Nutriție & Sfaturi</h2>
+      <a href="nnt.html">🧠 Recomandări Nutriționale</a>
+      <a href="sfaturi.html">📚 Sfaturi Personalizate</a>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Versiune Alpha • Creat cu pasiune de ZeeHUB 🔥
   </div>
 </body>
 </html>
