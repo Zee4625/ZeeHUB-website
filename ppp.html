@@ -70,6 +70,47 @@
       color: #0a0b0c;
       box-shadow: 0 0 35px #39ff14;
     }
+
+    /* Buton GODLY EXTREM */
+    .menu a.godly {
+      background: linear-gradient(45deg, #ff0000, #ffa500, #ffff00, #ffffff);
+      color: #330000;
+      font-weight: 900;
+      font-size: 1.6rem;
+      box-shadow: 0 0 45px #ffbf00, 0 0 25px #ff4500;
+      text-shadow: 0 0 10px #ff8c00;
+      border-radius: 25px;
+      flex: 1 1 220px;
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+    }
+    .menu a.godly::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.6) 20%, transparent 70%);
+      animation: shine 3s linear infinite;
+      transform: rotate(45deg);
+      pointer-events: none;
+      filter: drop-shadow(0 0 6px #fff);
+      border-radius: 25px;
+    }
+    @keyframes shine {
+      0% { transform: rotate(45deg) translateX(-100%); }
+      100% { transform: rotate(45deg) translateX(100%); }
+    }
+    .menu a.godly:hover {
+      background: linear-gradient(45deg, #ffffff, #ffff00, #ff4500, #ff0000);
+      color: #330000;
+      box-shadow: 0 0 70px #ffbf00, 0 0 50px #ff4500;
+      text-shadow: 0 0 15px #ff8c00;
+      transform: scale(1.07);
+    }
+
     .back-button {
       margin-top: 60px;
       padding: 12px 35px;
@@ -126,6 +167,7 @@
     <a href="mediu.html" title="Antrenament Mediu">Mediu</a>
     <a href="greu.html" title="Antrenament Greu">Greu</a>
     <a href="extrem.html" title="Antrenament Extrem">Extrem</a>
+    <a href="godly-extrem.html" class="godly" title="Antrenament Godly Extrem">GODLY EXTREM</a>
   </div>
 
   <a href="pgs.html" class="back-button" title="Înapoi">⬅ Înapoi</a>
