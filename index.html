@@ -7,12 +7,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Roboto&display=swap" rel="stylesheet">
 <style>
   :root {
-    --accent: #00fff2;
-    --glow: #39ff14;
-    --bg-dark: #0f1117;
+    --accent: #ff1a1a;
+    --glow: #ff4d4d;
+    --bg-dark: #000000;
     --bg-light: #fdfdfd;
-    --txt-dark: #fff;
-    --txt-light: #000;
+    --txt-dark: #ffffff;
+    --txt-light: #000000;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
@@ -26,18 +26,19 @@
   .navbar {
     position:fixed; top:0; width:100%; display:flex;
     justify-content:space-between; align-items:center;
-    background:rgba(0,0,0,0.6); padding:16px 32px;
-    box-shadow: 0 0 20px var(--accent);
+    background:rgba(20,0,0,0.8); padding:16px 32px;
+    box-shadow: 0 0 25px var(--accent);
     animation: neon 2s ease-in-out infinite alternate;
     z-index:10;
   }
   @keyframes neon {
-    from { box-shadow: 0 0 20px var(--accent); }
-    to { box-shadow: 0 0 50px var(--glow); }
+    from { box-shadow: 0 0 15px var(--accent); }
+    to { box-shadow: 0 0 45px var(--glow); }
   }
   .navbar .brand {
     font-family:'Orbitron'; font-size:24px;
-    text-shadow:0 0 10px var(--accent),0 0 20px var(--glow);
+    text-shadow:0 0 10px var(--accent),0 0 30px var(--glow);
+    color: var(--accent);
   }
   .navbar .controls { display:flex; gap:12px; align-items:center; }
   .navbar button {
@@ -50,7 +51,7 @@
   h1 {
     margin-top:100px; text-align:center;
     font-family:'Orbitron'; font-size:48px;
-    text-shadow:0 0 20px var(--glow),0 0 40px var(--accent);
+    text-shadow:0 0 25px var(--glow),0 0 60px var(--accent);
     animation: titleGrow 1.5s ease-out;
   }
   @keyframes titleGrow {
@@ -58,50 +59,34 @@
     to { opacity:1; transform: scale(1); }
   }
   .dashboard {
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
     gap:32px; width:90%; max-width:1200px;
     margin:40px auto;
   }
   .card {
-    background:rgba(255,255,255,0.05); backdrop-filter:blur(10px);
+    background:rgba(255,0,0,0.05); backdrop-filter:blur(10px);
     border:1px solid var(--accent); border-radius:20px;
     padding:32px; text-align:center; position:relative;
-    overflow:hidden; transform-style:preserve-3d;
-    transition:transform 0.5s, box-shadow 0.5s;
-  }
-  .card::after {
-    content:''; position:absolute; top:-50%; left:-50%;
-    width:200%; height:200%;
-    background:radial-gradient(circle,#00fff240,#0000);
-    transform:scale(0) rotate(45deg);
-    transition:transform 0.5s;
+    overflow:hidden; transition:transform 0.4s, box-shadow 0.4s;
   }
   .card:hover {
-    box-shadow:0 0 30px var(--accent), inset 0 0 15px var(--glow);
-    transform: translateZ(50px) rotateX(5deg);
+    box-shadow:0 0 25px var(--accent), inset 0 0 15px var(--glow);
+    transform: translateY(-8px);
   }
-  .card:hover::after { transform:scale(1) rotate(45deg); }
-  .card h2 { font-family:'Orbitron'; margin-bottom:16px; }
+  .card h2 { font-family:'Orbitron'; margin-bottom:16px; color: var(--accent); }
   .card a {
     display:block; margin:12px auto; padding:14px 24px;
     border-radius:12px; background:linear-gradient(90deg,var(--accent),var(--glow));
     color:var(--bg-dark); font-weight:600; font-size:16px;
-    text-decoration:none; position:relative;
-    transition:transform 0.3s, box-shadow 0.3s;
-  }
-  .card a::after {
-    content:''; position:absolute; top:0; left:0;
-    width:100%; height:100%; background:var(--bg-dark); opacity:0;
-    transition:opacity 0.3s;
+    text-decoration:none; transition:transform 0.3s, box-shadow 0.3s;
   }
   .card a:hover {
-    transform:translateY(-3px);
-    box-shadow:0 0 20px var(--glow);
+    transform:translateY(-4px);
+    box-shadow:0 0 15px var(--glow);
   }
-  .card a:hover::after { opacity:0.1; }
   .footer {
     margin:60px 0 30px; text-align:center;
-    color:var(--txt-light); opacity:0.7;
+    color:var(--glow); opacity:0.7;
   }
   .light {
     background:var(--bg-light); color:var(--txt-light);
@@ -112,8 +97,7 @@
     position:fixed; bottom:40px; right:40px;
     background:var(--accent); color:var(--bg-dark);
     padding:16px 24px; border-radius:12px; box-shadow:0 0 20px var(--accent);
-    opacity:0; transform:translateY(20px);
-    animation:toastIn 0.6s forwards;
+    opacity:0; animation:toastIn 0.6s forwards;
   }
   @keyframes toastIn {
     0% { opacity:0; transform:translateY(20px); }
@@ -126,18 +110,18 @@
 <canvas id="c"></canvas>
 
 <nav class="navbar">
-  <div class="brand">🚀 ZeeHUB</div>
+  <div class="brand">🔥 ZeeHUB</div>
   <div class="controls">
     <span class="clock">00:00:00</span>
-    <button onclick="toggleTheme()">🌙 Theme</button>
-    <button onclick="muteAudio()">🔇 Sound</button>
+    <button onclick="toggleTheme()">🌓 Theme</button>
+    <button onclick="muteAudio()">🔊 Sound</button>
   </div>
 </nav>
 
-<h1>🏁 Panou Principal</h1>
+<h1>🏁 Dashboard Principal</h1>
 
 <div class="dashboard">
-  <div class="card"><h2>🏋️‍♂️ Sport</h2>
+  <div class="card"><h2>🏋️ Sport</h2>
     <a href="pgs.html" data-snd>Program Antrenament</a>
     <a href="acc.html" data-snd>Creează Antrenament</a>
     <a href="prg.html" data-snd>Vezi Progresul</a>
@@ -152,18 +136,17 @@
   </div>
 </div>
 
-<div class="footer">🔥 Versiune Alpha • Creat cu pasiune de ZeeHUB 🔥</div>
-<div class="toast">👋 Salutare! Bine ai revenit în ZeeHUB!</div>
+<div class="footer">🔥 ZeeHUB Alpha • Fii puternic, fii tu însuți 🔥</div>
+<div class="toast">👋 Bine ai revenit în Zona Extremă!</div>
 
 <audio id="hoversound" src="https://assets.mixkit.co/sfx/preview/mixkit-button-click-1111.mp3"></audio>
 
 <script>
-// Canvas particule
 const c = document.getElementById('c'), ctx = c.getContext('2d');
 let w, h, particles = [];
 function initParticles(){
   w = c.width = innerWidth; h = c.height = innerHeight;
-  particles = Array.from({length:100}, () => ({
+  particles = Array.from({length:70}, () => ({
     x: Math.random()*w,
     y: Math.random()*h,
     vx: (Math.random()-0.5)*0.5,
@@ -178,34 +161,34 @@ function animate(){
     if(p.x<0||p.x>w) p.vx*=-1;
     if(p.y<0||p.y>h) p.vy*=-1;
     ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,6.28);
-    ctx.fillStyle='rgba(0,255,242,0.7)'; ctx.fill();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,26,26,0.6)';
+    ctx.fill();
   });
   requestAnimationFrame(animate);
 }
 initParticles(); animate();
 window.onresize = initParticles;
 
-// Clock
 function updateClock(){
   document.querySelector('.clock').textContent = new Date().toLocaleTimeString('ro-RO');
 }
 setInterval(updateClock, 1000); updateClock();
 
-// Toast + Confetti
-setTimeout(()=>document.querySelector('.toast').style.opacity=1,500);
+setTimeout(()=>document.querySelector('.toast').style.opacity=1,600);
 
-// Theme toggle
 function toggleTheme(){
   document.body.classList.toggle('light');
   localStorage.theme = document.body.classList.contains('light')?'light':'dark';
 }
 if(localStorage.theme==='light') document.body.classList.add('light');
 
-// Hover sound
 const snd = document.getElementById('hoversound');
 let muted=false;
-function muteAudio(){ muted=!muted; alert(muted?'Sunet oprit':'Sunet activat'); }
+function muteAudio(){
+  muted=!muted;
+  alert(muted?'Sunet oprit':'Sunet activat');
+}
 document.querySelectorAll('[data-snd]').forEach(el=>
   el.addEventListener('mouseover', ()=>{ if(!muted) snd.currentTime=0, snd.play(); })
 );
