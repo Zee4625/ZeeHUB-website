@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ZeeHUB | Răni Sportive</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto&display=swap');
+
+    body {
+      margin: 0;
+      padding: 40px 20px 100px;
+      background: linear-gradient(135deg, #0f1117, #1a1d24);
+      font-family: 'Roboto', sans-serif;
+      color: #00fff2;
+      position: relative;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      text-align: center;
+      font-size: 36px;
+      color: #39ff14;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px #00fff2;
+    }
+
+    .tips-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 25px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .tip-card {
+      background: rgba(20, 22, 30, 0.95);
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 0 18px #00fff255;
+      position: relative;
+      transition: 0.3s ease;
+    }
+
+    .tip-card:hover {
+      transform: scale(1.015);
+      box-shadow: 0 0 30px #39ff14aa;
+    }
+
+    .tip-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 20px;
+      color: #39ff14;
+      margin-bottom: 10px;
+    }
+
+    .tip-text {
+      font-size: 16px;
+      line-height: 1.5;
+      color: #ccc;
+    }
+
+    .refresh-btn {
+      margin-top: 15px;
+      background: linear-gradient(90deg, #00fff2, #39ff14);
+      color: #000;
+      font-weight: bold;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    .refresh-btn:hover {
+      background: #39ff14;
+      color: #0f1117;
+    }
+
+    .brand {
+      position: absolute;
+      top: 20px;
+      left: 30px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 20px;
+      color: #00fff2;
+      text-shadow: 0 0 10px #00fff2;
+      user-select: none;
+    }
+
+    .home-button {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      background: linear-gradient(90deg, #00fff2, #39ff14);
+      color: #0f1117;
+      font-weight: bold;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      box-shadow: 0 0 20px #00fff2;
+      transition: 0.3s ease;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .home-button:hover {
+      background: #39ff14;
+      box-shadow: 0 0 30px #39ff14;
+      color: #0f1117;
+    }
+
+    .footer-message {
+      margin-top: 60px;
+      text-align: center;
+      padding: 25px;
+      font-size: 18px;
+      color: #00fff2;
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(to right, #1a1d24, #0f1117);
+      border-radius: 25px;
+      box-shadow: 0 0 30px #00fff255;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      animation: glow 4s ease-in-out infinite;
+    }
+
+    @keyframes glow {
+      0%, 100% {
+        text-shadow: 0 0 10px #00fff2, 0 0 20px #00fff2aa;
+      }
+      50% {
+        text-shadow: 0 0 20px #39ff14, 0 0 40px #39ff14aa;
+      }
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 28px;
+      }
+
+      .home-button {
+        top: 15px;
+        right: 20px;
+        padding: 8px 14px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="brand">🩺 ZeeHUB</div>
+
+  <a href="index.html" class="home-button" aria-label="Acasă">🏠 Acasă</a>
+
+  <h1>🏥 Răni Frecvente în Sport</h1>
+
+  <div class="tips-section">
+    <!-- Încheieturi -->
+    <div class="tip-card">
+      <div class="tip-title">🦵 Încheieturi</div>
+      <div class="tip-text" id="incheieturi-tip">Aplică gheață 15-20 min de 3 ori pe zi.</div>
+      <button class="refresh-btn" onclick="refreshTip('incheieturi')">🔁 Alt sfat</button>
+    </div>
+
+    <!-- Cap -->
+    <div class="tip-card">
+      <div class="tip-title">🧠 Cap</div>
+      <div class="tip-text" id="cap-tip">Odihnește-te complet și evită ecranele după impact.</div>
+      <button class="refresh-btn" onclick="refreshTip('cap')">🔁 Alt sfat</button>
+    </div>
+
+    <!-- Crampe -->
+    <div class="tip-card">
+      <div class="tip-title">💢 Crampe</div>
+      <div class="tip-text" id="crampe-tip">Hidratează-te bine și întinde mușchiul afectat.</div>
+      <button class="refresh-btn" onclick="refreshTip('crampe')">🔁 Alt sfat</button>
+    </div>
+
+    <!-- Tendoane -->
+    <div class="tip-card">
+      <div class="tip-title">🧵 Tendoane</div>
+      <div class="tip-text" id="tendoane-tip">Fă pauză și evită suprasolicitarea repetitivă.</div>
+      <button class="refresh-btn" onclick="refreshTip('tendoane')">🔁 Alt sfat</button>
+    </div>
+
+    <!-- Ligamente -->
+    <div class="tip-card">
+      <div class="tip-title">🪢 Ligamente</div>
+      <div class="tip-text" id="ligamente-tip">Imobilizează zona și consultă un specialist.</div>
+      <button class="refresh-btn" onclick="refreshTip('ligamente')">🔁 Alt sfat</button>
+    </div>
+
+    <!-- Oase -->
+    <div class="tip-card">
+      <div class="tip-title">🦴 Oase</div>
+      <div class="tip-text" id="oase-tip">Nu forța zona și mergi la radiografie cât mai repede.</div>
+      <button class="refresh-btn" onclick="refreshTip('oase')">🔁 Alt sfat</button>
+    </div>
+  </div>
+
+  <div class="footer-message">
+    🧠 Tu contezi. Nu ce cred alții din jur.
+  </div>
+
+  <script>
+    const tips = {
+      incheieturi: [
+        "Aplică gheață 15-20 min de 3 ori pe zi.",
+        "Ridică zona afectată și odihnește-te.",
+        "Folosește o fașă elastică pentru compresie.",
+        "Evită efortul fizic până la recuperare completă."
+      ],
+      cap: [
+        "Odihnește-te complet și evită ecranele după impact.",
+        "Nu te antrena dacă ai dureri de cap sau amețeli.",
+        "Consultă medicul dacă apar greață sau confuzie.",
+        "Stai într-un mediu liniștit fără lumină puternică."
+      ],
+      crampe: [
+        "Hidratează-te bine și întinde mușchiul afectat.",
+        "Consumă banane sau alimente cu potasiu.",
+        "Aplică o compresă caldă pe zona cu crampe.",
+        "Fă masaj ușor până dispare disconfortul."
+      ],
+      tendoane: [
+        "Fă pauză și evită suprasolicitarea repetitivă.",
+        "Aplică gheață în primele 48h după durere.",
+        "Folosește încălțăminte sport adecvată.",
+        "Execută exerciții de întindere zilnic."
+      ],
+      ligamente: [
+        "Imobilizează zona și consultă un specialist.",
+        "Aplică gheață și ține piciorul ridicat.",
+        "Evită mersul pe membrul afectat.",
+        "Recuperarea poate dura 4-6 săptămâni – fii răbdător."
+      ],
+      oase: [
+        "Nu forța zona și mergi la radiografie cât mai repede.",
+        "Ține zona afectată nemișcată până la consult.",
+        "Nu aplica presiune chiar dacă durerea e mică.",
+        "După fractură, urmează fizioterapia recomandată."
+      ]
+    };
+
+    function refreshTip(category) {
+      const tipList = tips[category];
+      const randomTip = tipList[Math.floor(Math.random() * tipList.length)];
+      document.getElementById(`${category}-tip`).innerText = randomTip;
+    }
+  </script>
+</body>
+</html>
