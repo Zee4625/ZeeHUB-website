@@ -1,0 +1,79 @@
+// (function(ns, fetch) {
+//     if (typeof fetch !== 'function') return;
+//
+//     ns.fetch = function() {
+//
+//         var out = fetch.apply(this, arguments);
+//
+//
+//         // side-effect
+//         out.then(data => {
+//            if(data.status === 401){
+//                location.href = '/login';
+//            }
+//         });
+//
+//         return out;
+//     }
+//
+// }(window, window.fetch))
+
+const searchBtns = document.querySelectorAll('.search_button')
+
+searchBtns.forEach(function (item){
+    item.addEventListener('click', function (event){
+        var search = document.getElementById('search_bar')
+        const visibility = search.style.display
+        if(visibility === 'none'){
+            search.style.display = 'block'
+        } else {
+            search.style.display = 'none'
+        }
+    })
+})
+
+function consent(granted){
+    document.getElementById('consent_card').style.display = 'none';
+    if(granted){
+        localStorage.setItem('consentGranted', "true")
+        gtag('consent', 'update', {
+            'ad_storage': 'granted',
+            'ad_user_data': 'granted',
+            'ad_personalization': 'granted',
+            'analytics_storage': 'granted'
+        });
+
+    } else {
+        localStorage.setItem('consentGranted', "false")
+        gtag('consent', 'update', {
+            'ad_storage': 'denied',
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied',
+            'analytics_storage': 'denied'
+        });
+    }
+}
+
+if (localStorage.getItem('consentGranted') === null) {
+    document.getElementById('consent_card').style.display = 'block';
+}
+
+function notificate({title = null, message = null, type = "info", timeout = 3000}){
+    new Notify ({
+        status: type,
+        title: title,
+        text: message,
+        effect: 'slide',
+        speed: 500,
+        customClass: '_notificate',
+        showIcon: true,
+        showCloseButton: true,
+        autoclose: true,
+        autotimeout: timeout,
+        type: 'filled',
+        position: 'y-center right',
+        customWrapper: '',
+    })
+}
+
+
