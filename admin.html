@@ -103,11 +103,21 @@
 
   <script>
     function checkCode() {
-      const codeInput = document.getElementById('adminCode').value.trim();
+      const codeInput = document.getElementById('adminCode').value.trim().toUpperCase();
       const errorMessage = document.getElementById('errorMessage');
 
-      if (codeInput === 'ZEE4625') {
-        window.location.href = 'LOC.html';
+      // Ștergem mesajul de eroare la fiecare verificare
+      errorMessage.textContent = '';
+
+      // Definim codurile și paginile asociate
+      const codes = {
+        'ZEE4625': 'LOC.html',
+        'B1': 'B1.html'
+      };
+
+      // Verificăm dacă codul introdus există
+      if (codes[codeInput]) {
+        window.location.href = codes[codeInput];
       } else {
         errorMessage.textContent = '❌ Cod greșit. Acces refuzat.';
       }
