@@ -3,90 +3,108 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ZeeHUB - Curs de legislație rutieră 2025</title>
+  <title>ZeeHUB - Curs de legislație rutieră 2025 🚗</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
-      background-color: #000;
+      background-color: #0a0a0a;
       color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 40px 20px;
+      padding: 50px 20px;
+      min-height: 100vh;
+      background-image: radial-gradient(circle at top, #111 0%, #000 100%);
     }
 
     h1 {
       color: #39ff14;
-      font-size: 2.8rem;
-      text-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14;
+      font-size: 3rem;
+      text-shadow: 0 0 15px #39ff14, 0 0 25px #39ff14;
       margin-bottom: 10px;
     }
 
     h2 {
-      color: rgba(255,255,255,0.7);
+      color: rgba(255,255,255,0.8);
       font-weight: 400;
-      margin-bottom: 40px;
+      margin-bottom: 50px;
       text-align: center;
+      font-size: 1.2rem;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
       width: 100%;
-      max-width: 1200px;
+      max-width: 1100px;
     }
 
     a.button {
       text-decoration: none;
       color: #fff;
-      padding: 20px;
-      border-radius: 15px;
+      padding: 22px;
+      border-radius: 20px;
       text-align: center;
       font-weight: 600;
-      font-size: 1rem;
-      transition: transform 0.2s, box-shadow 0.2s;
+      font-size: 1.1rem;
+      transition: transform 0.2s, box-shadow 0.2s, filter 0.3s;
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
 
     a.button:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 0 20px rgba(255,255,255,0.3);
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 0 25px rgba(255,255,255,0.3);
+      filter: brightness(1.15);
     }
 
-    /* CULORI DIFERITE PE CATEGORII */
-    .verde {background: linear-gradient(135deg, #00ff7f, #006400);}
-    .albastru {background: linear-gradient(135deg, #1e90ff, #00008b);}
+    /* CULORI MODERNE */
+    .verde {background: linear-gradient(135deg, #00ff7f, #00994c);}
+    .albastru {background: linear-gradient(135deg, #1e90ff, #003f91);}
     .galben {background: linear-gradient(135deg, #ffd700, #b8860b);}
     .rosu {background: linear-gradient(135deg, #ff4500, #8b0000);}
-    .mov {background: linear-gradient(135deg, #da70d6, #4b0082);}
+    .mov {background: linear-gradient(135deg, #ba55d3, #4b0082);}
+
+    footer {
+      margin-top: 60px;
+      font-size: 0.9rem;
+      opacity: 0.7;
+      text-align: center;
+    }
 
   </style>
 </head>
 <body>
-  <h1>ZeeHUB</h1>
-  <h2>Curs de legislație rutieră 2025</h2>
+  <h1>🚦 ZeeHUB</h1>
+  <h2>Curs de legislație rutieră 2025 🧠</h2>
 
   <div class="grid">
-    <a class="button verde" href="Circulația pe autostrăzi - Curs de legislație rutieră 2025.html">Circulația pe autostrăzi</a>
-    <a class="button verde" href="Conducerea ecologică - Curs de legislație rutieră 2025.html">Conducerea ecologică</a>
-    <a class="button verde" href="Conducerea preventivă - Curs de legislație rutieră 2025.html">Conducerea preventivă</a>
-    <a class="button albastru" href="Depășirea - Curs de legislație rutieră 2025.html">Depășirea</a>
-    <a class="button galben" href="Indicatoare și marcaje - Curs de legislație rutieră 2025.html">Indicatoare și marcaje</a>
-    <a class="button rosu" href="Infracțiuni, contravenții și sancțiuni - Curs de legislație rutieră 2025.html">Infracțiuni, contravenții și sancțiuni</a>
-    <a class="button albastru" href="Intersecții și prioritate de trecere - Curs de legislație rutieră 2025.html">Intersecții și prioritate de trecere</a>
-    <a class="button mov" href="Măsuri de prim ajutor - Curs de legislație rutieră 2025.html">Măsuri de prim ajutor</a>
-    <a class="button albastru" href="Noțiuni de mecanică - Curs de legislație rutieră 2025.html">Noțiuni de mecanică</a>
-    <a class="button verde" href="Obligațiile conducătorilor de vehicule - Curs de legislație rutieră 2025.html">Obligațiile conducătorilor de vehicule</a>
-    <a class="button galben" href="Oprirea, staționarea și parcarea - Curs de legislație rutieră 2025.html">Oprirea, staționarea și parcarea</a>
-    <a class="button verde" href="Poziția în timpul mersului și semnalele conducătorilor de autovehicule - Curs de legislație rutieră 2025.html">Poziția în timpul mersului și semnalele conducătorilor</a>
-    <a class="button galben" href="Reguli generale - Curs de legislație rutieră 2025.html">Reguli generale</a>
-    <a class="button galben" href="Reguli referitoare la manevre - Curs de legislație rutieră 2025.html">Reguli referitoare la manevre</a>
-    <a class="button mov" href="Semnalele luminoase și sonore - Curs de legislație rutieră 2025.html">Semnalele luminoase și sonore</a>
-    <a class="button mov" href="Semnalele polițiștilor - Curs de legislație rutieră 2025.html">Semnalele polițiștilor</a>
-    <a class="button rosu" href="Trecerea la nivel cu calea ferată - Curs de legislație rutieră 2025.html">Trecerea la nivel cu calea ferată</a>
-    <a class="button verde" href="Viteza și distanța între vehicule - Curs de legislație rutieră 2025.html">Viteza și distanța între vehicule</a>
+    <a class="button verde" href="Circulația pe autostrăzi - Curs de legislație rutieră 2025.html">🛣️ Circulația pe autostrăzi</a>
+    <a class="button verde" href="Conducerea ecologică - Curs de legislație rutieră 2025.html">🌱 Conducerea ecologică</a>
+    <a class="button verde" href="Conducerea preventivă - Curs de legislație rutieră 2025.html">🛡️ Conducerea preventivă</a>
+    <a class="button albastru" href="Depășirea - Curs de legislație rutieră 2025.html">↔️ Depășirea</a>
+    <a class="button galben" href="Indicatoare și marcaje - Curs de legislație rutieră 2025.html">🚸 Indicatoare și marcaje</a>
+    <a class="button rosu" href="Infracțiuni, contravenții și sancțiuni - Curs de legislație rutieră 2025.html">⚖️ Infracțiuni & sancțiuni</a>
+    <a class="button albastru" href="Intersecții și prioritate de trecere - Curs de legislație rutieră 2025.html">🚗💨 Intersecții & prioritate</a>
+    <a class="button mov" href="Măsuri de prim ajutor - Curs de legislație rutieră 2025.html">🚑 Prim ajutor</a>
+    <a class="button albastru" href="Noțiuni de mecanică - Curs de legislație rutieră 2025.html">⚙️ Noțiuni de mecanică</a>
+    <a class="button verde" href="Obligațiile conducătorilor de vehicule - Curs de legislație rutieră 2025.html">📋 Obligațiile conducătorilor</a>
+    <a class="button galben" href="Oprirea, staționarea și parcarea - Curs de legislație rutieră 2025.html">🅿️ Oprirea & parcarea</a>
+    <a class="button verde" href="Poziția în timpul mersului și semnalele conducătorilor de autovehicule - Curs de legislație rutieră 2025.html">🧍‍♂️ Poziția & semnalele</a>
+    <a class="button galben" href="Reguli generale - Curs de legislație rutieră 2025.html">📘 Reguli generale</a>
+    <a class="button galben" href="Reguli referitoare la manevre - Curs de legislație rutieră 2025.html">🔄 Reguli despre manevre</a>
+    <a class="button mov" href="Semnalele luminoase și sonore - Curs de legislație rutieră 2025.html">💡🔊 Semnalele luminoase & sonore</a>
+    <a class="button mov" href="Semnalele polițiștilor - Curs de legislație rutieră 2025.html">👮 Semnalele polițiștilor</a>
+    <a class="button rosu" href="Trecerea la nivel cu calea ferată - Curs de legislație rutieră 2025.html">🚆 Trecerea la calea ferată</a>
+    <a class="button verde" href="Viteza și distanța între vehicule - Curs de legislație rutieră 2025.html">🏎️ Viteza & distanța</a>
   </div>
+
+  <footer>© 2025 ZeeHUB - Curs de legislație rutieră. Toate drepturile rezervate.</footer>
 </body>
 </html>
