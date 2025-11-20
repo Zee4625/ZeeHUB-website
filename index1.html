@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ZeeHUB — Hiragana & Katakana Images</title>
+  <meta name="description" content="ZeeHUB mini-site showing Hiragana and Katakana image charts (1.png, 2.png)." />
+  <style>
+    :root{--bg:#061226;--card:#0d1a2b;--accent:#5cc8ff;--muted:#9db7d3;--text:#eaf6ff}
+    *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    body{margin:0;background:linear-gradient(180deg,#031022,#071425);color:var(--text)}
+    header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid rgba(255,255,255,0.04)}
+    h1{margin:0;color:var(--accent);font-size:1.6rem}
+    .subtitle{color:var(--muted);font-size:0.95rem}
+    nav{display:flex;gap:12px}
+    .btn{padding:10px 18px;border-radius:10px;text-decoration:none;font-weight:700;color:#022}
+    .btn.learn{background:linear-gradient(180deg,#9fe5ff,#4ea8ff)}
+    .btn.test{background:linear-gradient(180deg,#baffc3,#4dff88)}
+    main{max-width:1100px;margin:28px auto;padding:18px}
+    .hero{display:flex;justify-content:space-between;align-items:center;gap:18px}
+    .card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+    .img-wrap{display:flex;flex-direction:column;gap:10px;align-items:center}
+    img.kana{max-width:100%;height:auto;border-radius:8px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 8px 24px rgba(2,6,23,0.6)}
+    .label{font-weight:700;color:var(--muted)}
+    .controls{display:flex;gap:12px;justify-content:flex-end;margin-top:12px}
+    .small{font-size:13px;padding:8px 10px;border-radius:8px;background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.03)}
+    footer{margin:30px auto;text-align:center;color:var(--muted)}
+    /* lightbox */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px;z-index:60;visibility:hidden;opacity:0;transition:opacity .18s ease}
+    .lightbox.visible{visibility:visible;opacity:1}
+    .lightbox img{max-width:98%;max-height:92%;border-radius:6px}
+    .close{position:absolute;top:18px;right:18px;padding:8px 12px;background:#fff;border-radius:8px;color:#022;font-weight:700;cursor:pointer}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}.hero{flex-direction:column;align-items:flex-start}}
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>ZeeHUB</h1>
+      <div class="subtitle">Hiragana & Katakana — image charts</div>
+    </div>
+    <nav>
+      <a class="btn learn" href="lego.html">Learn</a>
+      <a class="btn test" href="test.html">Test</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="card" style="flex:1">
+        <h2 style="margin:0 0 8px 0">Official charts (images)</h2>
+        <p class="subtitle" style="margin:0">Below are the full-image charts for Hiragana and Katakana. Click any image to enlarge.</p>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="small" id="print">Print / Save</button>
+        <a href="#" class="small" id="download-all">Download images</a>
+      </div>
+    </section>
+
+    <div class="grid" style="margin-top:18px">
+      <div class="card img-wrap">
+        <div class="label">Hiragana Chart</div>
+        <img src="1.png" alt="Hiragana chart" class="kana" loading="lazy" id="img1">
+        <div class="subtitle"></div>
+      </div>
+
+      <div class="card img-wrap">
+        <div class="label">Katakana Chart</div>
+        <img src="2.png" alt="Katakana chart" class="kana" loading="lazy" id="img2">
+        <div class="subtitle"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:18px;text-align:center;color:var(--muted)">
+
+    <div class="lightbox" id="lightbox" role="dialog" aria-hidden="true">
+      <button class="close" id="lb-close">Close</button>
+      <img src="" alt="Enlarged chart" id="lb-img">
+    </div>
+  </main>
+
+  <footer>
+    <div style="padding:18px;text-align:center;color:var(--muted)">ZeeHUB — Place your chart images named <code>1.png</code> and <code>2.png</code></div>
+  </footer>
+
+  <script>
+    // Basic interactions: print, download, lightbox
+    document.getElementById('print').addEventListener('click', ()=> window.print());
+
+    // Download all images as links
+    document.getElementById('download-all').addEventListener('click', (e)=>{
+      e.preventDefault();
+      ['1.png','2.png'].forEach(f=>{
+        const a = document.createElement('a'); a.href = f; a.download = f; document.body.appendChild(a); a.click(); a.remove();
+      });
+    });
+
+    // Lightbox
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lb-img');
+    function showImg(src, alt){ lbImg.src = src; lbImg.alt = alt; lb.classList.add('visible'); lb.setAttribute('aria-hidden','false'); }
+    function hideImg(){ lb.classList.remove('visible'); lb.setAttribute('aria-hidden','true'); lbImg.src=''; }
+    document.getElementById('img1').addEventListener('click', ()=> showImg('1.png','Hiragana chart'));
+    document.getElementById('img2').addEventListener('click', ()=> showImg('2.png','Katakana chart'));
+    document.getElementById('lb-close').addEventListener('click', hideImg);
+    lb.addEventListener('click', (e)=>{ if(e.target === lb) hideImg(); });
+
+    // Accessibility: close lightbox with Esc
+    document.addEventListener('keydown',(e)=>{ if(e.key === 'Escape') hideImg(); });
+  </script>
+</body>
+</html>
