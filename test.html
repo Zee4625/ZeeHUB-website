@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ZeeHUB — Hiragana Reading Test</title>
+<style>
+  :root{
+    --bg:#071026; --card:#0e1a2b; --accent:#5cc8ff; --text:#eaf6ff; --muted:#9db7d3;
+    --ok:#b7f5c7; --bad:#ffb4b4;
+  }
+  *{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;}
+  body{margin:0;min-height:100vh;background:linear-gradient(180deg,#021024,#07142a);color:var(--text);display:flex;align-items:center;justify-content:center;padding:28px}
+  .wrap{max-width:860px;width:100%}
+  header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+  h1{margin:0;font-size:1.3rem;color:var(--accent)}
+  p.lead{margin:0;color:var(--muted)}
+  .card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
+  .kana-box{display:flex;align-items:center;justify-content:center;height:180px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);margin:12px 0}
+  .kana{font-size:110px;font-weight:700;letter-spacing:4px}
+  .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}
+  input[type=text]{padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);min-width:220px;font-size:16px}
+  button{padding:10px 14px;border-radius:10px;border:0;background:var(--accent);color:#042;font-weight:700;cursor:pointer}
+  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--text);font-weight:600}
+  .small{padding:8px 10px;font-size:14px}
+  .status{margin-top:12px;padding:12px;border-radius:10px;background:rgba(0,0,0,0.2);display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .result{font-weight:800}
+  .ok{background:linear-gradient(90deg,#073b16,#2aa84a);color:#042;padding:8px 12px;border-radius:8px}
+  .bad{background:linear-gradient(90deg,#5b0b0b,#ff6b6b);color:#2b0000;padding:8px 12px;border-radius:8px}
+  .meta{color:var(--muted);font-size:14px}
+  .footer{display:flex;justify-content:space-between;align-items:center;margin-top:14px;color:var(--muted);font-size:13px}
+  .options{display:flex;gap:8px;align-items:center}
+  label.switch{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.02);padding:8px 10px;border-radius:8px}
+  @media (max-width:720px){ .kana{font-size:80px} input[type=text]{min-width:140px} .card{padding:12px} }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>ZeeHUB — Hiragana Reading Test</h1>
+        <p class="lead">Practice reading Hiragana by typing the correct romaji.</p>
+      </div>
+      <div class="meta">Tip: Aim for quick recognition — 1–3 seconds per character.</div>
+    </header>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <div class="meta">Mode: <strong>Hiragana (Basic)</strong></div>
+        <div class="options">
+          <label class="switch"><input id="hintToggle" type="checkbox"> Show romaji hint</label>
+          <button id="resetBtn" class="ghost small">Reset</button>
+        </div>
+      </div>
+
+      <div id="kanaBox" class="kana-box" aria-live="polite">
+        <div id="kana" class="kana">あ</div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <input id="answer" type="text" placeholder="type romaji (e.g., a, ka, shi)..." autocomplete="off" inputmode="latin" />
+        <button id="checkBtn">Check</button>
+        <button id="nextBtn" class="ghost small">Next</button>
+        <button id="revealBtn" class="ghost small">Reveal</button>
+      </div>
+
+      <div class="status" id="status">
+        <div>
+          <div class="result" id="feedback">Type the answer and press Check.</div>
+          <div class="meta" id="correctReveal" style="display:none;margin-top:6px">Correct answer: <strong id="correctText"></strong></div>
+        </div>
+        <div style="text-align:right">
+          <div class="meta">Questions: <strong id="asked">0</strong> / <strong id="correct">0</strong> correct</div>
+          <div class="meta" id="percent">0%</div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="meta">Using standard Hepburn romaji (e.g., し = shi, つ = tsu).</div>
+        <div>
+          <button id="allBtn" class="ghost small">All</button>
+          <button id="vowelBtn" class="ghost small">Vowels Only</button>
+          <button id="rowBtn" class="ghost small">By Rows</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+// Hiragana dictionary
+const kanaMap = {
+  "あ":"a","い":"i","う":"u","え":"e","お":"o",
+  "か":"ka","き":"ki","く":"ku","け":"ke","こ":"ko",
+  "さ":"sa","し":"shi","す":"su","せ":"se","そ":"so",
+  "た":"ta","ち":"chi","つ":"tsu","て":"te","と":"to",
+  "な":"na","に":"ni","ぬ":"nu","ね":"ne","の":"no",
+  "は":"ha","ひ":"hi","ふ":"fu","へ":"he","ほ":"ho",
+  "ま":"ma","み":"mi","む":"mu","め":"me","も":"mo",
+  "や":"ya","ゆ":"yu","よ":"yo",
+  "ら":"ra","り":"ri","る":"ru","れ":"re","ろ":"ro",
+  "わ":"wa","を":"o","ん":"n"
+};
+
+// Groups
+const vowels = ["あ","い","う","え","お"];
+const rows = [
+  ["あ","い","う","え","お"],
+  ["か","き","く","け","こ"],
+  ["さ","し","す","せ","そ"],
+  ["た","ち","つ","て","と"],
+  ["な","に","ぬ","ね","の"],
+  ["は","ひ","ふ","へ","ほ"],
+  ["ま","み","む","め","も"],
+  ["や","ゆ","よ"],
+  ["ら","り","る","れ","ろ"],
+  ["わ","を","ん"]
+];
+
+let pool = Object.keys(kanaMap);
+let current = null;
+let asked = 0, correct = 0;
+
+// UI elements
+const kanaEl = document.getElementById('kana');
+const answerEl = document.getElementById('answer');
+const feedbackEl = document.getElementById('feedback');
+const correctRevealEl = document.getElementById('correctReveal');
+const correctTextEl = document.getElementById('correctText');
+const askedEl = document.getElementById('asked');
+const correctEl = document.getElementById('correct');
+const percentEl = document.getElementById('percent');
+const hintToggle = document.getElementById('hintToggle');
+
+function pickRandom(){ return pool[Math.floor(Math.random()*pool.length)]; }
+
+function showNext(randomize=true){
+  correctRevealEl.style.display = 'none';
+  correctTextEl.textContent = '';
+  answerEl.value = '';
+  answerEl.focus();
+  current = pickRandom();
+  kanaEl.textContent = current;
+  renderHint();
+  if(randomize){ asked++; updateStats(); }
+  feedbackEl.textContent = 'Type the answer and press Check.';
+  feedbackEl.className = 'result';
+}
+
+function renderHint(){
+  const old = document.getElementById('kanaHint');
+  if(old) old.remove();
+  if(hintToggle.checked && current){
+    const hint = document.createElement('div');
+    hint.id = 'kanaHint';
+    hint.style.marginTop = '6px';
+    hint.style.color = 'var(--muted)';
+    hint.style.fontSize = '18px';
+    hint.textContent = kanaMap[current];
+    document.getElementById('kanaBox').appendChild(hint);
+  }
+}
+
+function normalize(s){ return s.trim().toLowerCase().replace(/\s+/g,''); }
+
+function checkAnswer(){
+  const user = normalize(answerEl.value || '');
+  const correctRomaji = kanaMap[current];
+  if(!user){
+    feedbackEl.textContent = 'Please type something first.';
+    return;
+  }
+  if(user === correctRomaji){
+    feedbackEl.textContent = '✅ Correct!';
+    feedbackEl.className = 'ok';
+    correct++;
+    updateStats();
+    correctRevealEl.style.display = 'none';
+  } else {
+    feedbackEl.textContent = '❌ Incorrect.';
+    feedbackEl.className = 'bad';
+    correctRevealEl.style.display = 'block';
+    correctTextEl.textContent = correctRomaji;
+  }
+}
+
+function updateStats(){
+  askedEl.textContent = asked;
+  correctEl.textContent = correct;
+  percentEl.textContent = (asked ? Math.round(correct/asked*100) : 0) + '%';
+}
+
+function resetAll(){
+  asked = 0; correct = 0; updateStats();
+  pool = Object.keys(kanaMap);
+  showNext(false);
+}
+
+// Button events
+document.getElementById('checkBtn').onclick = checkAnswer;
+document.getElementById('nextBtn').onclick = ()=>showNext(true);
+document.getElementById('revealBtn').onclick = ()=>{
+  correctRevealEl.style.display = 'block';
+  correctTextEl.textContent = kanaMap[current];
+};
+document.getElementById('resetBtn').onclick = resetAll;
+answerEl.addEventListener('keydown',e=>{
+  if(e.key === 'Enter'){ e.preventDefault(); checkAnswer(); }
+});
+hintToggle.onchange = renderHint;
+
+document.getElementById('allBtn').onclick = ()=>{ pool = Object.keys(kanaMap); resetAll(); };
+document.getElementById('vowelBtn').onclick = ()=>{ pool = vowels.slice(); resetAll(); };
+document.getElementById('rowBtn').onclick = ()=>{ pool = rows.flat(); resetAll(); };
+
+resetAll();
+</script>
+</body>
+</html>
