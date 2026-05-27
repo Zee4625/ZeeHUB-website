@@ -1,378 +1,768 @@
-<!-- Cod HTML complet adaptat pentru Gheorghe -->
 <!DOCTYPE html>
 <html lang="ro">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GOD RANK ++ Gheorghe</title>
+  <title>GOD RANK — Gheorghe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root {
+      --bg: #050508;
+      --surface: #0d0d14;
+      --surface2: #13131e;
+      --border: rgba(255,255,255,0.07);
+      --accent: #c84bff;
+      --accent2: #ff4bcc;
+      --gold: #ffd166;
+      --text: #f0eaff;
+      --muted: rgba(240,234,255,0.45);
+      --glow: 0 0 40px rgba(200,75,255,0.25);
     }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Orbitron', sans-serif;
-      background: linear-gradient(135deg, #0a0a0a, #1b002e);
-      color: #e0bfff;
-      padding: 30px;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    .navbar {
-      background: #1a001f;
-      padding: 20px 30px;
-      border-radius: 16px;
-      font-size: 26px;
-      font-weight: 900;
-      color: #e0bfff;
-      display: flex;
-      justify-content: space-between;
-      border: 2px solid #9f3fff;
-      box-shadow: 0 0 40px #9f3fff55;
+    /* ── BACKGROUND MESH ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 10% 0%, rgba(200,75,255,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 90% 100%, rgba(255,75,204,0.10) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(100,50,200,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
     }
+
+    /* Grain overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      background: rgba(5,5,8,0.85);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+
+    .progress-ring-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 16px 6px 8px;
+    }
+
+    .progress-ring-wrap svg { width: 30px; height: 30px; }
+    .ring-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 3; }
+    .ring-fill { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round;
+      stroke-dasharray: 75.4; stroke-dashoffset: 75.4;
+      transform: rotate(-90deg); transform-origin: 50% 50%;
+      transition: stroke-dashoffset 0.6s ease; }
+    #progress-text { font-size: 13px; font-weight: 600; color: var(--accent); }
 
     .back-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
       text-decoration: none;
-      color: #0d0d0d;
-      background: #9f3fff;
-      padding: 10px 20px;
-      border-radius: 30px;
-      font-weight: bold;
-      transition: 0.3s ease;
-      box-shadow: 0 0 10px #9f3fff;
+      color: var(--bg);
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      padding: 9px 22px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+      transition: opacity 0.2s, transform 0.2s;
     }
+    .back-btn:hover { opacity: 0.85; transform: translateY(-1px); }
 
-    .back-btn:hover {
-      background: #7d33cc;
-    }
-
-    .container {
-      margin-top: 40px;
-      padding: 40px;
-      background: #12001c;
-      border-radius: 20px;
-      box-shadow: 0 0 30px #9f3fff33;
-      max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    h1 {
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 1;
       text-align: center;
-      font-size: 42px;
-      font-weight: 900;
-      color: #ffffff;
-      margin-bottom: 60px;
-      text-shadow: 0 0 10px #ff66ff;
+      padding: 90px 40px 60px;
     }
 
-    .day {
-      border-left: 6px solid #9f3fff;
-      margin-bottom: 50px;
-      padding-left: 25px;
-      background: rgba(25, 0, 40, 0.8);
-      border-radius: 12px;
-      padding-top: 20px;
-      padding-bottom: 20px;
-      box-shadow: inset 0 0 20px #6600ff44;
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(200,75,255,0.35);
+      border-radius: 999px;
+      padding: 6px 18px;
+      margin-bottom: 28px;
     }
 
-    .day h2 {
-      font-size: 24px;
-      font-weight: 800;
-      color: #ffccff;
-      margin-bottom: 25px;
-      text-shadow: 0 0 6px #9f3fff;
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(56px, 9vw, 120px);
+      line-height: 0.92;
+      letter-spacing: 2px;
+      background: linear-gradient(160deg, #ffffff 0%, var(--accent) 55%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 20px;
     }
 
-    ul {
-      list-style: none;
+    .hero-sub {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 420px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+      font-weight: 300;
     }
 
-    li {
-      background: rgba(60, 0, 90, 0.3);
-      color: #ffffffcc;
-      border: 2px solid #9f3fff88;
-      padding: 14px 20px;
-      margin-bottom: 15px;
-      border-radius: 12px;
+    /* Stats bar */
+    .stats-bar {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
+      gap: 1px;
+      margin: 0 auto;
+      max-width: 640px;
+      background: var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .stat {
+      flex: 1;
+      background: var(--surface);
+      padding: 18px 20px;
+      text-align: center;
+    }
+
+    .stat-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      color: var(--accent);
+      letter-spacing: 1px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 2px;
+    }
+
+    /* ── WEEK GRID ── */
+    .week {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 30px 100px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    /* ── DAY CARD ── */
+    .day-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .day-card:hover {
+      border-color: rgba(200,75,255,0.3);
+      box-shadow: 0 0 30px rgba(200,75,255,0.08);
+    }
+
+    .day-card.completed {
+      border-color: rgba(200,75,255,0.5);
+      box-shadow: 0 0 20px rgba(200,75,255,0.12);
+    }
+
+    .day-header {
+      display: flex;
       align-items: center;
-      backdrop-filter: blur(4px);
-      transition: 0.3s ease;
+      justify-content: space-between;
+      padding: 22px 28px;
+      cursor: pointer;
+      user-select: none;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
     }
 
-    li:hover {
-      background: rgba(120, 0, 200, 0.3);
-      transform: scale(1.02);
+    .day-header:hover { background: rgba(255,255,255,0.02); }
+
+    .day-left { display: flex; align-items: center; gap: 16px; }
+
+    .day-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 40px;
+      color: rgba(255,255,255,0.08);
+      line-height: 1;
+      min-width: 40px;
     }
 
-    .check {
-      accent-color: #ff66ff;
+    .day-info {}
+    .day-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 1.5px;
+      line-height: 1.1;
+    }
+
+    .day-focus {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 400;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .day-right { display: flex; align-items: center; gap: 14px; }
+
+    .day-badge {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      padding: 5px 13px;
+      border-radius: 999px;
+      background: var(--surface2);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .day-badge.done {
+      background: rgba(200,75,255,0.15);
+      color: var(--accent);
+      border-color: rgba(200,75,255,0.35);
+    }
+
+    .chevron {
       width: 20px;
       height: 20px;
+      color: var(--muted);
+      transition: transform 0.3s;
+    }
+
+    .day-card.open .chevron { transform: rotate(180deg); }
+
+    /* Exercise list */
+    .day-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .day-card.open .day-body { max-height: 800px; }
+
+    .exercise-list {
+      padding: 16px 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .exercise-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
       cursor: pointer;
-      filter: drop-shadow(0 0 4px #ff66ff);
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+      user-select: none;
+    }
+
+    .exercise-item:hover { background: rgba(200,75,255,0.06); transform: translateX(3px); }
+
+    .exercise-item.checked {
+      background: rgba(200,75,255,0.07);
+      border-color: rgba(200,75,255,0.3);
+    }
+
+    .ex-check {
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      border: 2px solid rgba(255,255,255,0.15);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .exercise-item.checked .ex-check {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .ex-check svg { display: none; }
+    .exercise-item.checked .ex-check svg { display: block; }
+
+    .ex-text {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text);
+      flex: 1;
+      transition: color 0.2s;
+    }
+
+    .exercise-item.checked .ex-text {
+      color: var(--muted);
+      text-decoration: line-through;
+      text-decoration-color: rgba(200,75,255,0.4);
+    }
+
+    /* Mini progress bar inside day */
+    .day-progress-bar {
+      height: 3px;
+      background: var(--border);
+      width: 100%;
+    }
+
+    .day-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 0 40px 80px;
     }
 
     .reset-btn {
-      display: block;
-      margin: 60px auto 0;
-      padding: 20px 40px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #000000;
-      background: #9f3fff;
-      border: none;
-      border-radius: 30px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 14px 36px;
+      border-radius: 999px;
       cursor: pointer;
-      transition: 0.3s ease;
-      box-shadow: 0 0 20px #cc66ff;
+      transition: all 0.2s;
     }
 
     .reset-btn:hover {
-      background: #7a2cbf;
+      border-color: rgba(200,75,255,0.4);
+      color: var(--text);
+      background: var(--surface2);
     }
 
-    .footer {
-      margin-top: 60px;
-      text-align: center;
-      font-size: 18px;
-      color: #aa77ff;
-      font-weight: 700;
-      text-shadow: 0 0 5px #ff66ff;
-    }
-
-    .motivation {
-      margin-top: 30px;
-      font-size: 20px;
-      text-align: center;
-      color: #ffffffaa;
+    .quote {
+      margin-top: 40px;
+      font-size: 13px;
+      color: var(--muted);
       font-style: italic;
-      text-shadow: 0 0 8px #9f3fff;
+      letter-spacing: 0.5px;
+      line-height: 1.7;
+    }
+
+    /* ── CONFETTI ── */
+    @keyframes fall {
+      0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    .confetti-piece {
+      position: fixed;
+      width: 8px; height: 8px;
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 999;
+      animation: fall linear forwards;
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--surface);
+      border: 1px solid rgba(200,75,255,0.4);
+      color: var(--text);
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      z-index: 200;
+      white-space: nowrap;
+      box-shadow: 0 0 30px rgba(200,75,255,0.2);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 600px) {
+      nav { padding: 14px 20px; }
+      .hero { padding: 60px 20px 40px; }
+      .week { padding: 0 16px 80px; }
+      .day-header { padding: 18px 20px; }
+      .exercise-list { padding: 12px 16px 20px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="navbar">
-    <span>ZeeHUB – GHEORGHE EDITION</span>
-    <a href="index.html" class="back-btn">Back</a>
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">ZeeHUB × Gheorghe</div>
+  <div class="nav-right">
+    <div class="progress-ring-wrap">
+      <svg viewBox="0 0 30 30">
+        <circle class="ring-bg" cx="15" cy="15" r="12"/>
+        <circle class="ring-fill" id="main-ring" cx="15" cy="15" r="12"/>
+      </svg>
+      <span id="progress-text">0%</span>
+    </div>
+    <a href="index.html" class="back-btn">← Back</a>
   </div>
+</nav>
 
-  <div class="container">
-    <h1>🏆 ANRENAME GOD MODE PENTRU GHEORGHE</h1>
-
-    <div class="day"><h2>Luni – Forță Push</h2><ul>
-      <li>Incalzire 10-20 min<input type="checkbox" class="check" /></li>
-      <li>3x30 hitght push-ups <input type="checkbox" class="check" /></li>
-      <li>3x14 dips intrare in muscle-up<input type="checkbox" class="check" /></li>
-      <li>4x12 pike push-ups<input type="checkbox" class="check" /></li>
-      <li>3x3 hand stand pushup<input type="checkbox" class="check" /></li>
-      <li>3x12 explosive lateral push-ups<input type="checkbox" class="check" /></li>
-      <li>2x1-35 sec pushup<input type="checkbox" class="check" /></li>
-      <li>2x30 archer<input type="checkbox" class="check" /></li>
-    </ul></div>
-
-    <div class="day"><h2>Marti – Sac</h2><ul>
-      <li>Incalzire 10-20 min<input type="checkbox" class="check" /></li>     
-      <li>Spagat 3 incercari<input type="checkbox" class="check" /></li>
-      <li>Mers maini 4 metri de 2 ori<input type="checkbox" class="check" /></li>
-      <li>3x2 minute Seri la sac de cauciuc<input type="checkbox" class="check" /></li>
-    </ul></div>
-
-    
-  
-
-<div class="day"><h2>Miercuri – Forță Tracțiune</h2><ul>
-  <li>Incalzire 10-20 min<input type="checkbox" class="check" /></li>
-
-  <li>3x5 muscle-up<input type="checkbox" class="check" /></li>
-
-  <li>4x5-10 sec front lever hold<input type="checkbox" class="check" /></li>
-
-  <li>2x6 + 2x4 typewriter pull-ups<input type="checkbox" class="check" /></li>
-
-  <li>3x30 sec pull-up hold<input type="checkbox" class="check" /></li>
-
-  <li>3x10 lean back chin-ups<input type="checkbox" class="check" /></li>
-
-  <li>3x10 cross-body pull-ups<input type="checkbox" class="check" /></li>
-</ul></div>
-   </ul></div>
-
-  <div class="day"><h2>Joi – Core & Picioare</h2><ul>
-      <li>Incalzire 10-20 min<input type="checkbox" class="check" /></li>
-      <li>3x100 calf raises<input type="checkbox" class="check" /></li>
-      <li>3x30 squads genunchi in fata<input type="checkbox" class="check" /></li>
-      <li>3x40 1 leg calf raises +5 pistol each leg<input type="checkbox" class="check" /></li>
-      <li>3x60 mini abs <input type="checkbox" class="check" /></li>
-      <li>3x35 leg abs <input type="checkbox" class="check" /></li>
-      <li>4x14 L sit abs<input type="checkbox" class="check" /></li>
-    </ul></div>
-    
-    <div class="day"><h2>Vineri – Picioare & Explozie</h2><ul>
-      <li>Incalzire 10-20 min<input type="checkbox" class="check" /></li>
-      <li>200 push-ups <input type="checkbox" class="check" /></li>
-      <li>200 grip use per hand <input type="checkbox" class="check" /></li>
-      <li>200 abdomene <input type="checkbox" class="check" /></li>
-      <li>200 gambe <input type="checkbox" class="check" /></li>
-    </ul></div>
-
-
-    <div class="day"><h2>Sâmbătă – Zi de Skill</h2><ul>
-      <li>Incalzire 10-20 min<input type="checkbox" class="check" /></li>
-      <li>1x 100 arm grip <input type="checkbox" class="check" /></li>
-      <li>1x 120 gambe (30/40 pe scari) <input type="checkbox" class="check" /></li>
-      <li>1x 100 abdomene (20/30 normal or legs or legs crunch right left)  <input type="checkbox" class="check" /></li>
-      <li>1x 100 flotări (20/30 normale or archer or hight leg) <input type="checkbox" class="check" /></li>
-    </ul></div>
-
-
-
-
-
-
-
-
-    <div class="day"><h2>Duminică – Recuperare activă</h2><ul>
-      <li>Incalzire 10-20 min<input type="checkbox" class="check" /></li>
-      <li>Plimbare lungă 60 min sau stretching <input type="checkbox" class="check" /></li>
-      <li>Mobilitate umeri + încheieturi <input type="checkbox" class="check" /></li>
-      <li>Respirație 4-7-8 + meditație 10 min <input type="checkbox" class="check" /></li>
-    </ul></div>
-
-    <button class="reset-btn" onclick="resetCheckboxes()">🔁 Resetează Bifele</button>
-
-    <div class="footer">
-      💪 Gheorghe God Mode – Îți cunoști puterea. Trăiește ca un zeu.
-      <div class="motivation">✨ Tu contezi. Nu ce cred alții din jur. Ai încredere în tine.</div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">⚡ Weekly Program</div>
+  <h1>GOD<br>MODE</h1>
+  <p class="hero-sub">Programul tău de antrenament. Bifează fiecare exercițiu. Trăiește ca un zeu.</p>
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-val" id="stat-done">0</div>
+      <div class="stat-label">Bifate</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-total">0</div>
+      <div class="stat-label">Total</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-days">0/7</div>
+      <div class="stat-label">Zile</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-pct">0%</div>
+      <div class="stat-label">Progres</div>
     </div>
   </div>
+</section>
 
-  <script>
-    function resetCheckboxes() {
-      document.querySelectorAll('.check').forEach(c => c.checked = false);
-    }
-  </script>
+<!-- WEEK -->
+<main class="week" id="week"></main>
 
+<!-- FOOTER -->
+<footer>
+  <button class="reset-btn" onclick="resetAll()">↺ &nbsp;Resetează Bifele</button>
+  <p class="quote">💪 Tu contești. Nu ce cred alții din jur. Ai încredere în tine.</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DAYS = [
+  {
+    name: "Luni",
+    focus: "Forță Push",
+    icon: "🔥",
+    exercises: [
+      "Încălzire 10-20 min",
+      "3×30 high push-ups",
+      "3×14 dips intrare în muscle-up",
+      "4×12 pike push-ups",
+      "3×3 handstand push-up",
+      "3×12 explosive lateral push-ups",
+      "2×1-35 sec push-up hold",
+      "2×30 archer push-ups",
+    ]
+  },
+  {
+    name: "Marți",
+    focus: "Sac & Mobilitate",
+    icon: "👊",
+    exercises: [
+      "Încălzire 10-20 min",
+      "Spagat – 3 încercări",
+      "Mers pe mâini 4 metri × 2",
+      "3×2 min serii la sac de cauciuc",
+    ]
+  },
+  {
+    name: "Miercuri",
+    focus: "Forță Tracțiune",
+    icon: "💪",
+    exercises: [
+      "Încălzire 10-20 min",
+      "3×5 muscle-up",
+      "4×5-10 sec front lever hold",
+      "2×6 + 2×4 typewriter pull-ups",
+      "3×30 sec pull-up hold",
+      "3×10 lean back chin-ups",
+      "3×10 cross-body pull-ups",
+    ]
+  },
+  {
+    name: "Joi",
+    focus: "Core & Picioare",
+    icon: "🦵",
+    exercises: [
+      "Încălzire 10-20 min",
+      "3×100 calf raises",
+      "3×30 squats genunchi în față",
+      "3×40 1-leg calf raises + 5 pistol/each",
+      "3×60 mini abs",
+      "3×35 leg abs",
+      "4×14 L-sit abs",
+    ]
+  },
+  {
+    name: "Vineri",
+    focus: "Picioare & Explozie",
+    icon: "⚡",
+    exercises: [
+      "Încălzire 10-20 min",
+      "200 push-ups",
+      "200 grip use per hand",
+      "200 abdomene",
+      "200 gambe",
+    ]
+  },
+  {
+    name: "Sâmbătă",
+    focus: "Zi de Skill",
+    icon: "🎯",
+    exercises: [
+      "Încălzire 10-20 min",
+      "1×100 arm grip",
+      "1×120 gambe (30/40 pe scări)",
+      "1×100 abdomene (20/30 normal / legs / crunch stg-dr)",
+      "1×100 flotări (20/30 normale / archer / high leg)",
+    ]
+  },
+  {
+    name: "Duminică",
+    focus: "Recuperare Activă",
+    icon: "🧘",
+    exercises: [
+      "Încălzire 10-20 min",
+      "Plimbare lungă 60 min sau stretching",
+      "Mobilitate umeri + încheieturi",
+      "Respirație 4-7-8 + meditație 10 min",
+    ]
+  },
+];
+
+let state = JSON.parse(localStorage.getItem('gh_state') || 'null');
+if (!state || state.length !== DAYS.length) {
+  state = DAYS.map(d => new Array(d.exercises.length).fill(false));
+}
+
+function save() { localStorage.setItem('gh_state', JSON.stringify(state)); }
+
+function buildWeek() {
+  const week = document.getElementById('week');
+  week.innerHTML = '';
+  DAYS.forEach((day, di) => {
+    const card = document.createElement('div');
+    card.className = 'day-card';
+    card.id = `card-${di}`;
+
+    const checked = state[di].filter(Boolean).length;
+    const total = day.exercises.length;
+    const pct = total ? Math.round(checked / total * 100) : 0;
+
+    card.innerHTML = `
+      <div class="day-progress-bar"><div class="day-progress-fill" id="pf-${di}" style="width:${pct}%"></div></div>
+      <div class="day-header" onclick="toggleCard(${di})">
+        <div class="day-left">
+          <div class="day-number">0${di+1}</div>
+          <div class="day-info">
+            <div class="day-name">${day.icon} ${day.name}</div>
+            <div class="day-focus">${day.focus}</div>
+          </div>
+        </div>
+        <div class="day-right">
+          <div class="day-badge ${checked === total ? 'done' : ''}" id="badge-${di}">${checked}/${total}</div>
+          <svg class="chevron" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-list" id="list-${di}"></div>
+      </div>
+    `;
+
+    week.appendChild(card);
+    renderList(di);
+  });
+  updateGlobal();
+}
+
+function renderList(di) {
+  const list = document.getElementById(`list-${di}`);
+  list.innerHTML = '';
+  DAYS[di].exercises.forEach((ex, ei) => {
+    const item = document.createElement('div');
+    item.className = 'exercise-item' + (state[di][ei] ? ' checked' : '');
+    item.onclick = () => toggleEx(di, ei);
+    item.innerHTML = `
+      <div class="ex-check">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="ex-text">${ex}</span>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function toggleCard(di) {
+  const card = document.getElementById(`card-${di}`);
+  card.classList.toggle('open');
+}
+
+function toggleEx(di, ei) {
+  state[di][ei] = !state[di][ei];
+  save();
+  renderList(di);
+  updateDay(di);
+  updateGlobal();
+
+  const allChecked = state[di].every(Boolean);
+  if (allChecked) {
+    showToast(`🏆 ${DAYS[di].name} completat! Beast mode ON.`);
+    confettiBurst();
+  }
+}
+
+function updateDay(di) {
+  const checked = state[di].filter(Boolean).length;
+  const total = DAYS[di].exercises.length;
+  const pct = total ? Math.round(checked / total * 100) : 0;
+
+  document.getElementById(`badge-${di}`).textContent = `${checked}/${total}`;
+  document.getElementById(`badge-${di}`).className = 'day-badge' + (checked === total ? ' done' : '');
+  document.getElementById(`pf-${di}`).style.width = pct + '%';
+
+  const card = document.getElementById(`card-${di}`);
+  if (checked === total) card.classList.add('completed');
+  else card.classList.remove('completed');
+}
+
+function updateGlobal() {
+  let done = 0, total = 0, daysComplete = 0;
+  state.forEach((d, di) => {
+    d.forEach(v => { if(v) done++; });
+    total += d.length;
+    if (d.every(Boolean)) daysComplete++;
+  });
+  const pct = total ? Math.round(done / total * 100) : 0;
+
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-days').textContent = `${daysComplete}/7`;
+  document.getElementById('stat-pct').textContent = pct + '%';
+  document.getElementById('progress-text').textContent = pct + '%';
+
+  const ring = document.getElementById('main-ring');
+  const circ = 2 * Math.PI * 12;
+  ring.style.strokeDashoffset = circ - (circ * pct / 100);
+}
+
+function resetAll() {
+  state = DAYS.map(d => new Array(d.exercises.length).fill(false));
+  save();
+  buildWeek();
+  showToast('🔁 Program resetat. Let\'s go again!');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function confettiBurst() {
+  const colors = ['#c84bff','#ff4bcc','#ffd166','#ffffff','#a78bfa'];
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.cssText = `
+      left: ${Math.random() * 100}vw;
+      top: -10px;
+      background: ${colors[Math.floor(Math.random() * colors.length)]};
+      animation-duration: ${1.5 + Math.random() * 1.5}s;
+      animation-delay: ${Math.random() * 0.5}s;
+      width: ${6 + Math.random() * 8}px;
+      height: ${6 + Math.random() * 8}px;
+      border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+    `;
+    document.body.appendChild(p);
+    p.addEventListener('animationend', () => p.remove());
+  }
+}
+
+// Auto-open today's card
+const todayMap = [1,2,3,4,5,6,0]; // Mon=1
+const todayIdx = todayMap[(new Date().getDay())];
+
+buildWeek();
+setTimeout(() => {
+  const card = document.getElementById(`card-${todayIdx}`);
+  if (card) card.classList.add('open');
+}, 100);
+</script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
