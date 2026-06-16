@@ -1,0 +1,90 @@
+{
+    name: "Luni",
+    focus: "Forță Push",
+    icon: "🔥",
+    exercises: [
+      "Încălzire 10-20 min",
+      "3×30 high push-ups",
+      "3×12 dips intrare în muscle-up+ghiozdan 4kg",
+      "4×12 pike push-ups",
+      "3×1 handstand push-up",
+      "3×12 explosive lateral push-ups",
+      "2×1-35 sec push-up hold",
+      "2×30 archer push-ups",
+    ]
+  },
+  {
+    name: "Marți",
+    focus: "Spate",
+    icon: "👊",
+    exercises: [
+      "3 x 8 type wrider pullups",
+      "3 x 12 lean back chinups(Primul set la maxim)",
+      "3 x 10 L sit face back pullups",
+      "3 x 12 biceps under cap la bara de dips",
+      "3 x 10 tracțiuni după cap",
+      "4 x 10 comando pull ups",
+      "Încercări human flag",
+    ]
+  },
+  {
+    name: "Miercuri",
+    focus: "Forță Tracțiune",
+    icon: "💪",
+    exercises: [
+      "Încălzire 10-20 min",
+      "4×2-3 sec front lever hold",
+      "3×6 muscle-up",
+      "2×6 + 2×4 typewriter pull-ups",
+      "3×30 sec chin up hold",
+      "3×12 lean back chin-ups cu 4kg",
+      "3×10 cross-body pull-ups",
+      "3×8 tuck front lever rows",
+    ]
+  },
+  {
+    name: "Joi",
+    focus: "Core & Picioare",
+    icon: "🦵",
+    exercises: [
+      "Încălzire 10-20 min",
+      "2×100 calf raises",
+      "3×30 squats genunchi în față",
+      "3×5 pistol/each",
+      "3×60 mini abs",
+      "3×35 leg abs",
+      "4×14 L-sit abs",
+    ]
+  },
+  {
+    name: "Vineri",
+    focus: "Calm day",
+    icon: "⚡",
+    exercises: [
+      "Încălzire 10-20 min",
+      "2x 10 archer phusups",
+      "2x 8 pull ups",
+      "2x 20 squad",
+      "3x30 grip use",
+      "2x 20 abs",
+    ]
+  },
+  {
+    name: "Sâmbătă",
+    focus: "REST DAY GNG",
+    icon: "🧘",
+    exercises: [
+    ]
+  },
+  {
+    name: "Duminică",
+    focus: "MMA la sala",
+    icon: "🧘",
+    exercises: [
+      "Încălzire 10-20 min",
+      "Plimbare lungă 60 min sau stretching",
+      "Mobilitate umeri + încheieturi",
+      "Respirație 4-7-8 + meditație 10 min",
+    ]
+  },
+];
