@@ -44,21 +44,15 @@
   },
   {
     name: "Joi",
-    focus: "Core & Picioare",
-    icon: "🦵",
+    focus: "Rest",
+    icon: "🧘",
     exercises: [
       "Încălzire 10-20 min",
-      "2×100 calf raises",
-      "3×30 squats genunchi în față",
-      "3×5 pistol/each",
-      "3×60 mini abs",
-      "3×35 leg abs",
-      "4×14 L-sit abs",
     ]
   },
   {
     name: "Vineri",
-    focus: "Calm day",
+    focus: "Push Day",
     icon: "⚡",
     exercises: [
       "Încălzire 10-20 min",
