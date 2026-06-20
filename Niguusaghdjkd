@@ -65,14 +65,20 @@
   },
   {
     name: "Sâmbătă",
-    focus: "REST DAY GNG",
+    focus: "Pull",
     icon: "🧘",
     exercises: [
-    ]
+"3x 2-3 sec front lever",
+"3 x 10 brazilian rows sus ezplozie jos calm",
+"3 x 1Mers cu tracțiune comando",
+"3 x 2 mers pe bară față spate",
+"3 x 5 muscle up clap",
+"2 x 30 sec hollybody hold + 2 front lever walk",
+]
   },
   {
     name: "Duminică",
-    focus: "MMA la sala",
+    focus: "Leg day",
     icon: "🧘",
     exercises: [
       "Încălzire 10-20 min",
