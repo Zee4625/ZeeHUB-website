@@ -66,7 +66,7 @@
   },
   {
     name: "Sâmbătă",
-    focus: "Pull",
+    focus: "Legs + abs",
     icon: "🧘",
     exercises: [
 "3x 2-3 sec front lever",
@@ -79,13 +79,16 @@
   },
   {
     name: "Duminică",
-    focus: "Leg day",
+    focus: "Pull",
     icon: "🧘",
     exercises: [
       "Încălzire 10-20 min",
-      "Plimbare lungă 60 min sau stretching",
-      "Mobilitate umeri + încheieturi",
-      "Respirație 4-7-8 + meditație 10 min",
+      "3 x 5-6 sec front lever",
+      "3 x 8 typewrider pull ups",
+      "2 x 12 chinup back lean (primul la max)",
+      "3 x 12 biceps under",
+      "3 x 30 sec death hang",
+      "3 x 10 grip use 40 kg",
     ]
   },
 ];
