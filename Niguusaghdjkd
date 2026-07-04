@@ -14,7 +14,7 @@
   },
   {
     name: "Marți",
-    focus: "Spate",
+    focus: "Leg",
     icon: "👊",
     exercises: [
       "Încălzire 10-20 min",
@@ -67,15 +67,17 @@
   },
   {
     name: "Sâmbătă",
-    focus: "Legs + abs",
+    focus: "Leg",
     icon: "🧘",
     exercises: [
-"3x 2-3 sec front lever",
-"3 x 10 brazilian rows sus ezplozie jos calm",
-"3 x 1Mers cu tracțiune comando",
-"3 x 2 mers pe bară față spate",
-"3 x 5 muscle up clap",
-"2 x 30 sec hollybody hold + 2 front lever walk",
+      "Încălzire 10-20 min",
+      "2 x MAX pistol squad each leg",
+      "3 x 10 misipi full",
+      "2 x MAX gambe per leg (16)",
+      "3 x 12 gambe pe scară",
+      "3 x 8 lateral L sit ups",
+      "2 x MAX L sit bring (16)",
+      "3 x 40 coardă box",
 ]
   },
   {
@@ -86,9 +88,9 @@
       "Încălzire 10-20 min",
       "3 x 5-6 sec front lever",
       "3 x 8 typewrider pull ups",
-      "2 x 12 chinup back lean (primul la max)",
+      "2 x MAX chinup extension",
       "3 x 12 biceps under",
-      "3 x 30 sec death hang",
+      "2 x MAX gantere trapez",
       "3 x 10 grip use 40 kg",
       "3 x 10 gat fata sus + 3 x 12 stanga dreapta",
     ]
