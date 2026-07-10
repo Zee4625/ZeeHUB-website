@@ -59,7 +59,8 @@
     focus: "Push Day",
     icon: "⚡",
     exercises: [
-      "Încălzire 10-20 min",
+    "Încălzire 10-20 min",
+    "2 x MAX Planche lean",
     "2 x MAX chest dips (16)",
     "3 x 10 explosive pushups",
     "3 x 6 hand stand pushup wall elevated",
@@ -88,7 +89,6 @@
     focus: "Pull",
     icon: "🧘",
     exercises: [
-      "2 x MAX Planche lean",
       "Încălzire 10-20 min",
       "2 x MAX sec front lever (10)",
       "3 x 8 typewrider pull ups",
