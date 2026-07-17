@@ -35,8 +35,17 @@
   },
   {
     name: "Miercuri",
-    focus: "Forță Tracțiune",
+    focus: "REST!",
     icon: "💪",
+    exercises: [
+      
+      
+    ]
+  },
+  {
+    name: "Joi",
+    focus: "Pull",
+    icon: "🧘",
     exercises: [
       "Încălzire 10-20 min",
       "4 x 2-3 sec human flag",
@@ -48,60 +57,45 @@
       "2 x MAX gantere trapez (30)",
       "2 x Max wrist curls cu -2 kg bars (22)",
       "3 x 10 gat fata sus + 3 x 12 stanga dreapta",
-      
-    ]
-  },
-  {
-    name: "Joi",
-    focus: "Rest",
-    icon: "🧘",
-    exercises: [
-      "Încălzire 10-20 min",
     ]
   },
   {
     name: "Vineri",
-    focus: "Push Day",
+    focus: "REST",
     icon: "⚡",
     exercises: [
     "Încălzire 10-20 min",
-    "2 x MAX Planche lean",
-    "2 x MAX chest dips (16)",
-    "3 x 12 chest dips",
-    "3 x 9 hand stand pushup wall elevated",
-    "2 X MAX lean stratel planche"
-    "3 x 7 korean dips",
-    "2 x MAX triceps extension la scara (14)",
     ]
   },
   {
     name: "Sâmbătă",
-    focus: "Leg",
+    focus: "Pull+Biceps+Trapez",
     icon: "🧘",
     exercises: [
       "Încălzire 10-20 min",
-      "2 x MAX pistol squad each leg",
-      "3 x 10 misipi full",
-      "2 x MAX gambe per leg (16)",
-      "3 x 12 gambe pe scară",
-      "3 x 8 lateral L sit ups",
-      "2 x MAX L sit bring (16)",
-      "3 x 40 coardă box",
+      "2 x MAX chinup extension (35)",
+      "3 x 10 korean dips biceps add",
+      "2 x MAX chest dips (20)",
+      "2 x MAX tracțiune lean back (25)",
+     "2 x MAX triceps extension la scara (14)",
+      "2 x Max wrist curls cu -2 kg bars (22)",
+      "2 x MAX gantere trapez (30)",
+      "3 x 10 gat fata sus + 3 x 12 stanga dreapta",
 ]
   },
   {
     name: "Duminică",
-    focus: "Pull",
+    focus: "Legs+abs+spate",
     icon: "🧘",
     exercises: [
       "Încălzire 10-20 min",
       "2 x MAX sec front lever (12)",
       "3 x 10 chest pull ups",
-      "2 x MAX chinup extension (35)",
-      "3 x 12 biceps under",
-      "2 x MAX gantere trapez (30)",
-      "2 x MAX tracțiune lean back (25)",
-      "3 x 10 gat fata sus + 3 x 12 stanga dreapta",
+      "2 x MAX pistol squad each leg",
+      "3 x 10 misipi full",
+      "2 x MAX gambe per leg (16)",
+      "3 x 12 gambe pe scară",
+      "2 x MAX L sit bring (16)",
       "1 x 5 min mar trian",
     ]
   },
