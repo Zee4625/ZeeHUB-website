@@ -80,14 +80,16 @@
     focus: "Pull+Biceps+Trapez",
     icon: "🧘",
     exercises: [
-      "Încălzire 10-20 min",
-      "2 x MAX biceps cu gantere (20)",
-      "3 x 12 chinups slow",
-      "2 x 14 tuck dips"
-      "2 x 40 sec tuck Planche",
-      "2 x 11 muscle ups",
-      "2 x Max wrist curls fața cu 8 + 2-1kg plates bars (13)",
-      "3 x 10 gat fata sus + 3 x 12 stanga dreapta",
+      "3 x 12 hamer grip sholder press max",
+      "3 x 8 lateral raises cu 7 kg",
+      "4 x MAX 1 leg gambe pe scară (20)",
+      "2 x MAX gambe cu gantere slow (22)",
+      "2 x MAX gantere trapez (31)",
+      "4 x 8 bulgarian split squad each leg cu max",
+      "2 x 40 misipi full",
+      "2 x 40 russian twist cu 2 kg",
+      "2 x MAX L sit bring (18)"
+      "1 x 20 sec dragon flag",
 ]
   },
   {
@@ -95,17 +97,7 @@
     focus: "Legs+abs+spate",
     icon: "🧘",
     exercises: [
-      "Încălzire 10-20 min",
-      "2 x MAX gambe cu gantere (20)",
-      "4 x MAX 1 leg gambe pe scară (20)",
-      "3 x 20 rolă tibie each leg",
-      "2 x MAX sec front lever (12)",
-      "3 x 10 chest pull ups",
-      "2 x MAX pistol squad each leg",
-      "3 x 10 misipi full",
-      "2 x MAX L sit bring (16)",
-      "2 x MAX gantere trapez (30)",
-      "2 x 20 hard kick",
+
     ]
   },
 ];
