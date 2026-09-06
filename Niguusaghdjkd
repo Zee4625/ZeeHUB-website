@@ -20,6 +20,16 @@
   },
   {
     name: "Marți",
+    focus: "REST!",
+    icon: "💪",
+    exercises: [
+      "Încălzire 10-20 min",
+      "2 x 10 rolă tibie each leg (MAX HARD)",
+      "1 x 1 min each leg rola",
+    ]
+  },
+  {
+    name: "Miercuri",
     focus: "Leg",
     icon: "🧎",
     exercises: [
@@ -34,16 +44,6 @@
       "3 x 20 russian twist cu 10 kg",
       "2 x MAX L sit bring (22)", 
       "3 x 3=6 sec up-down dragon flag",
-    ]
-  },
-  {
-    name: "Miercuri",
-    focus: "REST!",
-    icon: "💪",
-    exercises: [
-      "Încălzire 10-20 min",
-      "2 x 10 rolă tibie each leg (MAX HARD)",
-      "1 x 1 min each leg rola",
     ]
   },
   {
@@ -108,7 +108,7 @@
       "4 x 18 wrist curls fața cu 10 kg",
       "4 x 10 wrist curls spate cu 5 kg",
       "4 x MAX 1 leg gambe pe scară (20)",
-      "3 x 12 gambe cu gantere slow cu 14 kg",
+      "3 x 12 gambe cu gantere slow cu 20 kg",
       "3 x 12 gantere trapez cu 20,5 kg ",
       "4 x 8 bulgarian split squad each leg cu max",
       "2 x 40 misipi,"
