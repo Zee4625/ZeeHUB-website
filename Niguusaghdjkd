@@ -8,13 +8,13 @@
       "Încălzire 10-20 min",
 "2 x incherchi full planche",
 "3 x 12 chest fly cu 14,5 kg gantere pe scaune",
-"3 x 7 chest dips cu 21 kg",
+"3 x 8 chest dips cu 21 kg",
 "3 x 10 wide flotari cu 26 kg",
 "3 x 8 hamer grip sholder press cu 14,5 kg",
-"3 x 8 lateral raises cu 8 kg",
-"3 x 8 rear lateral raises grip special cu 5 kg",
+"3 x 6 lateral raises cu 9 kg",
+"3 x 6 rear lateral raises grip special cu 7 kg",
 "3 x 7 skull crusher 1 dumbell cu 20 kg",
-"3 x 8 triceps kickbacks cu 9 kg",
+"3 x 10 triceps kickbacks cu 9 kg",
 "3 x 6 skull cursher 2 dumbells pe podea cu 8 kg",
     ]
   },
@@ -86,9 +86,12 @@ exercises: [
     icon: "🧘",
     exercises: [
       "1 x cat poti planche tuck",
-      "2 x 6 chest dips cu 21 kg",
-      "2 x 6 lateral raises cu 8 kg",
-      "2 x 6 triceps kickbacks cu 9 kg",
+      "3 x 11 chest fly cu 15 kg gantere pe scaune",
+      "2 x 8 chest dips cu 21 kg",
+      "2 x 6 lateral raises cu 9 kg",
+      "3 x 6 rear lateral raises grip special cu 7 kg",
+      "3 x 10 triceps kickbacks cu 9 kg",
+
       "3 x 30 sec death hang",
       "1 x MAX dragon flag",
 ]
