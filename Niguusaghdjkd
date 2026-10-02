@@ -62,8 +62,6 @@
       "2 x 20 wrist curls spate cu 7 kg",
       "1 x 10 jump swich pullups + 1 x 10 hight pullups "
       "1 x 50 max gripper per brat",
-      "4 x 20 gantere trapez cu 21 kg ",
-      "2 x 10 gat fata sus + 2 x 12 stanga dreapta cu presiune palmă",
       "3 x 2 min mar training",
     ]
   },
@@ -75,6 +73,8 @@ focus: "REST",
 icon: "⚡",
 exercises: [
 "Încălzire 10-20 min",
+"4 x 20 gantere trapez cu 22,5 kg ",
+"2 x 10 gat fata sus + 2 x 12 stanga dreapta cu presiune palmă",
 "1 x 60 hard kick each leg",
 "1 x 30 hard genunchi each leg"
 "2 x 30 box max cu bara",
