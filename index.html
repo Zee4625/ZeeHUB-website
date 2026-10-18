@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OmniVision AI - IR Night Vision & AI Tracking</title>
+  <title>OmniVision AI - IR Night Vision & AI Tracking Engine</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- Classic MediaPipe CDNs (100% Reliable Standalone Libraries) -->
+  <!-- MediaPipe Classic CDNs -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic/holistic.js" crossorigin="anonymous"></script>
@@ -57,13 +57,13 @@
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen overflow-x-hidden flex flex-col antialiased select-none">
 
-  <!-- Application Banner / Alert Status -->
+  <!-- Status Banner -->
   <div id="statusBanner" class="bg-cyan-950/80 border-b border-cyan-800/60 px-4 py-2 text-xs font-mono text-cyan-200 flex items-center justify-between transition-all">
     <div class="flex items-center space-x-2">
       <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
-      <span id="statusMessage">Se inițializează modelele AI MediaPipe Holistic și Shader-ele Optice IR...</span>
+      <span id="statusMessage">Se inițializează GPU WebGL Shaders & AI MediaPipe Engine...</span>
     </div>
-    <span id="modelSourceTag" class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] text-slate-300">Sursa: MediaPipe CDN + Shaders</span>
+    <span id="modelSourceTag" class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] text-slate-300">GPU Shader: WebGL 2.0 + MediaPipe</span>
   </div>
 
   <!-- Header Section -->
@@ -74,16 +74,16 @@
       </div>
       <div>
         <h1 class="text-xl font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-400">
-          OmniVision IR <span class="text-xs font-normal px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 ml-2">v4.0 Tactical</span>
+          OmniVision Tactical <span class="text-xs font-normal px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 ml-2">v5.0 WebGL GPU</span>
         </h1>
-        <p class="text-xs text-slate-400">Sistem Tactic Infra-Roșu, Termic FLIR & Intuiție AI AI Motion</p>
+        <p class="text-xs text-slate-400">Sistem Tactic Infra-Roșu WebGL, Termic FLIR & Intuiție AI Multi-Modală</p>
       </div>
     </div>
 
     <!-- Header Actions -->
     <div class="flex items-center space-x-3 mt-2 sm:mt-0 flex-wrap gap-y-2">
       <select id="cameraSelect" class="bg-slate-900 border border-slate-700 text-xs rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-emerald-500">
-        <option value="">Se caută camere...</option>
+        <option value="">Se caută senzori optic...</option>
       </select>
 
       <button id="toggleCameraBtn" class="flex items-center space-x-2 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-colors shadow-lg shadow-emerald-950/50">
@@ -106,17 +106,20 @@
   <!-- Workspace Container -->
   <main class="flex-1 flex flex-col lg:flex-row p-4 gap-4 overflow-hidden max-w-[1920px] w-full mx-auto">
 
-    <!-- Center/Left Visual Canvas Viewport -->
-    <section class="flex-1 flex flex-col items-center justify-center relative min-h-[450px] lg:min-h-0 bg-slate-900/60 rounded-2xl border border-slate-800/80 overflow-hidden shadow-2xl">
+    <!-- Center Visual Viewport -->
+    <section class="flex-1 flex flex-col items-center justify-center relative min-h-[480px] lg:min-h-0 bg-slate-900/60 rounded-2xl border border-slate-800/80 overflow-hidden shadow-2xl">
       
-      <!-- Video Element (Hidden rendering pipeline source) -->
+      <!-- Video Element -->
       <video id="webcamVideo" class="hidden" playsinline muted></video>
 
-      <!-- Viewport Canvas -->
-      <div id="canvasContainer" class="relative w-full h-full flex items-center justify-center bg-black/80">
-        <canvas id="outputCanvas" class="max-w-full max-h-full object-contain rounded-lg shadow-lg"></canvas>
+      <!-- Viewport Canvas Stack -->
+      <div id="canvasContainer" class="relative w-full h-full flex items-center justify-center bg-black/90">
+        <!-- GPU WebGL Canvas -->
+        <canvas id="webglCanvas" class="absolute inset-0 w-full h-full object-contain rounded-lg"></canvas>
+        <!-- 2D AI Overlay Canvas -->
+        <canvas id="overlayCanvas" class="absolute inset-0 w-full h-full object-contain rounded-lg pointer-events-none z-10"></canvas>
 
-        <!-- Dynamic Vision Filter Quick Bar -->
+        <!-- Vision Mode Bar -->
         <div class="absolute bottom-16 left-1/2 -translate-x-1/2 glass-panel px-3 py-1.5 rounded-full border border-slate-700/80 flex items-center gap-2 shadow-2xl z-20 overflow-x-auto max-w-[90vw]">
           <button data-mode="ir" class="btn-vision-mode px-3 py-1 rounded-full text-xs font-semibold bg-emerald-600 text-white shadow-md flex items-center gap-1.5 transition-all">
             <i data-lucide="eye" class="w-3.5 h-3.5"></i> Night Vision IR
@@ -135,8 +138,8 @@
           </button>
         </div>
 
-        <!-- Tactical Crosshair & Grid Overlay -->
-        <div id="tacticalGridOverlay" class="absolute inset-0 pointer-events-none opacity-40 border border-emerald-500/20 flex items-center justify-center">
+        <!-- Crosshair HUD Overlay -->
+        <div id="tacticalGridOverlay" class="absolute inset-0 pointer-events-none opacity-40 border border-emerald-500/20 flex items-center justify-center z-10">
           <div class="w-full h-[1px] bg-emerald-500/30 absolute top-1/2"></div>
           <div class="h-full w-[1px] bg-emerald-500/30 absolute left-1/2"></div>
           <div class="w-48 h-48 border border-emerald-500/30 rounded-full absolute flex items-center justify-center">
@@ -144,17 +147,17 @@
           </div>
         </div>
 
-        <!-- Motion Intuition Overlay Box -->
-        <div class="absolute top-4 left-4 glass-panel p-3.5 rounded-xl max-w-xs space-y-2 border border-emerald-500/30 text-xs shadow-2xl z-10">
+        <!-- Real-Time AI Telemetry Overlay Box -->
+        <div class="absolute top-4 left-4 glass-panel p-3.5 rounded-xl max-w-xs space-y-2 border border-emerald-500/30 text-xs shadow-2xl z-20">
           <div class="flex items-center justify-between border-b border-slate-700/60 pb-1.5">
             <span class="font-bold text-emerald-400 flex items-center gap-1.5">
-              <i data-lucide="activity" class="w-4 h-4 text-emerald-400"></i> Intuiție AI & Senzori
+              <i data-lucide="activity" class="w-4 h-4 text-emerald-400"></i> Intuiție AI & WebGL
             </span>
             <span id="aiConfidenceBadge" class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 font-mono border border-emerald-800">IR Activ</span>
           </div>
           
-          <div class="space-y-1 font-mono">
-            <p><span class="text-slate-400">Postură/Acțiune:</span> <span id="hudActionState" class="text-emerald-400 font-bold">Se așteaptă date...</span></p>
+          <div class="space-y-1 font-mono text-[11px]">
+            <p><span class="text-slate-400">Postură/Acțiune:</span> <span id="hudActionState" class="text-emerald-400 font-bold">Inactiv</span></p>
             <p><span class="text-slate-400">Gest Mâini:</span> <span id="hudHandGesture" class="text-amber-400 font-bold">Niciunul</span></p>
             <p><span class="text-slate-400">Expresie Față:</span> <span id="hudFaceExpression" class="text-purple-400 font-bold">Neutru</span></p>
             <p><span class="text-slate-400">Vector Viteză:</span> <span id="hudMotionVector" class="text-sky-400 font-bold">Static (0 px/s)</span></p>
@@ -164,14 +167,14 @@
       </div>
 
       <!-- Footer Realtime Diagnostics -->
-      <div class="w-full glass-panel px-4 py-2.5 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-6 gap-2 text-center text-xs">
+      <div class="w-full glass-panel px-4 py-2.5 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-6 gap-2 text-center text-xs z-20">
         <div class="p-1.5 rounded-lg bg-slate-800/40">
           <span class="block text-slate-400 text-[10px] uppercase font-semibold">Framerate</span>
           <span id="statFPS" class="font-mono text-sm font-bold text-emerald-400">0 FPS</span>
         </div>
         <div class="p-1.5 rounded-lg bg-slate-800/40">
           <span class="block text-slate-400 text-[10px] uppercase font-semibold">Mesh Față</span>
-          <span id="statFaceLandmarks" class="font-mono text-sm font-bold text-cyan-400">0 Puncte</span>
+          <span id="statFaceLandmarks" class="font-mono text-sm font-bold text-cyan-400">0 Pts</span>
         </div>
         <div class="p-1.5 rounded-lg bg-slate-800/40">
           <span class="block text-slate-400 text-[10px] uppercase font-semibold">Mâini Active</span>
@@ -179,34 +182,34 @@
         </div>
         <div class="p-1.5 rounded-lg bg-slate-800/40">
           <span class="block text-slate-400 text-[10px] uppercase font-semibold">Schelet Corp</span>
-          <span id="statPoseLandmarks" class="font-mono text-sm font-bold text-purple-400">0 Puncte</span>
+          <span id="statPoseLandmarks" class="font-mono text-sm font-bold text-purple-400">0 Pts</span>
         </div>
         <div class="p-1.5 rounded-lg bg-slate-800/40">
-          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Viteză Maximă</span>
+          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Viteză Max</span>
           <span id="statHandVelocity" class="font-mono text-sm font-bold text-rose-400">0 px/s</span>
         </div>
         <div class="p-1.5 rounded-lg bg-slate-800/40">
-          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Mod Operare</span>
-          <span id="statMode" class="font-mono text-sm font-bold text-sky-400">Se încarcă</span>
+          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Pipeline Optic</span>
+          <span id="statPipeline" class="font-mono text-sm font-bold text-sky-400">WebGL 2.0</span>
         </div>
       </div>
     </section>
 
-    <!-- Right Sidebar Dashboard Controls -->
+    <!-- Sidebar Dashboard Controls -->
     <aside class="w-full lg:w-96 glass-panel rounded-2xl p-4 border border-slate-800 flex flex-col gap-5 overflow-y-auto custom-scrollbar max-h-[calc(100vh-6rem)]">
       
       <!-- Shader & Optical Parameters -->
       <div class="space-y-3">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
           <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i data-lucide="sliders-horizontal" class="w-4 h-4 text-emerald-400"></i> Parametri Filtru Optic & Senzori
+            <i data-lucide="sliders-horizontal" class="w-4 h-4 text-emerald-400"></i> Parametri Filtru Optic GPU
           </h2>
         </div>
 
         <div class="space-y-3 text-xs">
           <div class="space-y-1">
             <div class="flex justify-between">
-              <label for="noiseIntensity" class="text-slate-300">Intensitate Zgomot Granulat (IR Grain)</label>
+              <label for="noiseIntensity" class="text-slate-300">Zgomot Granulat GPU (IR Grain)</label>
               <span id="noiseVal" class="font-mono text-emerald-400 font-bold">35%</span>
             </div>
             <input type="range" id="noiseIntensity" min="0" max="100" value="35" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
@@ -217,15 +220,23 @@
               <label for="gainBrightness" class="text-slate-300">Amplificare Gain / Luminozitate IR</label>
               <span id="gainVal" class="font-mono text-emerald-400 font-bold">1.3x</span>
             </div>
-            <input type="range" id="gainBrightness" min="0.5" max="2.5" step="0.1" value="1.3" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+            <input type="range" id="gainBrightness" min="0.5" max="3.0" step="0.1" value="1.3" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
           </div>
 
           <div class="space-y-1">
             <div class="flex justify-between">
-              <label for="contrastBoost" class="text-slate-300">Boost Contrast Termic / IR</label>
+              <label for="contrastBoost" class="text-slate-300">Contrast Termic / IR</label>
               <span id="contrastVal" class="font-mono text-emerald-400 font-bold">1.4x</span>
             </div>
-            <input type="range" id="contrastBoost" min="0.8" max="2.5" step="0.1" value="1.4" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+            <input type="range" id="contrastBoost" min="0.5" max="3.0" step="0.1" value="1.4" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex justify-between">
+              <label for="irIlluminator" class="text-slate-300">Proiector Iluminare Infra-Roșu</label>
+              <span id="irIlluminatorVal" class="font-mono text-emerald-400 font-bold">50%</span>
+            </div>
+            <input type="range" id="irIlluminator" min="0" max="100" value="50" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
           </div>
 
           <div class="grid grid-cols-2 gap-2 pt-1">
@@ -234,8 +245,8 @@
               <span class="text-slate-300">Linii Scanare IR</span>
             </label>
             <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
-              <input type="checkbox" id="chkBloom" checked class="rounded accent-emerald-500">
-              <span class="text-slate-300">Efect Bloom / Glow</span>
+              <input type="checkbox" id="chkVignette" checked class="rounded accent-emerald-500">
+              <span class="text-slate-300">Vignettă Optică</span>
             </label>
           </div>
         </div>
@@ -277,17 +288,17 @@
         </div>
       </div>
 
-      <!-- Prediction Adjustments -->
+      <!-- Trajectory & Dynamic Settings -->
       <div class="space-y-4">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
           <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i data-lucide="sliders" class="w-4 h-4 text-emerald-400"></i> Setări Intuiție & Traiectorie
+            <i data-lucide="sliders" class="w-4 h-4 text-emerald-400"></i> Orizont Predicție Vectorială
           </h2>
         </div>
 
         <div class="space-y-1">
           <div class="flex justify-between text-xs">
-            <label for="predictionScale" class="text-slate-300">Orizont Predicție (Secunde)</label>
+            <label for="predictionScale" class="text-slate-300">Orizont Timp Predicție</label>
             <span id="predictionScaleVal" class="font-mono text-emerald-400 font-bold">0.8 sec</span>
           </div>
           <input type="range" id="predictionScale" min="0.1" max="2.0" step="0.1" value="0.8" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
@@ -295,25 +306,25 @@
 
         <div class="space-y-1">
           <div class="flex justify-between text-xs">
-            <label for="trailLength" class="text-slate-300">Istoric Urmă Mișcare</label>
+            <label for="trailLength" class="text-slate-300">Lungime Urmă Traiectorie</label>
             <span id="trailLengthVal" class="font-mono text-emerald-400 font-bold">25 cadru</span>
           </div>
           <input type="range" id="trailLength" min="5" max="60" value="25" step="5" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
         </div>
       </div>
 
-      <!-- AI Telemetry Breakdowns -->
+      <!-- Detailed Telemetry Breakdown -->
       <div class="space-y-3">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
           <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i data-lucide="scan" class="w-4 h-4 text-emerald-400"></i> Telemetrie Detecție
+            <i data-lucide="scan" class="w-4 h-4 text-emerald-400"></i> Detalii Analiză Biometrică
           </h2>
         </div>
 
         <div class="space-y-2 text-xs">
           <!-- Hand Details -->
           <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
-            <span class="text-slate-400 text-[10px] uppercase font-bold block mb-1">Stare Mâini (Stânga / Dreapta)</span>
+            <span class="text-slate-400 text-[10px] uppercase font-bold block mb-1">Stare Mâini</span>
             <div class="flex justify-between items-center font-mono">
               <span id="leftHandStatus" class="text-slate-300">Stânga: Inactiv</span>
               <span id="rightHandStatus" class="text-slate-300">Dreapta: Inactiv</span>
@@ -322,20 +333,20 @@
 
           <!-- Face Metrics -->
           <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
-            <span class="text-slate-400 text-[10px] uppercase font-bold block mb-1">Analiză Expresie Facială</span>
+            <span class="text-slate-400 text-[10px] uppercase font-bold block mb-1">Examen Expresie Facială</span>
             <div class="grid grid-cols-2 gap-1 font-mono text-[11px]">
               <div>Zâmbet: <span id="valSmile" class="text-emerald-400">0%</span></div>
-              <div>Clipit: <span id="valBlink" class="text-emerald-400">0%</span></div>
               <div>Gură Deschisă: <span id="valMouth" class="text-emerald-400">0%</span></div>
-              <div>Sprâncene: <span id="valBrows" class="text-emerald-400">0%</span></div>
+              <div>Ochi Stâng: <span id="valEyeL" class="text-emerald-400">Deschis</span></div>
+              <div>Ochi Drept: <span id="valEyeR" class="text-emerald-400">Deschis</span></div>
             </div>
           </div>
 
           <!-- Pose Action -->
           <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
-            <span class="text-slate-400 text-[10px] uppercase font-bold block mb-1">Intuiție Corp & Mișcare Globală</span>
+            <span class="text-slate-400 text-[10px] uppercase font-bold block mb-1">Stare Mișcare Corp</span>
             <div class="font-mono text-emerald-300 font-semibold" id="bodyActionDetails">
-              Stationar / Neutru
+              Staționar / Neutru
             </div>
           </div>
         </div>
@@ -344,10 +355,6 @@
     </aside>
   </main>
 
-  <!-- Hidden Offscreen Canvas for Optical Shader Processing -->
-  <canvas id="offscreenCanvas" class="hidden"></canvas>
-
-  <!-- Javascript Logic -->
   <script>
     // --- Configuration State ---
     const config = {
@@ -355,8 +362,9 @@
       noiseIntensity: 0.35,
       gainBrightness: 1.3,
       contrastBoost: 1.4,
+      irIlluminator: 0.5,
       showScanlines: true,
-      showBloom: true,
+      showVignette: true,
       showFace: true,
       showHands: true,
       showPose: true,
@@ -373,24 +381,19 @@
     let demoMode = false;
     let demoAngle = 0;
 
-    // History for Vector Prediction
-    const history = {
-      leftHand: [],
-      rightHand: [],
-      head: []
-    };
+    // Tracking Trajectory History
+    const history = { leftHand: [], rightHand: [], head: [] };
 
-    // Performance Stats
+    // Stats
     let lastFrameTime = performance.now();
     let frameCount = 0;
     let fps = 0;
 
-    // --- DOM Elements ---
+    // DOM Elements
     const video = document.getElementById('webcamVideo');
-    const canvas = document.getElementById('outputCanvas');
-    const ctx = canvas.getContext('2d');
-    const offscreenCanvas = document.getElementById('offscreenCanvas');
-    const offscreenCtx = offscreenCanvas.getContext('2d');
+    const webglCanvas = document.getElementById('webglCanvas');
+    const overlayCanvas = document.getElementById('overlayCanvas');
+    const overlayCtx = overlayCanvas.getContext('2d');
 
     const toggleCameraBtn = document.getElementById('toggleCameraBtn');
     const toggleCameraBtnText = document.getElementById('toggleCameraBtnText');
@@ -398,17 +401,17 @@
     const statusBanner = document.getElementById('statusBanner');
     const statusMessage = document.getElementById('statusMessage');
     const statusDot = document.getElementById('statusDot');
-    const statMode = document.getElementById('statMode');
-    const tacticalGridOverlay = document.getElementById('tacticalGridOverlay');
+    const statPipeline = document.getElementById('statPipeline');
 
-    // Vision Shader Controls
-    const noiseIntensityInput = document.getElementById('noiseIntensity');
-    const gainBrightnessInput = document.getElementById('gainBrightness');
-    const contrastBoostInput = document.getElementById('contrastBoost');
+    // Shader UI Inputs
+    const noiseInput = document.getElementById('noiseIntensity');
+    const gainInput = document.getElementById('gainBrightness');
+    const contrastInput = document.getElementById('contrastBoost');
+    const illuminatorInput = document.getElementById('irIlluminator');
     const chkScanlines = document.getElementById('chkScanlines');
-    const chkBloom = document.getElementById('chkBloom');
+    const chkVignette = document.getElementById('chkVignette');
 
-    // UI Input Elements
+    // UI Overlay Toggles
     const chkFace = document.getElementById('chkFace');
     const chkHands = document.getElementById('chkHands');
     const chkPose = document.getElementById('chkPose');
@@ -418,7 +421,7 @@
     const predictionScale = document.getElementById('predictionScale');
     const trailLengthInput = document.getElementById('trailLength');
 
-    // UI Stats
+    // HUD Telemetry
     const statFPS = document.getElementById('statFPS');
     const statFaceLandmarks = document.getElementById('statFaceLandmarks');
     const statHandsCount = document.getElementById('statHandsCount');
@@ -432,19 +435,239 @@
     const leftHandStatus = document.getElementById('leftHandStatus');
     const rightHandStatus = document.getElementById('rightHandStatus');
     const valSmile = document.getElementById('valSmile');
-    const valBlink = document.getElementById('valBlink');
     const valMouth = document.getElementById('valMouth');
-    const valBrows = document.getElementById('valBrows');
+    const valEyeL = document.getElementById('valEyeL');
+    const valEyeR = document.getElementById('valEyeR');
     const bodyActionDetails = document.getElementById('bodyActionDetails');
 
-    // --- MediaPipe Holistic Model Initialization ---
+    // --- WebGL Shader Engine Initialization ---
+    let gl, glProgram, videoTexture;
+    let uniforms = {};
+
+    const vsSource = `
+      attribute vec2 a_position;
+      attribute vec2 a_texCoord;
+      varying vec2 v_texCoord;
+      uniform bool u_flip;
+      void main() {
+        gl_Position = vec4(a_position, 0.0, 1.0);
+        vec2 coord = a_texCoord;
+        if (u_flip) {
+          coord.x = 1.0 - coord.x;
+        }
+        v_texCoord = coord;
+      }
+    `;
+
+    const fsSource = `
+      precision mediump float;
+      uniform sampler2D u_image;
+      uniform vec2 u_resolution;
+      uniform int u_mode; // 0: Normal, 1: IR, 2: Thermal, 3: WhiteHot, 4: CyberHUD
+      uniform float u_noise;
+      uniform float u_gain;
+      uniform float u_contrast;
+      uniform float u_illuminator;
+      uniform bool u_scanlines;
+      uniform bool u_vignette;
+      uniform float u_time;
+      varying vec2 v_texCoord;
+
+      float rand(vec2 co) {
+        return fract(sin(dot(co.xy, vec2(12.9898, 78.233))) * 43758.5453);
+      }
+
+      vec3 thermalIronbow(float factor) {
+        float f = clamp(factor, 0.0, 1.0);
+        vec3 color;
+        if (f < 0.25) {
+          color = mix(vec3(0.0, 0.0, 0.5), vec3(0.5, 0.0, 0.5), f * 4.0);
+        } else if (f < 0.5) {
+          color = mix(vec3(0.5, 0.0, 0.5), vec3(1.0, 0.2, 0.0), (f - 0.25) * 4.0);
+        } else if (f < 0.75) {
+          color = mix(vec3(1.0, 0.2, 0.0), vec3(1.0, 0.9, 0.0), (f - 0.5) * 4.0);
+        } else {
+          color = mix(vec3(1.0, 0.9, 0.0), vec3(1.0, 1.0, 1.0), (f - 0.75) * 4.0);
+        }
+        return color;
+      }
+
+      void main() {
+        vec4 texColor = texture2D(u_image, v_texCoord);
+        vec3 col = texColor.rgb;
+
+        // Calculate Luminance
+        float lum = dot(col, vec3(0.299, 0.587, 0.114));
+
+        // IR Center Beam Spotlight Simulation
+        vec2 centerDist = v_texCoord - vec2(0.5);
+        float dist = length(centerDist);
+        float beam = smoothstep(0.7, 0.0, dist) * u_illuminator * 0.4;
+        lum += beam;
+
+        // Apply Gain & Contrast
+        lum = ((lum - 0.5) * u_contrast + 0.5) * u_gain;
+        lum = clamp(lum, 0.0, 1.0);
+
+        vec3 finalColor;
+
+        if (u_mode == 1) { // IR Night Vision Green
+          finalColor = vec3(lum * 0.1, lum * 1.3, lum * 0.25);
+        } else if (u_mode == 2) { // FLIR Thermal Ironbow
+          finalColor = thermalIronbow(lum);
+        } else if (u_mode == 3) { // White Hot Thermal
+          float wh = pow(lum, 1.2);
+          finalColor = vec3(wh);
+        } else if (u_mode == 4) { // CyberHUD Cyan/Purple
+          finalColor = vec3(lum * 0.1, lum * 1.1, lum * 1.4);
+        } else { // Normal RGB
+          finalColor = col;
+        }
+
+        // Apply Grain Noise Shader
+        if (u_noise > 0.0) {
+          float noise = (rand(v_texCoord * u_time) - 0.5) * u_noise;
+          finalColor += vec3(noise);
+        }
+
+        // Apply Scanlines
+        if (u_scanlines && (u_mode == 1 || u_mode == 4)) {
+          float scanline = sin(v_texCoord.y * u_resolution.y * 1.5) * 0.08;
+          finalColor -= vec3(scanline);
+        }
+
+        // Apply Vignette Optical Blur/Shadow
+        if (u_vignette) {
+          float vig = smoothstep(0.8, 0.2, dist);
+          finalColor *= vig;
+        }
+
+        gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), 1.0);
+      }
+    `;
+
+    function initWebGL() {
+      gl = webglCanvas.getContext('webgl') || webglCanvas.getContext('experimental-webgl');
+      if (!gl) {
+        console.warn("WebGL neacceptat. Trecere pe fallback 2D.");
+        statPipeline.innerText = "2D Fallback";
+        return false;
+      }
+
+      // Create Shaders
+      const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+      const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+      glProgram = gl.createProgram();
+      gl.attachShader(glProgram, vs);
+      gl.attachShader(glProgram, fs);
+      gl.linkProgram(glProgram);
+
+      if (!gl.getProgramParameter(glProgram, gl.LINK_STATUS)) {
+        console.error("Eroare legare WebGL Program:", gl.getProgramInfoLog(glProgram));
+        return false;
+      }
+
+      gl.useProgram(glProgram);
+
+      // Attribute Buffers
+      const positionBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+        -1, -1,  1, -1, -1,  1,
+        -1,  1,  1, -1,  1,  1,
+      ]), gl.STATIC_DRAW);
+
+      const aPosition = gl.getAttribLocation(glProgram, "a_position");
+      gl.enableVertexAttribArray(aPosition);
+      gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+
+      const texCoordBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+        0, 1,  1, 1,  0, 0,
+        0, 0,  1, 1,  1, 0,
+      ]), gl.STATIC_DRAW);
+
+      const aTexCoord = gl.getAttribLocation(glProgram, "a_texCoord");
+      gl.enableVertexAttribArray(aTexCoord);
+      gl.vertexAttribPointer(aTexCoord, 2, gl.FLOAT, false, 0, 0);
+
+      // Cache Uniform Locations
+      uniforms = {
+        image: gl.getUniformLocation(glProgram, "u_image"),
+        resolution: gl.getUniformLocation(glProgram, "u_resolution"),
+        mode: gl.getUniformLocation(glProgram, "u_mode"),
+        noise: gl.getUniformLocation(glProgram, "u_noise"),
+        gain: gl.getUniformLocation(glProgram, "u_gain"),
+        contrast: gl.getUniformLocation(glProgram, "u_contrast"),
+        illuminator: gl.getUniformLocation(glProgram, "u_illuminator"),
+        scanlines: gl.getUniformLocation(glProgram, "u_scanlines"),
+        vignette: gl.getUniformLocation(glProgram, "u_vignette"),
+        flip: gl.getUniformLocation(glProgram, "u_flip"),
+        time: gl.getUniformLocation(glProgram, "u_time")
+      };
+
+      // Create WebGL Texture
+      videoTexture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, videoTexture);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+      statPipeline.innerText = "WebGL 2.0 GPU";
+      return true;
+    }
+
+    function createShader(gl, type, source) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.error("Eroare compilare WebGL Shader:", gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+        return null;
+      }
+      return shader;
+    }
+
+    function renderWebGLFrame(sourceElement) {
+      if (!gl || !glProgram) return;
+
+      gl.viewport(0, 0, webglCanvas.width, webglCanvas.height);
+      gl.useProgram(glProgram);
+
+      // Upload Texture
+      gl.bindTexture(gl.TEXTURE_2D, videoTexture);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sourceElement);
+
+      // Mode Map
+      const modeMap = { normal: 0, ir: 1, thermal: 2, whitehot: 3, cyberhud: 4 };
+
+      // Set Uniforms
+      gl.uniform1i(uniforms.image, 0);
+      gl.uniform2f(uniforms.resolution, webglCanvas.width, webglCanvas.height);
+      gl.uniform1i(uniforms.mode, modeMap[config.visionMode] || 0);
+      gl.uniform1f(uniforms.noise, config.noiseIntensity);
+      gl.uniform1f(uniforms.gain, config.gainBrightness);
+      gl.uniform1f(uniforms.contrast, config.contrastBoost);
+      gl.uniform1f(uniforms.illuminator, config.irIlluminator);
+      gl.uniform1i(uniforms.scanlines, config.showScanlines ? 1 : 0);
+      gl.uniform1i(uniforms.vignette, config.showVignette ? 1 : 0);
+      gl.uniform1i(uniforms.flip, config.flipHorizontal ? 1 : 0);
+      gl.uniform1f(uniforms.time, performance.now() * 0.001);
+
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+    }
+
+    // --- MediaPipe Holistic Model Setup ---
     function initMediaPipe() {
       try {
-        if (typeof Holistic === 'undefined') {
+        if (typeof window.Holistic === 'undefined') {
           throw new Error("Bibliotecile MediaPipe nu au putut fi încărcate din CDN.");
         }
 
-        holistic = new Holistic({
+        holistic = new window.Holistic({
           locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}`
         });
 
@@ -459,18 +682,16 @@
 
         holistic.onResults(onHolisticResults);
 
-        updateStatus("Sistem Optic IR & Modele AI pregătite!", "success");
-        statMode.innerText = "IR AI Hybrid";
-        
+        updateStatus("Sistem GPU Shader & Modele AI pregătite!", "success");
         enumerateCameras();
-        startWebcam(); // Auto start camera
+        startWebcam(); // Auto-start
       } catch (err) {
-        console.warn("Eroare inițializare MediaPipe, trecere în Mod Demo Simulativ:", err);
-        enableDemoMode("Modele AI indisponibile. Mod Demo activat.");
+        console.warn("Eroare inițializare MediaPipe, trecere în Mod Simulare Demo:", err);
+        enableDemoMode("Modele AI CDN indisponibile. Simulare activată.");
       }
     }
 
-    // --- Status Banner Helper ---
+    // Status Banner Display Helper
     function updateStatus(msg, type = "info") {
       statusMessage.innerText = msg;
       if (type === "success") {
@@ -485,13 +706,13 @@
       }
     }
 
-    // --- Camera Enumeration ---
+    // --- Camera Enumeration & Control ---
     async function enumerateCameras() {
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
         const videoDevices = devices.filter(d => d.kind === 'videoinput');
         cameraSelect.innerHTML = '';
-        
+
         if (videoDevices.length === 0) {
           cameraSelect.innerHTML = '<option value="">Fără cameră detectată</option>';
           return;
@@ -500,7 +721,7 @@
         videoDevices.forEach((device, i) => {
           const opt = document.createElement('option');
           opt.value = device.deviceId;
-          opt.innerText = device.label || `Cameră IR ${i + 1}`;
+          opt.innerText = device.label || `Senzor Video ${i + 1}`;
           cameraSelect.appendChild(opt);
         });
       } catch (e) {
@@ -508,17 +729,16 @@
       }
     }
 
-    // --- Webcam Capture Setup ---
     async function startWebcam(deviceId = null) {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        enableDemoMode("Browserul nu suportă accesul la cameră.");
+        enableDemoMode("Browserul nu oferă acces la API Camera.");
         return;
       }
 
-      updateStatus("Pornire cameră video IR...", "info");
+      updateStatus("Conectare la senzorul optic video...", "info");
 
       if (videoStream) {
-        videoStream.getTracks().forEach(track => track.stop());
+        videoStream.getTracks().forEach(t => t.stop());
       }
 
       const constraints = {
@@ -539,150 +759,45 @@
         isWebcamActive = true;
         demoMode = false;
         toggleCameraBtnText.innerText = "Oprește Camera";
-        updateStatus("Senzor IR Conectat. Detecție AI Activă!", "success");
+        updateStatus("Senzor Optic Activ. Detecție AI & WebGL Rulare!", "success");
 
-        runFrameProcessing();
+        runFrameLoop();
       } catch (err) {
         console.error("Eroare acces webcam:", err);
-        enableDemoMode("Accesul la cameră a fost refuzat sau indisponibil.");
+        enableDemoMode("Acces la cameră respins sau indisponibil.");
       }
     }
 
     function stopWebcam() {
       if (videoStream) {
-        videoStream.getTracks().forEach(track => track.stop());
+        videoStream.getTracks().forEach(t => t.stop());
         videoStream = null;
       }
       isWebcamActive = false;
       toggleCameraBtnText.innerText = "Pornește Camera";
-      enableDemoMode("Cameră oprită de utilizator.");
+      enableDemoMode("Cameră dezactivată de utilizator.");
     }
 
     function enableDemoMode(reason) {
       demoMode = true;
       isWebcamActive = false;
-      statMode.innerText = "Mod Simulare Demo";
       updateStatus(`${reason} Rulare Mod Simulare Tactică.`, "error");
     }
 
-    // --- Main Processing Frame Loop ---
-    async function runFrameProcessing() {
+    // --- Main Frame Processing Loop ---
+    async function runFrameLoop() {
       if (!isWebcamActive) return;
 
       if (video.readyState >= 2 && holistic) {
         try {
           await holistic.send({ image: video });
         } catch (err) {
-          console.warn("Eroare procesare cadru AI:", err);
+          console.warn("Eroare cadru MediaPipe:", err);
         }
       }
 
       if (isWebcamActive) {
-        requestAnimationFrame(runFrameProcessing);
-      }
-    }
-
-    // --- OPTICAL SHADER ENGINE (Night Vision, Thermal FLIR, White Hot) ---
-    function applyVisionShaders(sourceImage, width, height) {
-      offscreenCanvas.width = width;
-      offscreenCanvas.height = height;
-
-      // Draw source image to offscreen buffer
-      offscreenCtx.save();
-      if (config.flipHorizontal) {
-        offscreenCtx.translate(width, 0);
-        offscreenCtx.scale(-1, 1);
-      }
-      offscreenCtx.drawImage(sourceImage, 0, 0, width, height);
-      offscreenCtx.restore();
-
-      if (config.visionMode === 'normal') {
-        ctx.drawImage(offscreenCanvas, 0, 0, width, height);
-        return;
-      }
-
-      const imgData = offscreenCtx.getImageData(0, 0, width, height);
-      const data = imgData.data;
-
-      const gain = config.gainBrightness;
-      const contrast = config.contrastBoost;
-      const mode = config.visionMode;
-
-      // Pixel Shading Loop
-      for (let i = 0; i < data.length; i += 4) {
-        let r = data[i];
-        let g = data[i + 1];
-        let b = data[i + 2];
-
-        // Gray luminance conversion
-        let lum = (0.299 * r + 0.587 * g + 0.114 * b);
-        
-        // Contrast & Gain adjustments
-        lum = ((lum - 128) * contrast + 128) * gain;
-        lum = Math.min(255, Math.max(0, lum));
-
-        if (mode === 'ir') {
-          // Night Vision Green Phosphor
-          data[i] = lum * 0.15;            // Red channel minimal
-          data[i + 1] = Math.min(255, lum * 1.35); // Green channel amplified
-          data[i + 2] = lum * 0.25;          // Blue channel subtle cyan
-        } else if (mode === 'thermal') {
-          // FLIR Rainbow Heatmap (Blue -> Purple -> Red -> Yellow -> White)
-          const norm = lum / 255;
-          if (norm < 0.25) { // Cold / Deep Blue
-            data[i] = 0;
-            data[i + 1] = Math.round(norm * 4 * 255);
-            data[i + 2] = 255;
-          } else if (norm < 0.5) { // Purple to Red
-            data[i] = Math.round((norm - 0.25) * 4 * 255);
-            data[i + 1] = 0;
-            data[i + 2] = Math.round((1 - (norm - 0.25) * 4) * 255);
-          } else if (norm < 0.75) { // Red to Yellow
-            data[i] = 255;
-            data[i + 1] = Math.round((norm - 0.5) * 4 * 255);
-            data[i + 2] = 0;
-          } else { // Yellow to White Hot
-            data[i] = 255;
-            data[i + 1] = 255;
-            data[i + 2] = Math.round((norm - 0.75) * 4 * 255);
-          }
-        } else if (mode === 'whitehot') {
-          // High contrast White Hot Thermal
-          const whiteHot = Math.pow(lum / 255, 1.3) * 255;
-          data[i] = whiteHot;
-          data[i + 1] = whiteHot;
-          data[i + 2] = whiteHot;
-        } else if (mode === 'cyberhud') {
-          // Tactical Cyan / Magenta High-tech Filter
-          data[i] = lum * 0.2;
-          data[i + 1] = Math.min(255, lum * 1.2);
-          data[i + 2] = Math.min(255, lum * 1.4);
-        }
-      }
-
-      ctx.putImageData(imgData, 0, 0);
-
-      // Noise & Grain Overlay
-      if (config.noiseIntensity > 0) {
-        ctx.save();
-        const noiseAmount = config.noiseIntensity * 40;
-        ctx.fillStyle = mode === 'ir' ? 'rgba(56, 239, 125, 0.05)' : 'rgba(255, 255, 255, 0.05)';
-        for (let j = 0; j < 400; j++) {
-          const nx = Math.random() * width;
-          const ny = Math.random() * height;
-          ctx.fillRect(nx, ny, 1.5, 1.5);
-        }
-        ctx.restore();
-      }
-
-      // Scanlines Layer
-      if (config.showScanlines && (mode === 'ir' || mode === 'cyberhud')) {
-        ctx.save();
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
-        for (let y = 0; y < height; y += 4) {
-          ctx.fillRect(0, y, width, 1.5);
-        }
-        ctx.restore();
+        requestAnimationFrame(runFrameLoop);
       }
     }
 
@@ -693,57 +808,59 @@
       lastFrameTime = now;
 
       frameCount++;
-      if (frameCount % 8 === 0) {
+      if (frameCount % 6 === 0) {
         fps = Math.round(1 / dt);
         statFPS.innerText = `${fps} FPS`;
       }
 
-      // Sync canvas sizing
       const w = results.image ? results.image.width : (video.videoWidth || 640);
       const h = results.image ? results.image.height : (video.videoHeight || 480);
-      
-      if (canvas.width !== w || canvas.height !== h) {
-        canvas.width = w;
-        canvas.height = h;
+
+      // Sync Canvas Dimensions
+      if (webglCanvas.width !== w || webglCanvas.height !== h) {
+        webglCanvas.width = w;
+        webglCanvas.height = h;
+        overlayCanvas.width = w;
+        overlayCanvas.height = h;
       }
 
-      // 0. Render Shader Video Frame
+      // Clear Overlay Context
+      overlayCtx.clearRect(0, 0, w, h);
+
+      // 1. Process WebGL Shaders on Base Image
       if (results.image) {
-        applyVisionShaders(results.image, canvas.width, canvas.height);
+        renderWebGLFrame(results.image);
       }
 
       let maxSpeed = 0;
-      const themeColor = getVisionThemeColor();
+      const theme = getThemeColors();
 
-      // 1. FACE MESH RENDER & CLASSIFICATION
+      // 2. FACE MESH PROCESSING
       if (results.faceLandmarks) {
         statFaceLandmarks.innerText = `${results.faceLandmarks.length} Pts`;
         if (config.showFace) {
-          drawLandmarks(ctx, results.faceLandmarks, {
-            color: themeColor.face,
-            lineWidth: 0.5,
+          drawLandmarks(overlayCtx, results.faceLandmarks, {
+            color: theme.face,
             radius: 1,
             flip: config.flipHorizontal,
-            canvasWidth: canvas.width,
-            canvasHeight: canvas.height
+            w, h
           });
         }
 
-        const faceMetrics = analyzeFace(results.faceLandmarks);
-        hudFaceExpression.innerText = faceMetrics.expr;
-        valSmile.innerText = `${faceMetrics.smile}%`;
-        valBlink.innerText = `${faceMetrics.blink}%`;
-        valMouth.innerText = `${faceMetrics.mouth}%`;
-        valBrows.innerText = `${faceMetrics.brows}%`;
+        const face = analyzeFace(results.faceLandmarks);
+        hudFaceExpression.innerText = face.expr;
+        valSmile.innerText = `${face.smile}%`;
+        valMouth.innerText = `${face.mouth}%`;
+        valEyeL.innerText = face.eyeL ? 'Deschis' : 'Închis';
+        valEyeR.innerText = face.eyeR ? 'Deschis' : 'Închis';
 
-        // Simulated Thermal Body Temp reading
-        const estTemp = (36.4 + (faceMetrics.smile / 100) * 0.4).toFixed(1);
+        const estTemp = (36.4 + (face.smile / 100) * 0.5).toFixed(1);
         hudThermalHeat.innerText = `${estTemp} °C (Nominal)`;
       } else {
         statFaceLandmarks.innerText = "0 Pts";
       }
 
-      // 2. HANDS TRACKING & GESTURES
+      // 3. HANDS TRACKING & GESTURE ANALYSIS
       let activeHands = 0;
       let handGestures = [];
 
@@ -751,21 +868,21 @@
       if (results.leftHandLandmarks) {
         activeHands++;
         const g = classifyHandGesture(results.leftHandLandmarks);
-        handGestures.push(`Stânga: ${g}`);
+        handGestures.push(`L: ${g}`);
         leftHandStatus.innerText = `Stânga: ${g}`;
-        
+
         if (config.showHands) {
-          drawConnectors(results.leftHandLandmarks, HAND_CONNECTIONS, themeColor.handLeft);
+          drawConnectors(overlayCtx, results.leftHandLandmarks, HAND_CONNECTIONS, theme.handLeft, w, h);
         }
 
         const wrist = results.leftHandLandmarks[0];
         const pt = { x: config.flipHorizontal ? (1 - wrist.x) : wrist.x, y: wrist.y };
         pushHistory(history.leftHand, pt);
         const pred = calculateTrajectory(history.leftHand);
-        maxSpeed = Math.max(maxSpeed, pred.speed * canvas.width);
+        maxSpeed = Math.max(maxSpeed, pred.speed * w);
 
-        drawTrajectoryTrail(history.leftHand, themeColor.handLeft);
-        drawPredictionVector(pt, pred, themeColor.handLeft);
+        drawTrajectoryTrail(overlayCtx, history.leftHand, theme.handLeft, w, h);
+        drawPredictionVector(overlayCtx, pt, pred, theme.handLeft, w, h);
       } else {
         leftHandStatus.innerText = "Stânga: Inactiv";
       }
@@ -774,21 +891,21 @@
       if (results.rightHandLandmarks) {
         activeHands++;
         const g = classifyHandGesture(results.rightHandLandmarks);
-        handGestures.push(`Dreapta: ${g}`);
+        handGestures.push(`R: ${g}`);
         rightHandStatus.innerText = `Dreapta: ${g}`;
 
         if (config.showHands) {
-          drawConnectors(results.rightHandLandmarks, HAND_CONNECTIONS, themeColor.handRight);
+          drawConnectors(overlayCtx, results.rightHandLandmarks, HAND_CONNECTIONS, theme.handRight, w, h);
         }
 
         const wrist = results.rightHandLandmarks[0];
         const pt = { x: config.flipHorizontal ? (1 - wrist.x) : wrist.x, y: wrist.y };
         pushHistory(history.rightHand, pt);
         const pred = calculateTrajectory(history.rightHand);
-        maxSpeed = Math.max(maxSpeed, pred.speed * canvas.width);
+        maxSpeed = Math.max(maxSpeed, pred.speed * w);
 
-        drawTrajectoryTrail(history.rightHand, themeColor.handRight);
-        drawPredictionVector(pt, pred, themeColor.handRight);
+        drawTrajectoryTrail(overlayCtx, history.rightHand, theme.handRight, w, h);
+        drawPredictionVector(overlayCtx, pt, pred, theme.handRight, w, h);
       } else {
         rightHandStatus.innerText = "Dreapta: Inactiv";
       }
@@ -796,11 +913,11 @@
       statHandsCount.innerText = `${activeHands} Detectate`;
       hudHandGesture.innerText = handGestures.length > 0 ? handGestures.join(' | ') : 'Niciunul';
 
-      // 3. POSE SKELETON & ACTION INTUITION
+      // 4. POSE SKELETON & MOTION ANALYSIS
       if (results.poseLandmarks) {
         statPoseLandmarks.innerText = `${results.poseLandmarks.length} Pts`;
         if (config.showPose) {
-          drawConnectors(results.poseLandmarks, POSE_CONNECTIONS, themeColor.pose);
+          drawConnectors(overlayCtx, results.poseLandmarks, POSE_CONNECTIONS, theme.pose, w, h);
         }
 
         const actionState = analyzeBodyPose(results.poseLandmarks, maxSpeed);
@@ -814,8 +931,8 @@
       hudMotionVector.innerText = maxSpeed > 40 ? `În Mișcare (${Math.round(maxSpeed)} px/s)` : 'Static (0 px/s)';
     }
 
-    // --- Dynamic Vision Colors based on Active Filter ---
-    function getVisionThemeColor() {
+    // --- Dynamic Overlay Palette ---
+    function getThemeColors() {
       if (config.visionMode === 'ir') {
         return { face: '#a7f3d0', handLeft: '#34d399', handRight: '#6ee7b7', pose: '#10b981' };
       } else if (config.visionMode === 'thermal') {
@@ -828,10 +945,9 @@
       return { face: '#38bdf8', handLeft: '#f43f5e', handRight: '#38bdf8', pose: '#a855f7' };
     }
 
-    // --- Gesture & Face Classifiers ---
-
+    // --- Biometric Classification Algorithms ---
     function classifyHandGesture(landmarks) {
-      if (!landmarks || landmarks.length < 21) return 'Necunoscut';
+      if (!landmarks || landmarks.length < 21) return 'Inactiv';
 
       const thumbTip = landmarks[4];
       const indexTip = landmarks[8];
@@ -847,62 +963,64 @@
       const isRingOpen = ringTip.y < landmarks[14].y;
       const isPinkyOpen = pinkyTip.y < landmarks[18].y;
 
-      if (pinchDist < 0.045) return 'Pinch / Prindere 👌';
+      if (pinchDist < 0.045) return 'Prindere / Pinch 👌';
       if (isIndexOpen && isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'Pace / Victorie ✌️';
-      if (isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'Arată cu degetul 👆';
+      if (isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'Arată cu Degetul 👆';
       if (isIndexOpen && isMiddleOpen && isRingOpen && isPinkyOpen) return 'Palmă Deschisă 🖐️';
-      if (!isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'Pumn ✊';
+      if (!isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'Pumn Strâns ✊';
 
       return 'Mână Activă';
     }
 
     function analyzeFace(landmarks) {
-      if (!landmarks || landmarks.length < 468) return { expr: 'Neutru', smile: 0, blink: 0, mouth: 0, brows: 0 };
+      if (!landmarks || landmarks.length < 468) return { expr: 'Neutru', smile: 0, mouth: 0, eyeL: true, eyeR: true };
 
       const mouthTop = landmarks[13];
       const mouthBottom = landmarks[14];
       const mouthLeft = landmarks[61];
       const mouthRight = landmarks[291];
 
-      const mouthHeight = Math.hypot(mouthTop.x - mouthBottom.x, mouthTop.y - mouthBottom.y);
-      const mouthWidth = Math.hypot(mouthLeft.x - mouthRight.x, mouthLeft.y - mouthRight.y);
+      const mouthH = Math.hypot(mouthTop.x - mouthBottom.x, mouthTop.y - mouthBottom.y);
+      const mouthW = Math.hypot(mouthLeft.x - mouthRight.x, mouthLeft.y - mouthRight.y);
 
-      const smileScore = Math.min(Math.max((mouthWidth - 0.15) * 4, 0), 1);
-      const mouthOpenScore = Math.min(Math.max((mouthHeight - 0.02) * 20, 0), 1);
+      const smileScore = Math.min(Math.max((mouthW - 0.14) * 4.5, 0), 1);
+      const mouthOpenScore = Math.min(Math.max((mouthH - 0.02) * 18, 0), 1);
+
+      // Eye Aspect Ratio estimation
+      const eyeLDist = Math.hypot(landmarks[159].x - landmarks[145].x, landmarks[159].y - landmarks[145].y);
+      const eyeRDist = Math.hypot(landmarks[386].x - landmarks[374].x, landmarks[386].y - landmarks[374].y);
 
       let expr = 'Neutru';
-      if (smileScore > 0.45) expr = 'Zâmbitor 😀';
-      else if (mouthOpenScore > 0.5) expr = 'Surprins / Gură Deschisă 😮';
-      else if (mouthOpenScore < 0.05 && smileScore < 0.2) expr = 'Concentrat / Neutru 😐';
+      if (smileScore > 0.4) expr = 'Zâmbitor 😀';
+      else if (mouthOpenScore > 0.45) expr = 'Surprins / Gură Deschisă 😮';
 
       return {
         expr,
         smile: Math.round(smileScore * 100),
-        blink: 0,
         mouth: Math.round(mouthOpenScore * 100),
-        brows: 0
+        eyeL: eyeLDist > 0.012,
+        eyeR: eyeRDist > 0.012
       };
     }
 
-    function analyzeBodyPose(poseLandmarks, maxSpeed) {
-      if (!poseLandmarks || poseLandmarks.length < 33) return 'Stationar';
+    function analyzeBodyPose(landmarks, maxSpeed) {
+      if (!landmarks || landmarks.length < 33) return 'Staționar';
 
-      const leftWrist = poseLandmarks[15];
-      const rightWrist = poseLandmarks[16];
-      const nose = poseLandmarks[0];
+      const leftWrist = landmarks[15];
+      const rightWrist = landmarks[16];
+      const nose = landmarks[0];
 
-      const isLeftHandRaised = leftWrist && nose && leftWrist.y < nose.y;
-      const isRightHandRaised = rightWrist && nose && rightWrist.y < nose.y;
+      const isLeftRaised = leftWrist && nose && leftWrist.y < nose.y;
+      const isRightRaised = rightWrist && nose && rightWrist.y < nose.y;
 
-      if (isLeftHandRaised && isRightHandRaised) return 'Brațe Ridicate / Salut 🙌';
-      if (isLeftHandRaised || isRightHandRaised) return 'Fluturare Mână 👋';
-      if (maxSpeed > 350) return 'Mișcare Rapidă / Gesturi ⚡';
+      if (isLeftRaised && isRightRaised) return 'Brațe Ridicate / Ambele 🙌';
+      if (isLeftRaised || isRightRaised) return 'Fluturare Mână 👋';
+      if (maxSpeed > 350) return 'Mișcare Rapidă ⚡';
 
-      return 'Postură Neutrală / Staționară';
+      return 'Postură Staționară Neutrală';
     }
 
-    // --- Trajectory & Vector Engine ---
-
+    // --- Trajectory & Vector Utilities ---
     function pushHistory(list, pt) {
       list.push({ ...pt, timestamp: performance.now() });
       if (list.length > config.trailLength) {
@@ -927,15 +1045,15 @@
       return { vx, vy, speed, px, py };
     }
 
-    function drawTrajectoryTrail(list, color) {
+    function drawTrajectoryTrail(ctx, list, color, w, h) {
       if (!config.showTrajectory || list.length < 2) return;
 
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(list[0].x * canvas.width, list[0].y * canvas.height);
+      ctx.moveTo(list[0].x * w, list[0].y * h);
 
       for (let i = 1; i < list.length; i++) {
-        ctx.lineTo(list[i].x * canvas.width, list[i].y * canvas.height);
+        ctx.lineTo(list[i].x * w, list[i].y * h);
       }
 
       ctx.strokeStyle = color;
@@ -946,13 +1064,13 @@
       ctx.restore();
     }
 
-    function drawPredictionVector(curr, pred, color) {
+    function drawPredictionVector(ctx, curr, pred, color, w, h) {
       if (!config.showVectors || pred.speed < 0.1) return;
 
-      const x1 = curr.x * canvas.width;
-      const y1 = curr.y * canvas.height;
-      const x2 = pred.px * canvas.width;
-      const y2 = pred.py * canvas.height;
+      const x1 = curr.x * w;
+      const y1 = curr.y * h;
+      const x2 = pred.px * w;
+      const y2 = pred.py * h;
 
       ctx.save();
       ctx.beginPath();
@@ -963,7 +1081,7 @@
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Predicted destination halo
+      // Predicted Target Circle
       ctx.beginPath();
       ctx.setLineDash([]);
       ctx.arc(x2, y2, 8, 0, Math.PI * 2);
@@ -975,7 +1093,7 @@
       ctx.restore();
     }
 
-    function drawConnectors(landmarks, connections, color) {
+    function drawConnectors(ctx, landmarks, connections, color, w, h) {
       if (!landmarks) return;
       ctx.save();
       ctx.strokeStyle = color;
@@ -984,10 +1102,10 @@
         const p1 = landmarks[i];
         const p2 = landmarks[j];
         if (p1 && p2) {
-          const x1 = config.flipHorizontal ? (1 - p1.x) * canvas.width : p1.x * canvas.width;
-          const y1 = p1.y * canvas.height;
-          const x2 = config.flipHorizontal ? (1 - p2.x) * canvas.width : p2.x * canvas.width;
-          const y2 = p2.y * canvas.height;
+          const x1 = config.flipHorizontal ? (1 - p1.x) * w : p1.x * w;
+          const y1 = p1.y * h;
+          const x2 = config.flipHorizontal ? (1 - p2.x) * w : p2.x * w;
+          const y2 = p2.y * h;
 
           ctx.beginPath();
           ctx.moveTo(x1, y1);
@@ -1003,8 +1121,8 @@
       ctx.fillStyle = opts.color;
       landmarks.forEach((pt, idx) => {
         if (idx % 3 === 0) {
-          const x = opts.flip ? (1 - pt.x) * opts.canvasWidth : pt.x * opts.canvasWidth;
-          const y = pt.y * opts.canvasHeight;
+          const x = opts.flip ? (1 - pt.x) * opts.w : pt.x * opts.w;
+          const y = pt.y * opts.h;
           ctx.beginPath();
           ctx.arc(x, y, opts.radius, 0, Math.PI * 2);
           ctx.fill();
@@ -1013,23 +1131,30 @@
       ctx.restore();
     }
 
-    // --- Demo Mode Animation Loop (Offline Fallback) ---
+    // --- Offline Synthetic Target Demo Loop ---
     function renderDemoLoop() {
       if (!demoMode) return;
 
       demoAngle += 0.04;
-      const w = canvas.width || 640;
-      const h = canvas.height || 480;
+      const w = webglCanvas.width || 640;
+      const h = webglCanvas.height || 480;
 
-      if (canvas.width !== 640 || canvas.height !== 480) {
-        canvas.width = 640;
-        canvas.height = 480;
+      if (webglCanvas.width !== 640 || webglCanvas.height !== 480) {
+        webglCanvas.width = 640;
+        webglCanvas.height = 480;
+        overlayCanvas.width = 640;
+        overlayCanvas.height = 480;
       }
 
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Draw Synthetic Target Canvas background
+      overlayCtx.clearRect(0, 0, w, h);
+      
+      const glCtx = webglCanvas.getContext('2d');
+      if (glCtx) {
+        glCtx.fillStyle = '#090d16';
+        glCtx.fillRect(0, 0, w, h);
+      }
 
-      // Orbital target calculation
       const x = 0.5 + Math.sin(demoAngle) * 0.25;
       const y = 0.5 + Math.cos(demoAngle * 0.8) * 0.2;
 
@@ -1037,76 +1162,75 @@
       pushHistory(history.rightHand, pt);
       const pred = calculateTrajectory(history.rightHand);
 
-      const colors = getVisionThemeColor();
-      drawTrajectoryTrail(history.rightHand, colors.handLeft);
-      drawPredictionVector(pt, pred, colors.handLeft);
+      const theme = getThemeColors();
+      drawTrajectoryTrail(overlayCtx, history.rightHand, theme.handLeft, w, h);
+      drawPredictionVector(overlayCtx, pt, pred, theme.handLeft, w, h);
 
-      // Target point
-      ctx.beginPath();
-      ctx.arc(x * canvas.width, y * canvas.height, 12, 0, Math.PI * 2);
-      ctx.fillStyle = colors.handLeft;
-      ctx.fill();
+      // Target Graphic
+      overlayCtx.beginPath();
+      overlayCtx.arc(x * w, y * h, 14, 0, Math.PI * 2);
+      overlayCtx.fillStyle = theme.handLeft;
+      overlayCtx.fill();
 
-      // Updates
+      // Diagnostics Updates
       hudActionState.innerText = "Simulare Tactică Demo";
-      hudHandGesture.innerText = "Tinta IR Demo";
-      hudFaceExpression.innerText = "Mod Simulare";
-      hudMotionVector.innerText = `Vx: ${Math.round(pred.vx)} px/s`;
-      statHandVelocity.innerText = `${Math.round(pred.speed * canvas.width)} px/s`;
+      hudHandGesture.innerText = "Țintă IR Demo";
+      hudFaceExpression.innerText = "Simulare Activă";
+      hudMotionVector.innerText = `Vx: ${Math.round(pred.vx * w)} px/s`;
+      statHandVelocity.innerText = `${Math.round(pred.speed * w)} px/s`;
       statFPS.innerText = "60 FPS";
 
       requestAnimationFrame(renderDemoLoop);
     }
 
-    // --- Control Listeners & App Launch ---
+    // --- UI Control Event Listeners ---
     toggleCameraBtn.addEventListener('click', () => {
-      if (isWebcamActive) {
-        stopWebcam();
-      } else {
-        startWebcam(cameraSelect.value);
-      }
+      if (isWebcamActive) stopWebcam();
+      else startWebcam(cameraSelect.value);
     });
 
     cameraSelect.addEventListener('change', (e) => {
-      if (isWebcamActive) {
-        startWebcam(e.target.value);
-      }
+      if (isWebcamActive) startWebcam(e.target.value);
     });
 
-    // Vision Mode Switching Buttons
     document.querySelectorAll('.btn-vision-mode').forEach(btn => {
       btn.addEventListener('click', (e) => {
         document.querySelectorAll('.btn-vision-mode').forEach(b => {
           b.className = "btn-vision-mode px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all";
         });
 
-        const selectedBtn = e.currentTarget;
-        selectedBtn.className = "btn-vision-mode px-3 py-1 rounded-full text-xs font-semibold bg-emerald-600 text-white shadow-md flex items-center gap-1.5 transition-all";
+        const selected = e.currentTarget;
+        selected.className = "btn-vision-mode px-3 py-1 rounded-full text-xs font-semibold bg-emerald-600 text-white shadow-md flex items-center gap-1.5 transition-all";
 
-        config.visionMode = selectedBtn.dataset.mode;
+        config.visionMode = selected.dataset.mode;
         document.getElementById('aiConfidenceBadge').innerText = `${config.visionMode.toUpperCase()} Activ`;
       });
     });
 
-    // Shader Controls
-    noiseIntensityInput.addEventListener('input', (e) => {
+    // Slider Controls
+    noiseInput.addEventListener('input', (e) => {
       config.noiseIntensity = parseFloat(e.target.value) / 100;
       document.getElementById('noiseVal').innerText = `${e.target.value}%`;
     });
 
-    gainBrightnessInput.addEventListener('input', (e) => {
+    gainInput.addEventListener('input', (e) => {
       config.gainBrightness = parseFloat(e.target.value);
       document.getElementById('gainVal').innerText = `${config.gainBrightness}x`;
     });
 
-    contrastBoostInput.addEventListener('input', (e) => {
+    contrastInput.addEventListener('input', (e) => {
       config.contrastBoost = parseFloat(e.target.value);
       document.getElementById('contrastVal').innerText = `${config.contrastBoost}x`;
     });
 
-    chkScanlines.addEventListener('change', (e) => config.showScanlines = e.target.checked);
+    illuminatorInput.addEventListener('input', (e) => {
+      config.irIlluminator = parseFloat(e.target.value) / 100;
+      document.getElementById('irIlluminatorVal').innerText = `${e.target.value}%`;
+    });
 
-    // Option Toggles
+    chkScanlines.addEventListener('change', (e) => config.showScanlines = e.target.checked);
+    chkVignette.addEventListener('change', (e) => config.showVignette = e.target.checked);
+
     chkFace.addEventListener('change', (e) => config.showFace = e.target.checked);
     chkHands.addEventListener('change', (e) => config.showHands = e.target.checked);
     chkPose.addEventListener('change', (e) => config.showPose = e.target.checked);
@@ -1126,9 +1250,18 @@
 
     // Exporters
     document.getElementById('snapshotBtn').addEventListener('click', () => {
+      // Merge WebGL and Overlay Canvases into single export image
+      const expCanvas = document.createElement('canvas');
+      expCanvas.width = webglCanvas.width;
+      expCanvas.height = webglCanvas.height;
+      const expCtx = expCanvas.getContext('2d');
+
+      expCtx.drawImage(webglCanvas, 0, 0);
+      expCtx.drawImage(overlayCanvas, 0, 0);
+
       const link = document.createElement('a');
-      link.download = `omnivision-ir-snapshot-${Date.now()}.png`;
-      link.href = canvas.toDataURL('image/png');
+      link.download = `omnivision-tactical-snapshot-${Date.now()}.png`;
+      link.href = expCanvas.toDataURL('image/png');
       link.click();
     });
 
@@ -1147,11 +1280,11 @@
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
       const a = document.createElement('a');
       a.href = dataStr;
-      a.download = `omnivision-ir-telemetry-${Date.now()}.json`;
+      a.download = `omnivision-telemetry-${Date.now()}.json`;
       a.click();
     });
 
-    // Connections Definitions for MediaPipe Holistic
+    // Connections Mapping
     const HAND_CONNECTIONS = [
       [0, 1], [1, 2], [2, 3], [3, 4],
       [0, 5], [5, 6], [6, 7], [7, 8],
@@ -1165,9 +1298,10 @@
       [11, 23], [12, 24], [23, 24], [23, 25], [24, 26], [25, 27], [26, 28]
     ];
 
-    // On Load Initialization
+    // Initialization
     window.addEventListener('load', () => {
-      lucide.createIcons();
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+      initWebGL();
       initMediaPipe();
       renderDemoLoop();
     });
