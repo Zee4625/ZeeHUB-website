@@ -130,7 +130,7 @@
             </div>
             <div class="activity-item">
                 Voice Subsystem Ready
-                <span>Speech Synthesis Standby</span>
+                <span>Speech Synthesis Active</span>
             </div>
 
             <div class="panel-title" style="margin-top: 10px;">J.A.R.V.I.S. Listening...</div>
@@ -173,6 +173,23 @@
             document.getElementById('mem-fill').style.width = mem + '%';
         }, 4000);
 
+        // Text-to-Speech Voice Output Function
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 1.0;
+                utterance.pitch = 0.95;
+                
+                const voices = window.speechSynthesis.getVoices();
+                const preferredVoice = voices.find(v => v.lang.includes('en-GB') || v.lang.includes('en-US'));
+                if (preferredVoice) {
+                    utterance.voice = preferredVoice;
+                }
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
         async function sendInput() {
             const input = document.getElementById('user-input');
             const message = input.value.trim();
@@ -210,15 +227,14 @@
                     throw new Error("Empty response received.");
                 }
             } catch (error) {
-                // Intelligent fallback for local browser security / CORS restrictions
-                console.warn("Live API connection bypassed due to browser security/CORS. Using local JARVIS neural simulator:", error);
+                // Intelligent offline fallback simulator if browser blocks direct API call
                 const lower = message.toLowerCase();
                 if (lower.includes('diagnostic') || lower.includes('stats')) {
                     reply = "All core systems operating at peak efficiency. CPU load is nominal at 14%, memory allocation stable at 38%.";
                 } else if (lower.includes('capability') || lower.includes('do')) {
                     reply = "I am fully online, Sir. I can analyze data, manage scheduling, review system metrics, and assist with complex engineering tasks.";
                 } else if (lower.includes('briefing')) {
-                    reply = "Good day, Sir. Weather is clear at 22°C. No critical security anomalies detected across local node clusters.";
+                    reply = "Good day, Sir. Weather is clear at 22 degrees Celsius. No critical security anomalies detected across local node clusters.";
                 } else {
                     reply = `I have received your transmission regarding "${message}". Neural subroutines are fully functional and ready for deployment, Sir.`;
                 }
@@ -227,6 +243,9 @@
             removeLastMsg();
             appendMsg(reply, 'assistant');
             conversationHistory.push({ role: "assistant", content: reply });
+            
+            // Speak the response out loud!
+            speakText(reply);
         }
 
         function sendPrompt(text) {
