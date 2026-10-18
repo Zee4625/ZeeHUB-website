@@ -1,455 +1,238 @@
 <!DOCTYPE html>
-<html lang="ro" class="dark h-full">
+<html lang="ro">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Urmărire Trăsături Faciale AI - MediaPipe</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        darkBg: '#0b0f19',
-                        cardBg: '#151c2c',
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <!-- MediaPipe FaceMesh & Camera Utils (Versiuni clasice CDN super-stabile, fara erori de CORS/WASM) -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
-
-    <style>
-        /* Oglindire video și canvas pentru experiență nativă de oglindă */
-        .mirror {
-            transform: scaleX(-1);
-        }
-        /* Gradient animat pentru titlu */
-        .gradient-text {
-            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #000000 100%);
-            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analiză facială live</title>
+<style>
+:root{--bg:#eef2f7;--surf:#fff;--surf2:#e4eaf2;--tx:#162033;--mut:#5d6b82;--acc:#0a7fc2;--ok:#16a34a;--warn:#e11d48;--bd:#cfd8e6;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#121823;--surf:#1b2433;--surf2:#263247;--tx:#e8edf5;--mut:#94a3b8;--acc:#5cc8ff;--ok:#4ade80;--warn:#fb7185;--bd:#2f3c52;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:20px;max-width:1180px;margin:0 auto}
+h1{font-size:1.7rem;margin:0 0 4px;letter-spacing:-.01em}
+.sub{margin:0 0 20px;color:var(--mut);max-width:70ch}
+main{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:20px;align-items:start}
+@media(max-width:860px){main{grid-template-columns:1fr}}
+.wrap{position:relative;aspect-ratio:4/3;background:#000;border-radius:14px;overflow:hidden;border:1px solid var(--bd)}
+.wrap video,.wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+video{transform:scaleX(-1)}
+#msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;color:#e8edf5;background:rgba(10,14,22,.78);font-size:1rem}
+#msg:empty{display:none}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+button{font:inherit;font-weight:600;padding:9px 16px;border-radius:9px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);cursor:pointer}
+button.pri{background:var(--acc);border-color:var(--acc);color:#04121c}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+input{font:inherit;padding:9px 12px;border-radius:9px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);min-width:0;flex:1 1 160px}
+#fps{margin-left:auto;color:var(--mut);font-variant-numeric:tabular-nums}
+.enroll{margin-top:18px;padding:14px;border-radius:12px;background:var(--surf);border:1px solid var(--bd)}
+.enroll h2{font-size:1rem;margin:0 0 4px}
+.muted{color:var(--mut);font-size:.9rem}
+.chip{display:inline-block;margin:6px 6px 0 0;padding:3px 10px;border-radius:99px;background:var(--surf2);font-size:.9rem}
+#cards{display:grid;gap:14px}
+.card{background:var(--surf);border:1px solid var(--bd);border-radius:12px;padding:14px 16px}
+.card h3{margin:0 0 8px;font-size:1.1rem}
+.card h3 small{color:var(--mut);font-weight:400}
+dl{display:grid;grid-template-columns:auto 1fr;gap:3px 14px;margin:0 0 10px}
+dt{color:var(--mut)}
+dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
+.bar{display:grid;grid-template-columns:78px 1fr 52px;gap:8px;align-items:center;font-size:.9rem;margin-top:5px}
+.bar i{display:block;height:8px;border-radius:4px;background:var(--surf2);position:relative;overflow:hidden}
+.bar i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:var(--acc)}
+.bar.mv i::after{background:var(--warn)}
+.bar b{text-align:right;font-weight:500;font-variant-numeric:tabular-nums}
+.empty{padding:18px;border:1px dashed var(--bd);border-radius:12px;color:var(--mut)}
+.note{margin-top:22px;color:var(--mut);font-size:.88rem;max-width:80ch}
+</style>
 </head>
-<body class="bg-darkBg text-slate-100 min-h-full font-sans flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+<body>
+<h1>Analiză facială live</h1>
+<p class="sub">Pornește camera și pagina detectează fețele, reperele faciale, vârsta, genul, emoția, poziția capului, clipirile și mișcarea. Totul rulează în browserul tău; nicio imagine nu este trimisă nicăieri.</p>
+<main>
+  <section>
+    <div class="wrap" id="wrap">
+      <video id="v" autoplay muted playsinline></video>
+      <canvas id="c"></canvas>
+      <div id="msg">Apasă „Pornește camera” pentru a începe.</div>
+    </div>
+    <div class="row">
+      <button class="pri" id="start">Pornește camera</button>
+      <button id="stop" disabled>Oprește</button>
+      <button id="calib" disabled title="Setează poziția actuală a capului ca „drept înainte”">Calibrează capul</button>
+      <span id="fps"></span>
+    </div>
+    <div class="enroll">
+      <h2>Recunoaștere persoane</h2>
+      <p class="muted" style="margin:0 0 10px">Scrie un nume și apasă butonul cât timp ești în cadru. Fața este memorată doar în acest browser.</p>
+      <div class="row" style="margin-top:0">
+        <input id="name" placeholder="Nume (ex: Andrei)" maxlength="40" aria-label="Nume">
+        <button id="save" disabled>Memorează fața</button>
+        <button id="clear">Șterge tot</button>
+      </div>
+      <div id="known"></div>
+      <div id="hint" class="muted" style="margin-top:6px" role="status"></div>
+    </div>
+  </section>
+  <aside id="cards"><div class="empty">Rezultatele apar aici după pornirea camerei.</div></aside>
+</main>
+<p class="note">Vârsta și genul sunt estimări făcute de un model AI după aspectul feței și pot greși. Unghiurile capului sunt aproximative; folosește „Calibrează capul” după ce te uiți drept în cameră. Pentru lumină și precizie bună, stai cu fața spre o sursă de lumină.</p>
 
-    <!-- Header / Antet -->
-    <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-4 py-4 sm:px-8">
-        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="p-2.5 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">
-                    <i data-lucide="scan-face" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold gradient-text tracking-wide">FaceTracker AI</h1>
-                    <p class="text-xs text-slate-400">Detecție și urmărire facială 3D cu MediaPipe</p>
-                </div>
-            </div>
+<script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const v=$('v'),c=$('c'),ctx=c.getContext('2d');
+const MODEL_URL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model/';
+const EXPR={neutral:'Neutru',happy:'Fericit',sad:'Trist',angry:'Furios',fearful:'Speriat',disgusted:'Dezgustat',surprised:'Surprins'};
+const GROUPS=[[0,16,0],[17,21,0],[22,26,0],[27,30,0],[31,35,0],[36,41,1],[42,47,1],[48,59,1],[60,67,1]];
+let running=false,stream=null,loaded=false,matcher=null,lastRes=[],states=[],offs={yaw:0,pitch:0},raw0={yaw:0,pitch:0},fps=0,lastT=0;
+let known=[];try{known=JSON.parse(localStorage.getItem('faces')||'[]')}catch(e){}
 
-            <!-- Indicator Stare Cameră -->
-            <div class="flex items-center gap-3">
-                <span id="statusBadge" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700 transition-all">
-                    <span class="w-2 h-2 rounded-full bg-slate-500"></span>
-                    Oprită
-                </span>
-            </div>
-        </div>
-    </header>
+const esc=s=>s.replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+const mean=(p,a,b)=>{let x=0,y=0;for(let i=a;i<=b;i++){x+=p[i].x;y+=p[i].y}const n=b-a+1;return{x:x/n,y:y/n}};
+const ear=(p,s)=>(dist(p[s+1],p[s+5])+dist(p[s+2],p[s+4]))/(2*dist(p[s],p[s+3]));
+const setMsg=t=>{$('msg').textContent=t};
+const hint=t=>{$('hint').textContent=t};
 
-    <!-- Conținut Principal -->
-    <main class="max-w-7xl mx-auto px-4 py-6 sm:px-8 flex-1 w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
-        
-        <!-- Zona Video/Canvas (3 coloane pe desktop) -->
-        <div class="lg:col-span-3 flex flex-col gap-4">
-            <!-- Container Oglindă Video -->
-            <div class="relative w-full aspect-video bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl flex items-center justify-center">
-                <!-- Video Element -->
-                <video id="webcam" playsinline class="w-full h-full object-cover mirror hidden"></video>
-                
-                <!-- Canvas suprapus pentru desenat conexiunile faciale -->
-                <canvas id="outputCanvas" class="absolute inset-0 w-full h-full object-cover mirror pointer-events-none"></canvas>
+function persist(){try{localStorage.setItem('faces',JSON.stringify(known))}catch(e){}}
+function buildMatcher(){
+  const g={};
+  known.forEach(k=>(g[k.name]=g[k.name]||[]).push(new Float32Array(k.d)));
+  const list=Object.entries(g).map(([n,d])=>new faceapi.LabeledFaceDescriptors(n,d));
+  matcher=list.length?new faceapi.FaceMatcher(list,0.5):null;
+  $('known').innerHTML=Object.keys(g).length?Object.keys(g).map(n=>`<span class="chip">${esc(n)}</span>`).join(''):'<span class="muted">Nicio față memorată.</span>';
+}
+buildMatcher();
 
-                <!-- Overlay de pornire / încărcare / mesaj de eroare -->
-                <div id="placeholderOverlay" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-slate-950/90 gap-5 transition-opacity">
-                    <div id="overlayIconContainer" class="p-4 bg-slate-900 rounded-full border border-slate-800 text-slate-400 shadow-inner">
-                        <i id="overlayIcon" data-lucide="camera" class="w-12 h-12 text-indigo-400"></i>
-                    </div>
-                    <div class="max-w-md">
-                        <h2 id="overlayTitle" class="text-xl font-bold text-slate-100 mb-2">Gata de Scanare Facială</h2>
-                        <p id="overlayDesc" class="text-sm text-slate-400 leading-relaxed">Apasă pe butonul de mai jos pentru a solicita permisiunea camerei și a porni urmărirea în timp real.</p>
-                    </div>
-                    <button id="quickStartBtn" class="mt-2 inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-sm bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg shadow-indigo-600/30 active:scale-95 cursor-pointer">
-                        <i data-lucide="video" class="w-5 h-5"></i>
-                        <span>Pornește Camera & Tracking-ul</span>
-                    </button>
-                </div>
-            </div>
+async function start(){
+  $('start').disabled=true;
+  try{
+    if(!loaded){
+      setMsg('Se încarcă modelele AI (doar prima dată)…');
+      await faceapi.tf.ready();
+      await Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+        faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+        faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
+        faceapi.nets.ageGenderNet.loadFromUri(MODEL_URL),
+        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+      ]);
+      loaded=true;
+    }
+    setMsg('Se cere acces la cameră…');
+    stream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:640},height:{ideal:480},facingMode:'user'},audio:false});
+    v.srcObject=stream;await v.play();
+    c.width=v.videoWidth;c.height=v.videoHeight;
+    $('wrap').style.aspectRatio=v.videoWidth+'/'+v.videoHeight;
+    running=true;states=[];lastT=performance.now();setMsg('');
+    $('stop').disabled=false;$('calib').disabled=false;$('save').disabled=false;
+    loop();
+  }catch(e){
+    $('start').disabled=false;
+    setMsg(e&&e.name==='NotAllowedError'
+      ?'Accesul la cameră a fost refuzat. Permite camera din setările browserului și apasă din nou „Pornește camera”.'
+      :e&&e.name==='NotFoundError'
+      ?'Nu am găsit nicio cameră conectată.'
+      :'Nu am putut porni: '+(e&&e.message?e.message:e)+'. Verifică conexiunea la internet (modelele se descarcă o dată) și permisiunea camerei.');
+  }
+}
+function stop(){
+  running=false;
+  if(stream)stream.getTracks().forEach(t=>t.stop());
+  v.srcObject=null;ctx.clearRect(0,0,c.width,c.height);
+  $('start').disabled=false;$('stop').disabled=true;$('calib').disabled=true;$('save').disabled=true;
+  $('fps').textContent='';setMsg('Camera este oprită.');
+  $('cards').innerHTML='<div class="empty">Rezultatele apar aici după pornirea camerei.</div>';
+}
 
-            <!-- Panou Statistici Live -->
-            <div class="grid grid-cols-3 gap-3">
-                <div class="bg-cardBg p-4 rounded-xl border border-slate-800 flex flex-col items-center justify-center text-center">
-                    <span class="text-xs text-slate-400 font-medium">Cadre / secundă (FPS)</span>
-                    <span id="fpsCounter" class="text-2xl font-bold text-indigo-400 mt-1">0</span>
-                </div>
-                <div class="bg-cardBg p-4 rounded-xl border border-slate-800 flex flex-col items-center justify-center text-center">
-                    <span class="text-xs text-slate-400 font-medium">Fețe Detectate</span>
-                    <span id="faceCount" class="text-2xl font-bold text-emerald-400 mt-1">0</span>
-                </div>
-                <div class="bg-cardBg p-4 rounded-xl border border-slate-800 flex flex-col items-center justify-center text-center">
-                    <span class="text-xs text-slate-400 font-medium">Rezoluție Video</span>
-                    <span id="resolutionInfo" class="text-sm font-semibold text-slate-300 mt-2">-- x --</span>
-                </div>
-            </div>
-        </div>
+async function loop(){
+  if(!running)return;
+  try{
+    const res=await faceapi.detectAllFaces(v,new faceapi.TinyFaceDetectorOptions({inputSize:320,scoreThreshold:0.5}))
+      .withFaceLandmarks().withFaceExpressions().withAgeAndGender().withFaceDescriptors();
+    const now=performance.now(),dt=(now-lastT)/1000;lastT=now;
+    fps=fps*0.9+(1/Math.max(dt,0.001))*0.1;
+    res.sort((a,b)=>a.detection.box.x-b.detection.box.x);
+    lastRes=res;render(res,dt);
+  }catch(e){console.error(e)}
+  requestAnimationFrame(loop);
+}
 
-        <!-- Panou Controale și Setări (1 coloană) -->
-        <div class="space-y-5">
-            <!-- Control Principal -->
-            <div class="bg-cardBg p-5 rounded-2xl border border-slate-800 shadow-lg">
-                <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
-                    <i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i> Control Cameră
-                </h2>
-                
-                <button id="toggleCamBtn" class="w-full py-3.5 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg shadow-indigo-600/20 active:scale-95 cursor-pointer">
-                    <i data-lucide="video" class="w-5 h-5"></i>
-                    <span>Pornește Camera & Tracking-ul</span>
-                </button>
-            </div>
+function render(res,dt){
+  const W=c.width;ctx.clearRect(0,0,W,c.height);
+  const fx=x=>W-x,html=[];
+  states.forEach((s,i)=>{if(i>=res.length)s.prev=null});
+  res.slice(0,4).forEach((r,i)=>{
+    const s=states[i]||(states[i]={ages:[],blinks:0,closed:false,mv:0,prev:null});
+    const b=r.detection.box,p=r.landmarks.positions;
+    s.ages.push(r.age);if(s.ages.length>25)s.ages.shift();
+    const age=Math.round(s.ages.reduce((a,x)=>a+x,0)/s.ages.length);
+    let name=null;
+    if(matcher){const m=matcher.findBestMatch(r.descriptor);if(m.label!=='unknown')name=m.label}
+    // poziția capului
+    const eL=mean(p,36,41),eR=mean(p,42,47),eM={x:(eL.x+eR.x)/2,y:(eL.y+eR.y)/2};
+    const roll=Math.round(Math.atan2(eR.y-eL.y,eR.x-eL.x)*180/Math.PI);
+    const yawRaw=((p[30].x-(p[0].x+p[16].x)/2)/dist(p[0],p[16]))*180;
+    const pitchRaw=((p[30].y-eM.y)/(p[8].y-eM.y)-0.55)*160;
+    if(i===0)raw0={yaw:yawRaw,pitch:pitchRaw};
+    const yaw=Math.round(yawRaw-offs.yaw),pitch=Math.round(pitchRaw-offs.pitch);
+    const dirs=[];
+    if(yaw<-12)dirs.push('spre dreapta');else if(yaw>12)dirs.push('spre stânga');
+    if(pitch>12)dirs.push('în jos');else if(pitch<-12)dirs.push('în sus');
+    if(roll<-10)dirs.push('înclinat dreapta');else if(roll>10)dirs.push('înclinat stânga');
+    const dirText=dirs.length?dirs.join(', '):'drept înainte';
+    // ochi, gură
+    const closed=(ear(p,36)+ear(p,42))/2<0.2;
+    if(s.closed&&!closed)s.blinks++;
+    s.closed=closed;
+    const mo=dist(p[62],p[66])/dist(p[60],p[64]);
+    // mișcare
+    if(s.prev){const d=dist(p[30],s.prev)/b.width/Math.max(dt,0.01);s.mv=s.mv*0.8+d*0.2}
+    s.prev={x:p[30].x,y:p[30].y};
+    const mvLabel=s.mv<0.15?'nemișcat':s.mv<0.6?'ușoară':'ridicată';
+    // desen
+    const col=name?'#4ade80':'#5cc8ff';
+    ctx.strokeStyle=col;ctx.lineWidth=2;
+    ctx.strokeRect(fx(b.x+b.width),b.y,b.width,b.height);
+    ctx.lineWidth=1.2;ctx.strokeStyle='rgba(255,255,255,.75)';
+    GROUPS.forEach(([a,z,cl])=>{ctx.beginPath();for(let k=a;k<=z;k++){k===a?ctx.moveTo(fx(p[k].x),p[k].y):ctx.lineTo(fx(p[k].x),p[k].y)}if(cl)ctx.closePath();ctx.stroke()});
+    ctx.fillStyle='#fff';
+    p.forEach(q=>{ctx.beginPath();ctx.arc(fx(q.x),q.y,1.5,0,6.283);ctx.fill()});
+    const label=(name||'Necunoscut')+' · ~'+age+' ani';
+    ctx.font='600 14px system-ui,sans-serif';
+    const tw=ctx.measureText(label).width,lx=fx(b.x+b.width),ly=Math.max(22,b.y);
+    ctx.fillStyle=col;ctx.fillRect(lx,ly-22,tw+12,22);
+    ctx.fillStyle='#04121c';ctx.fillText(label,lx+6,ly-6);
+    // card
+    const top=Object.entries(r.expressions).sort((a,b)=>b[1]-a[1]).slice(0,3);
+    html.push(`<article class="card"><h3>${name?esc(name):'Persoană necunoscută'} <small>#${i+1}</small></h3>
+<dl><dt>Vârstă (estimată)</dt><dd>~${age} ani</dd>
+<dt>Gen (estimat)</dt><dd>${r.gender==='male'?'Bărbat':'Femeie'} (${Math.round(r.genderProbability*100)}%)</dd>
+<dt>Capul</dt><dd>${dirText}</dd>
+<dt>Unghiuri</dt><dd>${yaw}° / ${pitch}° / ${roll}°</dd>
+<dt>Ochi</dt><dd>${closed?'închiși':'deschiși'}, ${s.blinks} clipiri</dd>
+<dt>Gură</dt><dd>${mo>0.35?'deschisă':'închisă'}</dd></dl>
+${top.map(([k,val])=>`<div class="bar"><span>${EXPR[k]}</span><i style="--w:${Math.round(val*100)}%"></i><b>${Math.round(val*100)}%</b></div>`).join('')}
+<div class="bar mv"><span>Mișcare</span><i style="--w:${Math.min(100,Math.round(s.mv/1.5*100))}%"></i><b>${mvLabel}</b></div></article>`);
+  });
+  $('cards').innerHTML=html.join('')||'<div class="empty">Nu văd nicio față. Privește spre cameră, într-un loc luminat.</div>';
+  $('fps').textContent=fps.toFixed(0)+' FPS';
+}
 
-            <!-- Opțiuni Afișare -->
-            <div class="bg-cardBg p-5 rounded-2xl border border-slate-800 shadow-lg space-y-4">
-                <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-2">
-                    <i data-lucide="palette" class="w-4 h-4 text-indigo-400"></i> Personalizare Grafică
-                </h2>
-
-                <!-- Toggle Mesh (Linii) -->
-                <label class="flex items-center justify-between cursor-pointer p-2.5 rounded-xl hover:bg-slate-800/50 transition-colors">
-                    <span class="text-sm font-medium text-slate-300 flex items-center gap-2">
-                        <i data-lucide="grid" class="w-4 h-4 text-indigo-400"></i> Plasă Facială (Linii)
-                    </span>
-                    <input type="checkbox" id="toggleMesh" checked class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-900">
-                </label>
-
-                <!-- Toggle Landmarks (Puncte) -->
-                <label class="flex items-center justify-between cursor-pointer p-2.5 rounded-lg hover:bg-slate-800/50 transition-colors">
-                    <span class="text-sm font-medium text-slate-300 flex items-center gap-2">
-                        <i data-lucide="dot" class="w-4 h-4 text-indigo-400"></i> Puncte Cheie
-                    </span>
-                    <input type="checkbox" id="toggleLandmarks" checked class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-900">
-                </label>
-
-                <!-- Culoare Linie -->
-                <div class="pt-3 border-t border-slate-800">
-                    <label class="block text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">Culoare Neon Tracking</label>
-                    <div class="grid grid-cols-4 gap-2">
-                        <button data-color="#00ffcc" class="color-btn h-10 rounded-xl border-2 border-slate-100 bg-[#00ffcc] hover:scale-105 transition-all shadow-md" title="Verde/Cyan Neon"></button>
-                        <button data-color="#0099ff" class="color-btn h-10 rounded-xl border-2 border-transparent bg-[#0099ff] hover:scale-105 transition-all shadow-md" title="Albastru Neon"></button>
-                        <button data-color="#ff007f" class="color-btn h-10 rounded-xl border-2 border-transparent bg-[#ff007f] hover:scale-105 transition-all shadow-md" title="Roz Neon"></button>
-                        <button data-color="#ffea00" class="color-btn h-10 rounded-xl border-2 border-transparent bg-[#ffea00] hover:scale-105 transition-all shadow-md" title="Galben Neon"></button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Ghid și Depanare Permisiuni -->
-            <div class="bg-cardBg/80 p-5 rounded-2xl border border-slate-800 text-xs text-slate-400 space-y-2.5">
-                <h3 class="font-semibold text-slate-200 flex items-center gap-1.5 text-sm">
-                    <i data-lucide="help-circle" class="w-4 h-4 text-indigo-400"></i> Probleme cu camera?
-                </h3>
-                <ol class="list-decimal list-inside space-y-1.5 leading-relaxed text-slate-400">
-                    <li>Dacă apare o fereastră pop-up din browser, apasă pe <strong class="text-slate-200">Permite (Allow)</strong>.</li>
-                    <li>Verifică dacă pictograma de lacăt sau cameră din stânga adresei web are blocat accesul.</li>
-                    <li>Asigură-te că altă aplicație (Zoom, Teams, Skype etc.) nu folosește deja camera.</li>
-                    <li>Procesarea are loc 100% local în browserul tău.</li>
-                </ol>
-            </div>
-        </div>
-    </main>
-
-    <!-- Subsol (Footer) -->
-    <footer class="border-t border-slate-800 bg-slate-900/50 py-4 text-center text-xs text-slate-500">
-        <p>Aplicație HTML5 / MediaPipe FaceMesh — Detecție Trăsături Faciale în timp real</p>
-    </footer>
-
-    <!-- Script Principal JavaScript -->
-    <script>
-        // Elemente DOM
-        const videoElement = document.getElementById("webcam");
-        const canvasElement = document.getElementById("outputCanvas");
-        const canvasCtx = canvasElement.getContext("2d");
-        
-        const toggleCamBtn = document.getElementById("toggleCamBtn");
-        const quickStartBtn = document.getElementById("quickStartBtn");
-        const statusBadge = document.getElementById("statusBadge");
-        
-        const fpsCounter = document.getElementById("fpsCounter");
-        const faceCount = document.getElementById("faceCount");
-        const resolutionInfo = document.getElementById("resolutionInfo");
-        
-        const overlay = document.getElementById("placeholderOverlay");
-        const overlayIcon = document.getElementById("overlayIcon");
-        const overlayTitle = document.getElementById("overlayTitle");
-        const overlayDesc = document.getElementById("overlayDesc");
-
-        const toggleMesh = document.getElementById("toggleMesh");
-        const toggleLandmarks = document.getElementById("toggleLandmarks");
-        const colorBtns = document.querySelectorAll(".color-btn");
-
-        // Stări aplicație
-        let cameraUtils = null;
-        let faceMesh = null;
-        let isCameraRunning = false;
-        let strokeColor = "#00ffcc";
-        let showMesh = true;
-        let showLandmarks = true;
-
-        // Calcul FPS
-        let frameCount = 0;
-        let lastFpsUpdate = performance.now();
-
-        // Inițializare Lucide Icons
-        lucide.createIcons();
-
-        // 1. Configurare Model MediaPipe FaceMesh
-        function initFaceMesh() {
-            faceMesh = new FaceMesh({
-                locateFile: (file) => {
-                    return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
-                }
-            });
-
-            faceMesh.setOptions({
-                maxNumFaces: 2,
-                refineLandmarks: true,
-                minDetectionConfidence: 0.5,
-                minTrackingConfidence: 0.5
-            });
-
-            faceMesh.onResults(onFaceMeshResults);
-        }
-
-        // 2. Procesare și Desenare Rezultate
-        function onFaceMeshResults(results) {
-            // Calculare FPS
-            const now = performance.now();
-            frameCount++;
-            if (now - lastFpsUpdate >= 1000) {
-                fpsCounter.textContent = Math.round((frameCount * 1000) / (now - lastFpsUpdate));
-                frameCount = 0;
-                lastFpsUpdate = now;
-            }
-
-            // Setează dimensiunea canvas-ului potrivită cu dimensiunea imaginii primite
-            if (canvasElement.width !== videoElement.videoWidth || canvasElement.height !== videoElement.videoHeight) {
-                canvasElement.width = videoElement.videoWidth || 1280;
-                canvasElement.height = videoElement.videoHeight || 720;
-                resolutionInfo.textContent = `${canvasElement.width} x ${canvasElement.height}`;
-            }
-
-            // Curăță ecranul
-            canvasCtx.save();
-            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-
-            if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
-                faceCount.textContent = results.multiFaceLandmarks.length;
-
-                for (const landmarks of results.multiFaceLandmarks) {
-                    // Desenează Plasa Facială (Mesh)
-                    if (showMesh) {
-                        drawConnectors(canvasCtx, landmarks, FACEMESH_TESSELATION, {
-                            color: strokeColor + "33", // Transparență pentru rețea
-                            lineWidth: 1
-                        });
-                        drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYE, { color: strokeColor, lineWidth: 1.5 });
-                        drawConnectors(canvasCtx, landmarks, FACEMESH_LEFT_EYE, { color: strokeColor, lineWidth: 1.5 });
-                        drawConnectors(canvasCtx, landmarks, FACEMESH_LIPS, { color: strokeColor, lineWidth: 1.5 });
-                        drawConnectors(canvasCtx, landmarks, FACEMESH_FACE_OVAL, { color: strokeColor, lineWidth: 1.5 });
-                    }
-
-                    // Desenează Punctele Cheie (Landmarks)
-                    if (showLandmarks) {
-                        drawLandmarks(canvasCtx, landmarks, {
-                            color: "#ffffff",
-                            lineWidth: 0.5,
-                            radius: 0.8
-                        });
-                    }
-                }
-            } else {
-                faceCount.textContent = "0";
-            }
-            canvasCtx.restore();
-        }
-
-        // 3. Pornire explicită Cameră cu Solicitare Permisiune
-        async function startCamera() {
-            updateStatus("Se solicită permisiunea...", "loading");
-            updateOverlay("loader", "Se deschide camera...", "Apasă pe 'Permite' (Allow) dacă browser-ul solicită permisiunea de acces la webcam.");
-
-            if (!faceMesh) {
-                initFaceMesh();
-            }
-
-            try {
-                // Solicitare directă de la browser
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 },
-                        facingMode: "user"
-                    }
-                });
-
-                videoElement.srcObject = stream;
-                
-                // Utilizare CameraUtils din MediaPipe pentru un loop video optimizat
-                cameraUtils = new Camera(videoElement, {
-                    onFrame: async () => {
-                        await faceMesh.send({ image: videoElement });
-                    },
-                    width: 1280,
-                    height: 720
-                });
-
-                await cameraUtils.start();
-
-                isCameraRunning = true;
-                videoElement.classList.remove("hidden");
-                overlay.classList.add("hidden");
-
-                updateStatus("Activă", "active");
-                setButtonState(true);
-
-            } catch (err) {
-                console.error("Eroare accesare cameră:", err);
-                isCameraRunning = false;
-                
-                let title = "Acces la cameră blocat";
-                let msg = "Nu s-a putut accesa camera web. Asigură-te că ai permis accesul din browser.";
-
-                if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
-                    title = "Permisiune Refuzată";
-                    msg = "Ai blocat accesul la cameră. Apasă pe pictograma cu lacăt/cameră din bara de adrese sus pentru a schimba permisiunea.";
-                } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
-                    title = "Cameră Negăsită";
-                    msg = "Nu a fost detectată nicio cameră web conectată la calculator sau telefon.";
-                } else if (err.name === "NotReadableError" || err.name === "TrackStartError") {
-                    title = "Cameră Ocupată";
-                    msg = "Camera este deja utilizată de o altă aplicație (Zoom, Skype, alt tab de browser etc.). Închide aplicația respectivă și încearcă din nou.";
-                }
-
-                updateStatus("Eroare Cameră", "error");
-                updateOverlay("alert-triangle", title, msg);
-                setButtonState(false);
-            }
-        }
-
-        // 4. Oprire Cameră
-        function stopCamera() {
-            if (cameraUtils) {
-                cameraUtils.stop();
-                cameraUtils = null;
-            }
-
-            if (videoElement.srcObject) {
-                const tracks = videoElement.srcObject.getTracks();
-                tracks.forEach(track => track.stop());
-                videoElement.srcObject = null;
-            }
-
-            isCameraRunning = false;
-            videoElement.classList.add("hidden");
-            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-            overlay.classList.remove("hidden");
-
-            // Resetează statistici
-            fpsCounter.textContent = "0";
-            faceCount.textContent = "0";
-            resolutionInfo.textContent = "-- x --";
-
-            updateStatus("Oprită", "stopped");
-            updateOverlay("camera", "Camera este Oprită", "Apasă pe butonul de mai jos pentru a începe urmărirea facială.");
-            setButtonState(false);
-        }
-
-        // Toggle Pornire / Oprire
-        async function toggleCamera() {
-            if (isCameraRunning) {
-                stopCamera();
-            } else {
-                await startCamera();
-            }
-        }
-
-        // 5. Utilitare UI
-        function updateStatus(text, type) {
-            const colors = {
-                stopped: "bg-slate-800 text-slate-400 border-slate-700",
-                loading: "bg-amber-500/10 text-amber-400 border-amber-500/30",
-                active: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
-                error: "bg-rose-500/10 text-rose-400 border-rose-500/30"
-            };
-
-            const dots = {
-                stopped: "bg-slate-500",
-                loading: "bg-amber-400 animate-pulse",
-                active: "bg-emerald-400 animate-pulse",
-                error: "bg-rose-500"
-            };
-
-            statusBadge.className = `inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold border ${colors[type]}`;
-            statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full ${dots[type]}"></span> ${text}`;
-        }
-
-        function updateOverlay(iconName, title, description) {
-            overlayIcon.setAttribute("data-lucide", iconName);
-            overlayTitle.textContent = title;
-            overlayDesc.textContent = description;
-            lucide.createIcons();
-        }
-
-        function setButtonState(running) {
-            if (running) {
-                toggleCamBtn.innerHTML = `<i data-lucide="video-off" class="w-5 h-5"></i><span>Oprește Camera</span>`;
-                toggleCamBtn.classList.replace("bg-indigo-600", "bg-rose-600");
-                toggleCamBtn.classList.replace("hover:bg-indigo-500", "hover:bg-rose-500");
-            } else {
-                toggleCamBtn.innerHTML = `<i data-lucide="video" class="w-5 h-5"></i><span>Pornește Camera & Tracking-ul</span>`;
-                toggleCamBtn.classList.replace("bg-rose-600", "bg-indigo-600");
-                toggleCamBtn.classList.replace("hover:bg-rose-500", "hover:bg-indigo-500");
-            }
-            lucide.createIcons();
-        }
-
-        // Event Listeners pentru Butoane și Controale
-        toggleCamBtn.addEventListener("click", toggleCamera);
-        quickStartBtn.addEventListener("click", toggleCamera);
-
-        toggleMesh.addEventListener("change", (e) => {
-            showMesh = e.target.checked;
-        });
-
-        toggleLandmarks.addEventListener("change", (e) => {
-            showLandmarks = e.target.checked;
-        });
-
-        // Schimbare culori
-        colorBtns.forEach(btn => {
-            btn.addEventListener("click", () => {
-                colorBtns.forEach(b => b.classList.replace("border-slate-100", "border-transparent"));
-                btn.classList.replace("border-transparent", "border-slate-100");
-                strokeColor = btn.getAttribute("data-color");
-            });
-        });
-    </script>
+$('start').onclick=start;
+$('stop').onclick=stop;
+$('calib').onclick=()=>{offs={yaw:raw0.yaw,pitch:raw0.pitch};hint('Capul a fost calibrat ca „drept înainte”.')};
+$('save').onclick=()=>{
+  const n=$('name').value.trim();
+  if(!n){hint('Scrie mai întâi un nume.');return}
+  if(!lastRes.length){hint('Nu văd nicio față în cadru acum.');return}
+  const r=lastRes.reduce((a,b)=>b.detection.box.width>a.detection.box.width?b:a);
+  known.push({name:n,d:Array.from(r.descriptor)});
+  persist();buildMatcher();$('name').value='';
+  hint('Fața lui '+n+' a fost memorată. Mai adaugă una din alt unghi pentru precizie mai bună.');
+};
+$('clear').onclick=()=>{known=[];persist();buildMatcher();hint('Toate fețele memorate au fost șterse.')};
+</script>
 </body>
 </html>
