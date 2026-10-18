@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FACE//RECON - educational biometric lab</title>
+<title>Z.Engine // FACE//RECON</title>
 <style>
 :root{--bg:#03080a;--pn:#07130f;--ln:#0f3b2a;--tx:#b8ffd9;--mut:#5fae8a;--g:#3dff9a;--a:#ffb020;--r:#ff4d5e;--h:#38bdf8;color-scheme:dark}
 *{box-sizing:border-box}
@@ -61,13 +61,48 @@ dd{margin:0;text-align:right;overflow-wrap:anywhere}
 .fbadge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:1px solid var(--ln);color:var(--mut);font-size:.75rem;font-weight:700}
 .fbadge.up{border-color:var(--h);color:var(--h);box-shadow:0 0 6px rgba(56,189,248,.5)}
 footer{margin-top:20px;color:var(--mut);font-size:.8rem}
+#gate{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(3,8,10,.96)}
+#gate .panel{width:min(460px,100%);padding:22px;border:1px solid var(--g);background:var(--pn);box-shadow:0 0 28px rgba(61,255,154,.16)}
+#gate h1{margin:0 0 8px;font-size:1.1rem;color:var(--g);letter-spacing:.08em}
+#pin{letter-spacing:.4em;text-align:center;font-size:1.2rem}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button.on{background:var(--g);color:#02150d}
+#admin{margin-top:16px}
+#adminlock{padding:24px;text-align:center}
+#app[hidden],#admin[hidden],#lab[hidden]{display:none!important}
 </style>
 </head>
 <body>
+<div id="gate">
+  <div class="panel">
+    <h1>Z.ENGINE // LOGIN<span class="cur"></span></h1>
+    <p class="muted">Site locked. Log in with a saved fingerprint or face, or open Administration with the admin code.</p>
+    <div class="row" style="margin-top:14px">
+      <input id="pin" type="password" inputmode="numeric" maxlength="8" placeholder="ADMIN CODE" aria-label="Admin code" autocomplete="off">
+      <button class="pri" id="unlock">ENTER ADMIN</button>
+    </div>
+    <div class="row">
+      <button id="loginFp">LOGIN WITH FINGERPRINT</button>
+      <button id="loginFace">LOGIN WITH FACE</button>
+    </div>
+    <p class="muted" id="gateMsg" style="margin:12px 0 0" role="status"></p>
+  </div>
+</div>
+<div id="app" hidden>
 <header>
-  <div class="brand">FACE//RECON<span class="cur"></span><small>educational biometric lab</small></div>
-  <div class="row" style="margin:0"><span class="tag" id="perm"></span><span class="tag" id="clock"></span></div>
+  <div class="brand">FACE//RECON<span class="cur"></span><small>Z.Engine educational biometric lab</small></div>
+  <div class="row" style="margin:0">
+    <div class="tabs">
+      <button class="sm on" id="tabLab">LAB</button>
+      <button class="sm" id="tabAdmin">ADMINISTRATION</button>
+    </div>
+    <span class="tag" id="who"></span>
+    <span class="tag" id="perm"></span>
+    <span class="tag" id="clock"></span>
+    <button class="sm" id="logout">LOG OUT</button>
+  </div>
 </header>
+<div id="lab">
 <main>
   <section>
     <div class="wrap" id="wrap">
@@ -105,317 +140,3 @@ footer{margin-top:20px;color:var(--mut);font-size:.8rem}
       <div id="known"></div>
       <div class="row"><button class="sm" id="clear">WIPE REGISTRY</button></div>
       <div id="hint" class="muted" style="margin-top:8px" role="status"></div>
-    </div>
-  </aside>
-</main>
-<footer>Educational demo. Face analysis and hand tracking run locally in your browser; camera frames are never uploaded. Age and gender are model estimates and can be wrong. This page does not identify strangers and has no connection to Instagram, YouTube or Facebook.</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous"></script>
-<script>
-const $=id=>document.getElementById(id);
-const v=$('v'),c=$('c'),ctx=c.getContext('2d');
-const MODEL_URL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model/';
-const EXPR={neutral:'Neutral',happy:'Happy',sad:'Sad',angry:'Angry',fearful:'Fearful',disgusted:'Disgusted',surprised:'Surprised'};
-const STEPS=['Look straight at the camera','Turn your head slightly left','Turn your head slightly right','Raise your chin slightly','Lower your chin slightly'];
-const INTRO='ACCESS REQUEST: video input. Frames are analysed locally in this page and never uploaded. Your browser will show its own permission prompt once: choose Allow.';
-const DENIED='ACCESS DENIED: the camera is blocked for this page. Click the lock or settings icon next to the address bar, set Camera to Allow, then retry.';
-const HAND_EDGES=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
-let running=false,enrolling=false,stream=null,loaded=false,matcher=null,lastRes=[],states=[],offs={yaw:0,pitch:0},raw0={yaw:0,pitch:0},fps=0,lastT=0,edges=null,hadFace=false;
-let handsModel=null,handsReady=false,lastHands=[],hadHand=false;
-
-const esc=s=>String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
-const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-const mean=(p,a,b)=>{let x=0,y=0;for(let i=a;i<=b;i++){x+=p[i].x;y+=p[i].y}const n=b-a+1;return{x:x/n,y:y/n}};
-const ear=(p,s)=>(dist(p[s+1],p[s+5])+dist(p[s+2],p[s+4]))/(2*dist(p[s],p[s+3]));
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-const hint=t=>{$('hint').textContent=t};
-const busy=b=>{$('start').disabled=b;$('allow').disabled=b};
-function log(m,cls){const l=$('log'),d=document.createElement('div');d.textContent=new Date().toLocaleTimeString('en-GB')+'  '+m;if(cls)d.className=cls;l.appendChild(d);while(l.children.length>60)l.firstChild.remove();l.scrollTop=l.scrollHeight}
-function setMsg(t,btn,label){$('msgt').textContent=t;$('allow').hidden=!btn;$('allow').textContent=label||'[ GRANT CAMERA ACCESS ]';$('msg').hidden=!t}
-
-/* ---------- finger / gesture math ---------- */
-function fingerStates(p){
-  const ext=(tip,pip)=>dist(p[tip],p[0])>dist(p[pip],p[0])*1.08;
-  const thumb=dist(p[4],p[0])>dist(p[2],p[0])*1.15;
-  return [thumb, ext(8,6), ext(12,10), ext(16,14), ext(20,18)];
-}
-function gestureFor(st,p,hs){
-  const[T,I,M,R,P]=st,cnt=st.filter(Boolean).length,pinch=dist(p[4],p[8])/hs;
-  if(I&&M&&!R&&!P)return'Peace sign';
-  if(pinch<0.4&&M&&R&&P)return'OK sign';
-  if(cnt===0)return'Fist';
-  if(cnt===5)return'Open palm';
-  if(I&&!M&&!R&&!P)return'Pointing';
-  if(T&&!I&&!M&&!R&&!P)return'Thumbs up';
-  return cnt+' finger'+(cnt===1?'':'s')+' raised';
-}
-function drawHandsOverlay(W,fx){
-  const list=lastHands||[];
-  if(!!list.length!==hadHand){hadHand=!!list.length;log(hadHand?'Hand input acquired':'Hand input lost',hadHand?'ok':'warn')}
-  $('handstag').textContent=list.length?('hands: '+list.length):'';
-  if(!list.length){$('hands').innerHTML='<p class="muted" style="margin:0">No hand in frame.</p>';return}
-  const names=['Thumb','Index','Middle','Ring','Pinky'];
-  const rows=list.slice(0,2).map((h,i)=>{
-    const px=h.lm.map(q=>({x:q.x*W,y:q.y*c.height}));
-    ctx.strokeStyle='rgba(56,189,248,.55)';ctx.lineWidth=1.4;ctx.beginPath();
-    HAND_EDGES.forEach(([a,z])=>{ctx.moveTo(fx(px[a].x),px[a].y);ctx.lineTo(fx(px[z].x),px[z].y)});ctx.stroke();
-    ctx.fillStyle='#38bdf8';px.forEach(q=>{ctx.beginPath();ctx.arc(fx(q.x),q.y,2.4,0,6.283);ctx.fill()});
-    const hs=dist(px[0],px[9])||1,st=fingerStates(px),g=gestureFor(st,px,hs);
-    const wx=fx(px[0].x),wy=px[0].y;
-    ctx.font='700 12px ui-monospace,Menlo,Consolas,monospace';
-    const tw=ctx.measureText(g).width;
-    ctx.fillStyle='#38bdf8';ctx.fillRect(wx-tw/2-6,wy+8,tw+12,18);
-    ctx.fillStyle='#02150d';ctx.fillText(g,wx-tw/2,wy+21);
-    return`<div style="margin-top:${i?10:0}"><b class="h">Hand ${i+1}</b> — ${esc(g)}<div class="row" style="margin:4px 0 0">${names.map((nm,k)=>`<span class="fbadge ${st[k]?'up':''}" title="${nm}">${nm[0]}</span>`).join('')}</div></div>`;
-  });
-  $('hands').innerHTML=rows.join('');
-}
-
-/* ---------- local intel (own device only) ---------- */
-const n=navigator,cn=n.connection||{},off=-new Date().getTimezoneOffset()/60;
-function fpHash(){try{const k=document.createElement('canvas');k.width=240;k.height=60;const x=k.getContext('2d');x.textBaseline='top';x.font='16px Arial';x.fillStyle='#f60';x.fillRect(100,5,80,30);x.fillStyle='#069';x.fillText('FaceRecon fp 1.0',4,10);x.beginPath();x.arc(60,40,18,0,6.28);x.stroke();const s=k.toDataURL();let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return(h>>>0).toString(16).toUpperCase().padStart(8,'0')}catch(e){return'n/a'}}
-function gpuName(){try{const g=document.createElement('canvas').getContext('webgl'),e=g.getExtension('WEBGL_debug_renderer_info');return e?g.getParameter(e.UNMASKED_RENDERER_WEBGL):g.getParameter(g.RENDERER)}catch(e){return'n/a'}}
-const intel={
-  'Platform':(n.userAgentData&&n.userAgentData.platform)||n.platform||'n/a',
-  'User agent':n.userAgent,
-  'Languages':(n.languages||[n.language]).join(', '),
-  'Time zone':Intl.DateTimeFormat().resolvedOptions().timeZone+' (UTC'+(off>=0?'+':'')+off+')',
-  'Screen':screen.width+'x'+screen.height+' @'+devicePixelRatio+'x',
-  'CPU threads':n.hardwareConcurrency||'n/a',
-  'Memory':n.deviceMemory?'>= '+n.deviceMemory+' GB':'n/a',
-  'GPU':gpuName(),
-  'Network':cn.effectiveType?cn.effectiveType+', ~'+cn.downlink+' Mbps':(n.onLine?'online':'offline'),
-  'Touch points':n.maxTouchPoints,
-  'Cookies':n.cookieEnabled?'enabled':'disabled',
-  'Do Not Track':n.doNotTrack==='1'?'on':'off/unset',
-  'Canvas fingerprint':fpHash()
-};
-const paint=()=>{$('dev').innerHTML=Object.entries(intel).map(([k,x])=>`<dt>${k}</dt><dd>${esc(x)}</dd>`).join('')};
-paint();
-if(n.getBattery)n.getBattery().then(b=>{intel['Battery']=Math.round(b.level*100)+'%'+(b.charging?' (charging)':'');paint()}).catch(()=>{});
-async function trace(){
-  $('trace').disabled=true;log('Network trace: asking ipwho.is for YOUR public IP...','warn');
-  try{
-    const j=await(await fetch('https://ipwho.is/')).json();
-    if(!j.success)throw new Error(j.message||'lookup failed');
-    Object.assign(intel,{'IP address':j.ip,'Location (IP)':[j.city,j.region,j.country].filter(Boolean).join(', '),'Coordinates (IP)':j.latitude+', '+j.longitude,'ISP':(j.connection&&j.connection.isp)||'n/a','ASN':j.connection&&j.connection.asn?'AS'+j.connection.asn:'n/a','Time zone (IP)':(j.timezone&&j.timezone.id)||'n/a'});
-    log('Trace complete: '+j.ip+' / '+j.city+', '+j.country,'ok');
-  }catch(e){
-    try{const j=await(await fetch('https://api.ipify.org?format=json')).json();intel['IP address']=j.ip;log('Partial trace: IP only','warn')}
-    catch(e2){log('Trace failed: '+(e.message||e)+' (offline or blocked)','err')}
-  }
-  paint();$('trace').disabled=false;
-}
-function gps(){
-  if(!n.geolocation){log('Geolocation not supported','err');return}
-  log('Requesting GPS fix (the browser will ask permission)...','warn');
-  n.geolocation.getCurrentPosition(p=>{intel['GPS fix']=p.coords.latitude.toFixed(5)+', '+p.coords.longitude.toFixed(5)+' (+/-'+Math.round(p.coords.accuracy)+' m)';paint();log('GPS fix acquired','ok')},e=>log('GPS: '+e.message,'err'),{enableHighAccuracy:true,timeout:15000});
-}
-
-/* ---------- registry (saved profiles) ---------- */
-function clean(k){
-  if(!k||typeof k.name!=='string'||!Array.isArray(k.d))return null;
-  let d=k.d.length&&typeof k.d[0]==='number'?[k.d]:k.d;
-  d=d.filter(a=>Array.isArray(a)&&a.length===128&&a.every(Number.isFinite)).slice(-15);
-  if(!d.length)return null;
-  const g=k.gender==='Male'||k.gender==='Bărbat'?'Male':k.gender==='Female'||k.gender==='Femeie'?'Female':'';
-  return{id:String(k.id||'').replace(/[^a-z0-9]/gi,'').slice(0,20)||Math.random().toString(36).slice(2),name:k.name.slice(0,40),age:Number.isFinite(k.age)?Math.round(k.age):null,gender:g,thumb:/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(k.thumb||'')?k.thumb:'',created:Number.isFinite(k.created)?k.created:Date.now(),d};
-}
-let known=[];
-try{known=JSON.parse(localStorage.getItem('faces')||'[]').map(clean).filter(Boolean)}catch(e){}
-function persist(){try{localStorage.setItem('faces',JSON.stringify(known));return true}catch(e){return false}}
-function buildMatcher(){
-  matcher=known.length?new faceapi.FaceMatcher(known.map(k=>new faceapi.LabeledFaceDescriptors(k.id,k.d.map(a=>new Float32Array(a)))),0.5):null;
-  $('known').innerHTML=known.length?known.map(k=>`<div class="prof">${k.thumb?`<img src="${k.thumb}" alt="">`:''}<div><b>${esc(k.name)}</b><br><small>${k.age?'~'+k.age+' y, ':''}${k.gender?k.gender+', ':''}${k.d.length} samples, ${new Date(k.created).toLocaleDateString('en-GB')}</small></div><button class="sm" data-del="${k.id}">DELETE</button></div>`).join(''):'<p class="muted" style="margin:10px 0 0">Registry is empty.</p>';
-}
-buildMatcher();
-
-/* ---------- camera ---------- */
-function showPerm(s){$('perm').textContent='camera: '+({granted:'granted',denied:'blocked',prompt:'not confirmed'}[s]||s)}
-async function initPerm(){
-  setMsg(INTRO,true);
-  try{
-    const st=await n.permissions.query({name:'camera'});
-    showPerm(st.state);st.onchange=()=>showPerm(st.state);
-    if(st.state==='granted')start();
-    else if(st.state==='denied')setMsg(DENIED,true,'[ RETRY ]');
-  }catch(e){}
-}
-async function start(){
-  busy(true);
-  try{
-    if(!loaded){
-      setMsg('Loading neural models (first run only)...');log('Loading face models...');
-      await faceapi.tf.ready();
-      await Promise.all([faceapi.nets.tinyFaceDetector,faceapi.nets.faceLandmark68Net,faceapi.nets.faceExpressionNet,faceapi.nets.ageGenderNet,faceapi.nets.faceRecognitionNet].map(m=>m.loadFromUri(MODEL_URL)));
-      loaded=true;log('Face models ready','ok');
-    }
-    if(!handsReady){
-      log('Loading hand-tracking model...');
-      handsModel=new Hands({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/${f}`});
-      handsModel.setOptions({maxNumHands:2,modelComplexity:1,minDetectionConfidence:0.6,minTrackingConfidence:0.6});
-      handsModel.onResults(r=>{lastHands=(r.multiHandLandmarks||[]).map(lm=>({lm}))});
-      handsReady=true;log('Hand model ready','ok');
-    }
-    setMsg('Waiting for the camera permission prompt...');
-    stream=await n.mediaDevices.getUserMedia({video:{width:{ideal:640},height:{ideal:480},facingMode:'user'},audio:false});
-    v.srcObject=stream;await v.play();
-    c.width=v.videoWidth;c.height=v.videoHeight;
-    $('wrap').style.aspectRatio=v.videoWidth+'/'+v.videoHeight;
-    running=true;states=[];lastT=performance.now();setMsg('');showPerm('granted');
-    $('stop').disabled=false;$('calib').disabled=false;$('save').disabled=false;
-    log('Camera online ('+v.videoWidth+'x'+v.videoHeight+'). Scan running.','ok');
-    loop();handLoop();
-  }catch(e){
-    busy(false);
-    if(e&&e.name==='NotAllowedError'){showPerm('denied');setMsg(DENIED,true,'[ RETRY ]');log('Camera access denied','err')}
-    else if(e&&e.name==='NotFoundError'){setMsg('No camera found on this device.',true,'[ RETRY ]');log('No camera found','err')}
-    else{setMsg('Start failed: '+(e&&e.message?e.message:e)+'. Check your internet connection (models download once) and the camera permission.',true,'[ RETRY ]');log('Start failed','err')}
-  }
-}
-function stop(){
-  running=false;
-  if(stream)stream.getTracks().forEach(t=>t.stop());
-  v.srcObject=null;ctx.clearRect(0,0,c.width,c.height);
-  busy(false);$('stop').disabled=true;$('calib').disabled=true;$('save').disabled=true;$('guide').hidden=true;
-  $('fps').textContent='';$('handstag').textContent='';setMsg('Scan stopped. Camera released.',true,'[ RESTART ]');log('Scan stopped');
-  $('cards').innerHTML='<div class="empty">&gt; no scan running. Start the scan to see live target data.</div>';
-  $('hands').innerHTML='<p class="muted" style="margin:0">No hand in frame.</p>';
-  lastHands=[];hadHand=false;
-}
-async function loop(){
-  if(!running)return;
-  try{
-    const res=await faceapi.detectAllFaces(v,new faceapi.TinyFaceDetectorOptions({inputSize:320,scoreThreshold:0.5})).withFaceLandmarks().withFaceExpressions().withAgeAndGender().withFaceDescriptors();
-    const now=performance.now(),dt=(now-lastT)/1000;lastT=now;
-    fps=fps*0.9+(1/Math.max(dt,0.001))*0.1;
-    res.sort((a,b)=>a.detection.box.x-b.detection.box.x);
-    lastRes=res;render(res,dt);
-  }catch(e){console.error(e)}
-  requestAnimationFrame(loop);
-}
-async function handLoop(){
-  if(!running)return;
-  try{await handsModel.send({image:v})}catch(e){console.error(e)}
-  requestAnimationFrame(handLoop);
-}
-function buildEdges(p){
-  const s=new Set();
-  p.forEach((a,i)=>p.map((b,j)=>[j,dist(a,b)]).filter(x=>x[0]!==i).sort((x,y)=>x[1]-y[1]).slice(0,3).forEach(([j])=>s.add(i<j?i+'-'+j:j+'-'+i)));
-  edges=[...s].map(k=>k.split('-').map(Number));
-}
-function render(res,dt){
-  const W=c.width;ctx.clearRect(0,0,W,c.height);
-  const fx=x=>W-x,html=[];
-  if(!!res.length!==hadFace){hadFace=!!res.length;log(hadFace?'Target lock acquired':'Target lost',hadFace?'ok':'warn')}
-  states.forEach((s,i)=>{if(i>=res.length)s.prev=null});
-  res.slice(0,4).forEach((r,i)=>{
-    const s=states[i]||(states[i]={ages:[],blinks:0,closed:false,mv:0,prev:null,pid:''});
-    const b=r.detection.box,p=r.landmarks.positions;
-    if(!edges)buildEdges(p);
-    s.ages.push(r.age);if(s.ages.length>25)s.ages.shift();
-    const age=Math.round(s.ages.reduce((a,x)=>a+x,0)/s.ages.length);
-    let prof=null,conf=0;
-    if(matcher){const m=matcher.findBestMatch(r.descriptor);if(m.label!=='unknown'){prof=known.find(k=>k.id===m.label)||null;conf=Math.round((1-m.distance)*100)}}
-    const name=prof?prof.name:null;
-    if((prof?prof.id:'')!==s.pid){s.pid=prof?prof.id:'';if(prof)log('Identity match: '+prof.name+' ('+conf+'%)','ok')}
-    const eL=mean(p,36,41),eR=mean(p,42,47),eM={x:(eL.x+eR.x)/2,y:(eL.y+eR.y)/2};
-    const roll=Math.round(Math.atan2(eR.y-eL.y,eR.x-eL.x)*180/Math.PI);
-    const yawRaw=((p[30].x-(p[0].x+p[16].x)/2)/dist(p[0],p[16]))*180;
-    const pitchRaw=((p[30].y-eM.y)/(p[8].y-eM.y)-0.55)*160;
-    if(i===0)raw0={yaw:yawRaw,pitch:pitchRaw};
-    const yaw=Math.round(yawRaw-offs.yaw),pitch=Math.round(pitchRaw-offs.pitch);
-    const dirs=[];
-    if(yaw<-12)dirs.push('right');else if(yaw>12)dirs.push('left');
-    if(pitch>12)dirs.push('down');else if(pitch<-12)dirs.push('up');
-    if(roll<-10)dirs.push('tilt right');else if(roll>10)dirs.push('tilt left');
-    const closed=(ear(p,36)+ear(p,42))/2<0.2;
-    if(s.closed&&!closed)s.blinks++;
-    s.closed=closed;
-    const mo=dist(p[62],p[66])/dist(p[60],p[64]);
-    if(s.prev){const d=dist(p[30],s.prev)/b.width/Math.max(dt,0.01);s.mv=s.mv*0.8+d*0.2}
-    s.prev={x:p[30].x,y:p[30].y};
-    const mvLabel=s.mv<0.15?'still':s.mv<0.6?'low':'high';
-    const col=name?'#3dff9a':'#ffb020';
-    ctx.strokeStyle='rgba(61,255,154,.4)';ctx.lineWidth=1;ctx.beginPath();
-    edges.forEach(([a,z])=>{ctx.moveTo(fx(p[a].x),p[a].y);ctx.lineTo(fx(p[z].x),p[z].y)});ctx.stroke();
-    ctx.fillStyle=col;p.forEach(q=>ctx.fillRect(fx(q.x)-1.5,q.y-1.5,3,3));
-    const bx=fx(b.x+b.width),by=b.y,bw=b.width,bh=b.height,L=Math.min(bw,bh)*.18;
-    ctx.strokeStyle=col;ctx.lineWidth=2;ctx.beginPath();
-    [[bx,by,1,1],[bx+bw,by,-1,1],[bx,by+bh,1,-1],[bx+bw,by+bh,-1,-1]].forEach(([x,y,dx,dy])=>{ctx.moveTo(x+dx*L,y);ctx.lineTo(x,y);ctx.lineTo(x,y+dy*L)});ctx.stroke();
-    const sy=by+((performance.now()/1400)%1)*bh;
-    ctx.strokeStyle='rgba(61,255,154,.55)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(bx,sy);ctx.lineTo(bx+bw,sy);ctx.stroke();
-    const label='T'+(i+1)+' | '+(name?name.toUpperCase():'UNIDENTIFIED')+' | ~'+age+'y';
-    ctx.font='700 13px ui-monospace,Menlo,Consolas,monospace';
-    const tw=ctx.measureText(label).width,ly=Math.max(20,by);
-    ctx.fillStyle=col;ctx.fillRect(bx,ly-20,tw+12,20);
-    ctx.fillStyle='#02150d';ctx.fillText(label,bx+6,ly-6);
-    const top=Object.entries(r.expressions).sort((a,b)=>b[1]-a[1]).slice(0,3);
-    html.push(`<article class="box"><h2>&gt; target ${String(i+1).padStart(2,'0')} // ${name?'identified':'unidentified'}</h2>
-<dl><dt>Identity</dt><dd class="${name?'g':'a'}">${name?esc(name)+' ('+conf+'%)':'UNKNOWN'}</dd>
-${prof?`<dt>Registered</dt><dd>${new Date(prof.created).toLocaleDateString('en-GB')}, ${prof.d.length} samples</dd>`:''}
-<dt>Est. age</dt><dd>~${age} years</dd>
-<dt>Est. gender</dt><dd>${r.gender==='male'?'Male':'Female'} (${Math.round(r.genderProbability*100)}%)</dd>
-<dt>Head</dt><dd>${dirs.length?dirs.join(', '):'straight ahead'}</dd>
-<dt>Yaw/pitch/roll</dt><dd>${yaw} / ${pitch} / ${roll} deg</dd>
-<dt>Eyes</dt><dd>${closed?'closed':'open'}, ${s.blinks} blinks</dd>
-<dt>Mouth</dt><dd>${mo>0.35?'open':'closed'}</dd></dl>
-${top.map(([k,val])=>`<div class="bar"><span>${EXPR[k]}</span><i style="--w:${Math.round(val*100)}%"></i><b>${Math.round(val*100)}%</b></div>`).join('')}
-<div class="bar mv"><span>Motion</span><i style="--w:${Math.min(100,Math.round(s.mv/1.5*100))}%"></i><b>${mvLabel}</b></div></article>`);
-  });
-  $('cards').innerHTML=html.join('')||'<div class="empty">&gt; no target in frame. Face the camera in a well-lit spot.</div>';
-  drawHandsOverlay(W,fx);
-  $('fps').textContent=fps.toFixed(0)+' FPS';
-}
-
-/* ---------- guided registration ---------- */
-const biggest=()=>lastRes.length?lastRes.reduce((a,b)=>b.detection.box.width>a.detection.box.width?b:a):null;
-function thumb(r){
-  const b=r.detection.box,side=Math.max(b.width,b.height)*1.5,cx=b.x+b.width/2,cy=b.y+b.height/2;
-  const t=document.createElement('canvas');t.width=t.height=96;
-  const x=t.getContext('2d');x.translate(96,0);x.scale(-1,1);
-  x.drawImage(v,cx-side/2,cy-side/2,side,side,0,0,96,96);
-  return t.toDataURL('image/jpeg',0.8);
-}
-async function enroll(){
-  const nm=$('name').value.trim();
-  if(!nm){hint('Enter a name first.');return}
-  if(!running||enrolling)return;
-  enrolling=true;$('save').disabled=true;log('Registration started for '+nm,'warn');
-  const d=[],ages=[],gens=[];let th='';
-  for(let i=0;i<STEPS.length&&running;i++){
-    $('guide').hidden=false;$('guide').textContent=(i+1)+'/'+STEPS.length+' '+STEPS[i];
-    await sleep(1800);
-    let r=biggest();
-    if(!r){await sleep(700);r=biggest()}
-    if(!r)continue;
-    d.push(Array.from(r.descriptor,x=>+x.toFixed(4)));ages.push(r.age);gens.push(r.gender);
-    if(!th)th=thumb(r);
-  }
-  $('guide').hidden=true;enrolling=false;$('save').disabled=!running;
-  if(d.length<3){hint('Face not clear enough ('+d.length+' of '+STEPS.length+' captures). Try again with better light.');log('Registration failed','err');return}
-  const age=Math.round(ages.reduce((a,x)=>a+x,0)/ages.length);
-  const gender=gens.filter(g=>g==='male').length>=gens.length/2?'Male':'Female';
-  const ex=known.find(k=>k.name.toLowerCase()===nm.toLowerCase());
-  if(ex){ex.d=ex.d.concat(d).slice(-15);ex.age=age;ex.gender=gender}
-  else known.push({id:Math.random().toString(36).slice(2),name:nm,age,gender,thumb:th,created:Date.now(),d});
-  hint(persist()?'Profile "'+nm+'" saved ('+d.length+' captures).':'Browser storage is full. Delete old profiles.');
-  log('Profile saved: '+nm,'ok');buildMatcher();$('name').value='';
-}
-
-$('start').onclick=start;
-$('allow').onclick=start;
-$('stop').onclick=stop;
-$('save').onclick=enroll;
-$('trace').onclick=trace;
-$('gps').onclick=gps;
-$('calib').onclick=()=>{offs={yaw:raw0.yaw,pitch:raw0.pitch};log('Head calibrated as straight ahead','ok')};
-$('known').onclick=e=>{const t=e.target.closest('[data-del]');if(!t)return;known=known.filter(k=>k.id!==t.dataset.del);persist();buildMatcher();hint('Profile deleted.')};
-$('clear').onclick=()=>{if(known.length&&!confirm('Delete all saved profiles?'))return;known=[];persist();buildMatcher();hint('Registry wiped.')};
-setInterval(()=>{$('clock').textContent=new Date().toLocaleTimeString('en-GB')},1000);
-['FACE//RECON kernel 1.1 loaded','Educational build: all analysis stays in this browser','Local device intel collected','Awaiting camera access'].forEach((m,i)=>setTimeout(()=>log(m,i===3?'warn':''),i*250));
-initPerm();
-</script>
-</body>
-</html>
