@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="ro" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Face, Hand & Pose Tracking with Motion Intuition</title>
+  <title>OmniVision AI - Face, Hand & Pose Tracking</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- MediaPipe Tasks Vision CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm/vision_bundle.js" crossorigin="anonymous"></script>
+  <!-- Classic MediaPipe CDNs (100% Reliable Standalone Libraries) -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic/holistic.js" crossorigin="anonymous"></script>
 
   <script>
     tailwind.config = {
@@ -20,7 +22,6 @@
         extend: {
           colors: {
             brand: {
-              50: '#f0f9ff',
               400: '#38bdf8',
               500: '#06b6d4',
               600: '#0891b2',
@@ -54,9 +55,18 @@
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen overflow-x-hidden flex flex-col antialiased">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen overflow-x-hidden flex flex-col antialiased select-none">
 
-  <!-- Main Header -->
+  <!-- Application Banner / Alert Status -->
+  <div id="statusBanner" class="bg-cyan-950/80 border-b border-cyan-800/60 px-4 py-2 text-xs font-mono text-cyan-200 flex items-center justify-between transition-all">
+    <div class="flex items-center space-x-2">
+      <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
+      <span id="statusMessage">Se inițializează modelele AI MediaPipe Holistic...</span>
+    </div>
+    <span id="modelSourceTag" class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] text-slate-300">Sursa: MediaPipe CDN</span>
+  </div>
+
+  <!-- Header Section -->
   <header class="w-full glass-panel z-30 px-6 py-3 flex flex-wrap items-center justify-between border-b border-slate-800 shrink-0">
     <div class="flex items-center space-x-3">
       <div class="p-2 bg-cyan-500/20 text-cyan-400 rounded-xl border border-cyan-500/30">
@@ -64,146 +74,145 @@
       </div>
       <div>
         <h1 class="text-xl font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-400">
-          OmniVision AI <span class="text-xs font-normal px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 ml-2">v2.0 Pro</span>
+          OmniVision AI <span class="text-xs font-normal px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 ml-2">v3.0 Ultra</span>
         </h1>
-        <p class="text-xs text-slate-400">Full Body, Multi-Hand, Face Mesh & Motion Trajectory Prediction</p>
+        <p class="text-xs text-slate-400">Detecție Facială, Corp, Mâini și Intuiție Mișcare Traiectorie</p>
       </div>
     </div>
 
-    <!-- Actions & Status Header Bar -->
+    <!-- Header Actions -->
     <div class="flex items-center space-x-3 mt-2 sm:mt-0 flex-wrap gap-y-2">
-      <div id="cameraStatusBadge" class="flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
-        <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-        <span id="cameraStatusText">Loading Vision AI Models...</span>
-      </div>
+      <select id="cameraSelect" class="bg-slate-900 border border-slate-700 text-xs rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-cyan-500">
+        <option value="">Se caută camere...</option>
+      </select>
 
-      <button id="toggleCameraBtn" class="flex items-center space-x-2 px-3 py-1.5 text-xs font-semibold rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white transition-colors shadow-lg shadow-cyan-950/50 disabled:opacity-50">
+      <button id="toggleCameraBtn" class="flex items-center space-x-2 px-3 py-1.5 text-xs font-semibold rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white transition-colors shadow-lg shadow-cyan-950/50">
         <i data-lucide="camera" class="w-4 h-4"></i>
-        <span id="toggleCameraBtnText">Request Camera</span>
+        <span id="toggleCameraBtnText">Pornește Camera</span>
       </button>
 
       <button id="snapshotBtn" class="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors">
         <i data-lucide="download" class="w-4 h-4"></i>
-        <span>Snapshot</span>
+        <span>Captură PNG</span>
       </button>
 
       <button id="exportJsonBtn" class="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 border border-indigo-700/50 transition-colors">
         <i data-lucide="file-json" class="w-4 h-4"></i>
-        <span>Export Telemetry (JSON)</span>
+        <span>Export Telemetrie</span>
       </button>
     </div>
   </header>
 
-  <!-- Main Content Workspace -->
+  <!-- Workspace Container -->
   <main class="flex-1 flex flex-col lg:flex-row p-4 gap-4 overflow-hidden max-w-[1920px] w-full mx-auto">
 
-    <!-- Left/Center: Canvas Viewport & Action HUD Overlay -->
+    <!-- Center/Left Visual Canvas Viewport -->
     <section class="flex-1 flex flex-col items-center justify-center relative min-h-[450px] lg:min-h-0 bg-slate-900/60 rounded-2xl border border-slate-800/80 overflow-hidden shadow-2xl">
       
-      <!-- Video Element -->
+      <!-- Video Element (Hidden rendering pipeline source) -->
       <video id="webcamVideo" class="hidden" playsinline muted></video>
 
-      <!-- Interactive Canvas -->
-      <div id="canvasContainer" class="relative w-full h-full flex items-center justify-center bg-black/40 select-none">
+      <!-- Viewport Canvas -->
+      <div id="canvasContainer" class="relative w-full h-full flex items-center justify-center bg-black/40">
         <canvas id="outputCanvas" class="max-w-full max-h-full object-contain rounded-lg shadow-lg"></canvas>
 
-        <!-- AI Detected Intuition Overlay Box -->
-        <div class="absolute top-4 left-4 glass-panel p-3 rounded-xl max-w-xs space-y-2 border border-cyan-500/30 text-xs shadow-2xl">
+        <!-- Motion Intuition Overlay Box -->
+        <div class="absolute top-4 left-4 glass-panel p-3.5 rounded-xl max-w-xs space-y-2 border border-cyan-500/30 text-xs shadow-2xl">
           <div class="flex items-center justify-between border-b border-slate-700/60 pb-1.5">
             <span class="font-bold text-cyan-400 flex items-center gap-1.5">
-              <i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i> Motion Intuition Engine
+              <i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i> Intuiție Mișcare AI
             </span>
-            <span id="aiConfidenceBadge" class="text-[10px] px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 font-mono">100% Match</span>
+            <span id="aiConfidenceBadge" class="text-[10px] px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 font-mono">Activ</span>
           </div>
           
           <div class="space-y-1 font-mono">
-            <p><span class="text-slate-400">Action Intuition:</span> <span id="hudActionState" class="text-emerald-400 font-bold">Initializing...</span></p>
-            <p><span class="text-slate-400">Hand Gestures:</span> <span id="hudHandGesture" class="text-amber-400 font-bold">None</span></p>
-            <p><span class="text-slate-400">Facial Expression:</span> <span id="hudFaceExpression" class="text-purple-400 font-bold">Neutral</span></p>
-            <p><span class="text-slate-400">Predicted Motion Vector:</span> <span id="hudMotionVector" class="text-sky-400 font-bold">Static</span></p>
+            <p><span class="text-slate-400">Postură/Acțiune:</span> <span id="hudActionState" class="text-emerald-400 font-bold">Se așteaptă date...</span></p>
+            <p><span class="text-slate-400">Gest Mâini:</span> <span id="hudHandGesture" class="text-amber-400 font-bold">Niciunul</span></p>
+            <p><span class="text-slate-400">Expresie Față:</span> <span id="hudFaceExpression" class="text-purple-400 font-bold">Neutru</span></p>
+            <p><span class="text-slate-400">Vector Viteză:</span> <span id="hudMotionVector" class="text-sky-400 font-bold">Static (0 px/s)</span></p>
           </div>
         </div>
       </div>
 
-      <!-- Live Diagnostics Stats Bar -->
+      <!-- Footer Realtime Diagnostics -->
       <div class="w-full glass-panel px-4 py-2.5 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-6 gap-2 text-center text-xs">
         <div class="p-1.5 rounded-lg bg-slate-800/40">
           <span class="block text-slate-400 text-[10px] uppercase font-semibold">Framerate</span>
           <span id="statFPS" class="font-mono text-sm font-bold text-cyan-400">0 FPS</span>
         </div>
         <div class="p-1.5 rounded-lg bg-slate-800/40">
-          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Face Mesh</span>
-          <span id="statFaceLandmarks" class="font-mono text-sm font-bold text-emerald-400">468 Pts</span>
+          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Mesh Față</span>
+          <span id="statFaceLandmarks" class="font-mono text-sm font-bold text-emerald-400">0 Puncte</span>
         </div>
         <div class="p-1.5 rounded-lg bg-slate-800/40">
-          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Hands Active</span>
-          <span id="statHandsCount" class="font-mono text-sm font-bold text-amber-400">0 Detected</span>
+          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Mâini Active</span>
+          <span id="statHandsCount" class="font-mono text-sm font-bold text-amber-400">0 Detectate</span>
         </div>
         <div class="p-1.5 rounded-lg bg-slate-800/40">
-          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Pose Tracker</span>
-          <span id="statPoseLandmarks" class="font-mono text-sm font-bold text-purple-400">33 Pts</span>
+          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Schelet Corp</span>
+          <span id="statPoseLandmarks" class="font-mono text-sm font-bold text-purple-400">0 Puncte</span>
         </div>
         <div class="p-1.5 rounded-lg bg-slate-800/40">
-          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Velocity (Hand)</span>
+          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Viteză Maximă</span>
           <span id="statHandVelocity" class="font-mono text-sm font-bold text-rose-400">0 px/s</span>
         </div>
         <div class="p-1.5 rounded-lg bg-slate-800/40">
-          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Gaze Direction</span>
-          <span id="statGazeDir" class="font-mono text-sm font-bold text-sky-400">Center</span>
+          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Mod Operare</span>
+          <span id="statMode" class="font-mono text-sm font-bold text-sky-400">Se încarcă</span>
         </div>
       </div>
     </section>
 
-    <!-- Right Sidebar Controls & AI Analysis -->
+    <!-- Right Sidebar Dashboard Controls -->
     <aside class="w-full lg:w-96 glass-panel rounded-2xl p-4 border border-slate-800 flex flex-col gap-5 overflow-y-auto custom-scrollbar max-h-[calc(100vh-6rem)]">
       
-      <!-- Visual Layer Toggles -->
+      <!-- Overlay Toggles -->
       <div class="space-y-3">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
           <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i data-lucide="layers" class="w-4 h-4 text-cyan-400"></i> Active Vision Overlays
+            <i data-lucide="layers" class="w-4 h-4 text-cyan-400"></i> Strat Grafic Vizual (Overlays)
           </h2>
         </div>
 
         <div class="grid grid-cols-2 gap-2 text-xs">
           <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
             <input type="checkbox" id="chkFace" checked class="rounded accent-cyan-500">
-            <span class="text-slate-300">Face Mesh (468)</span>
+            <span class="text-slate-300">Mesh Față (468)</span>
           </label>
           <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
             <input type="checkbox" id="chkHands" checked class="rounded accent-cyan-500">
-            <span class="text-slate-300">Hands (21 Pts)</span>
+            <span class="text-slate-300">Mâini (21 Pts)</span>
           </label>
           <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
             <input type="checkbox" id="chkPose" checked class="rounded accent-cyan-500">
-            <span class="text-slate-300">Pose Skeleton</span>
+            <span class="text-slate-300">Schelet Corp</span>
           </label>
           <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
             <input type="checkbox" id="chkTrajectory" checked class="rounded accent-cyan-500">
-            <span class="text-slate-300">Motion Trails</span>
+            <span class="text-slate-300">Traiectorie Trai</span>
           </label>
           <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
             <input type="checkbox" id="chkVectors" checked class="rounded accent-cyan-500">
-            <span class="text-slate-300">Vectors & Predict</span>
+            <span class="text-slate-300">Vectori Predicție</span>
           </label>
           <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
             <input type="checkbox" id="chkFlip" checked class="rounded accent-cyan-500">
-            <span class="text-slate-300">Mirror Video</span>
+            <span class="text-slate-300">Oglindire Video</span>
           </label>
         </div>
       </div>
 
-      <!-- Sensitivity & Prediction Settings -->
+      <!-- Prediction Adjustments -->
       <div class="space-y-4">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
           <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i data-lucide="sliders" class="w-4 h-4 text-cyan-400"></i> Motion Prediction Controls
+            <i data-lucide="sliders" class="w-4 h-4 text-cyan-400"></i> Setări Intuiție & Traiectorie
           </h2>
         </div>
 
         <div class="space-y-1">
           <div class="flex justify-between text-xs">
-            <label for="predictionScale" class="text-slate-300">Prediction Horizon</label>
+            <label for="predictionScale" class="text-slate-300">Orizont Predicție (Secunde)</label>
             <span id="predictionScaleVal" class="font-mono text-cyan-400 font-bold">0.8 sec</span>
           </div>
           <input type="range" id="predictionScale" min="0.1" max="2.0" step="0.1" value="0.8" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
@@ -211,47 +220,47 @@
 
         <div class="space-y-1">
           <div class="flex justify-between text-xs">
-            <label for="trailLength" class="text-slate-300">Motion Trail History</label>
-            <span id="trailLengthVal" class="font-mono text-cyan-400 font-bold">25 frames</span>
+            <label for="trailLength" class="text-slate-300">Istoric Urmă Mișcare</label>
+            <span id="trailLengthVal" class="font-mono text-cyan-400 font-bold">25 cadru</span>
           </div>
           <input type="range" id="trailLength" min="5" max="60" value="25" step="5" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
         </div>
       </div>
 
-      <!-- Live Gesture Intuition Telemetry Cards -->
+      <!-- AI Telemetry Breakdowns -->
       <div class="space-y-3">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
           <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i data-lucide="scan" class="w-4 h-4 text-cyan-400"></i> AI Detection Telemetry
+            <i data-lucide="scan" class="w-4 h-4 text-cyan-400"></i> Telemetrie Detecție
           </h2>
         </div>
 
         <div class="space-y-2 text-xs">
-          <!-- Hand Detailed Box -->
+          <!-- Hand Details -->
           <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
-            <span class="text-slate-400 text-[10px] uppercase font-bold block mb-1">Left & Right Hands</span>
+            <span class="text-slate-400 text-[10px] uppercase font-bold block mb-1">Stare Mâini (Stânga / Dreapta)</span>
             <div class="flex justify-between items-center font-mono">
-              <span id="leftHandStatus" class="text-slate-400">Left: None</span>
-              <span id="rightHandStatus" class="text-slate-400">Right: None</span>
+              <span id="leftHandStatus" class="text-slate-300">Stânga: Inactiv</span>
+              <span id="rightHandStatus" class="text-slate-300">Dreapta: Inactiv</span>
             </div>
           </div>
 
-          <!-- Face Detail Box -->
+          <!-- Face Metrics -->
           <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
-            <span class="text-slate-400 text-[10px] uppercase font-bold block mb-1">Facial Blendshapes & Metrics</span>
+            <span class="text-slate-400 text-[10px] uppercase font-bold block mb-1">Analiză Expresie Facială</span>
             <div class="grid grid-cols-2 gap-1 font-mono text-[11px]">
-              <div>Smile: <span id="valSmile" class="text-cyan-400">0%</span></div>
-              <div>Eye Blink: <span id="valBlink" class="text-cyan-400">0%</span></div>
-              <div>Mouth Open: <span id="valMouth" class="text-cyan-400">0%</span></div>
-              <div>Eyebrow Raised: <span id="valBrows" class="text-cyan-400">0%</span></div>
+              <div>Zâmbet: <span id="valSmile" class="text-cyan-400">0%</span></div>
+              <div>Clipit: <span id="valBlink" class="text-cyan-400">0%</span></div>
+              <div>Gură Deschisă: <span id="valMouth" class="text-cyan-400">0%</span></div>
+              <div>Sprâncene: <span id="valBrows" class="text-cyan-400">0%</span></div>
             </div>
           </div>
 
-          <!-- Body Action Classifier -->
+          <!-- Pose Action -->
           <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
-            <span class="text-slate-400 text-[10px] uppercase font-bold block mb-1">Pose & Full Body Intuition</span>
+            <span class="text-slate-400 text-[10px] uppercase font-bold block mb-1">Intuiție Corp & Mișcare Globală</span>
             <div class="font-mono text-cyan-300 font-semibold" id="bodyActionDetails">
-              Standing / Neutral
+              Stationar / Neutru
             </div>
           </div>
         </div>
@@ -260,8 +269,9 @@
     </aside>
   </main>
 
+  <!-- Javascript Logic -->
   <script>
-    // --- Application Configuration & State ---
+    // --- Configuration State ---
     const config = {
       showFace: true,
       showHands: true,
@@ -269,35 +279,28 @@
       showTrajectory: true,
       showVectors: true,
       flipHorizontal: true,
-      predictionHorizon: 0.8, // seconds in future
+      predictionHorizon: 0.8,
       trailLength: 25
     };
 
     let isWebcamActive = false;
     let videoStream = null;
-    let visionTasksLoaded = false;
+    let holistic = null;
+    let cameraUtil = null;
+    let demoMode = false;
+    let demoAngle = 0;
 
-    // Vision Models References
-    let faceLandmarker = null;
-    let handLandmarker = null;
-    let poseLandmarker = null;
-
-    // Motion & Trajectory History
+    // History for Vector Prediction
     const history = {
       leftHand: [],
       rightHand: [],
-      head: [],
-      poseCenter: []
+      head: []
     };
 
-    // Diagnostics
+    // Performance Stats
     let lastFrameTime = performance.now();
     let frameCount = 0;
     let fps = 0;
-
-    // Synthetic Demo Mode Object (for testing without camera)
-    let demoMode = false;
-    let demoAngle = 0;
 
     // --- DOM Elements ---
     const video = document.getElementById('webcamVideo');
@@ -305,10 +308,13 @@
     const ctx = canvas.getContext('2d');
     const toggleCameraBtn = document.getElementById('toggleCameraBtn');
     const toggleCameraBtnText = document.getElementById('toggleCameraBtnText');
-    const cameraStatusBadge = document.getElementById('cameraStatusBadge');
-    const cameraStatusText = document.getElementById('cameraStatusText');
+    const cameraSelect = document.getElementById('cameraSelect');
+    const statusBanner = document.getElementById('statusBanner');
+    const statusMessage = document.getElementById('statusMessage');
+    const statusDot = document.getElementById('statusDot');
+    const statMode = document.getElementById('statMode');
 
-    // UI Controls
+    // UI Input Elements
     const chkFace = document.getElementById('chkFace');
     const chkHands = document.getElementById('chkHands');
     const chkPose = document.getElementById('chkPose');
@@ -318,15 +324,12 @@
     const predictionScale = document.getElementById('predictionScale');
     const trailLengthInput = document.getElementById('trailLength');
 
-    // Stats UI
+    // UI Stats
     const statFPS = document.getElementById('statFPS');
     const statFaceLandmarks = document.getElementById('statFaceLandmarks');
     const statHandsCount = document.getElementById('statHandsCount');
     const statPoseLandmarks = document.getElementById('statPoseLandmarks');
     const statHandVelocity = document.getElementById('statHandVelocity');
-    const statGazeDir = document.getElementById('statGazeDir');
-
-    // HUD Telemetry
     const hudActionState = document.getElementById('hudActionState');
     const hudHandGesture = document.getElementById('hudHandGesture');
     const hudFaceExpression = document.getElementById('hudFaceExpression');
@@ -339,221 +342,392 @@
     const valBrows = document.getElementById('valBrows');
     const bodyActionDetails = document.getElementById('bodyActionDetails');
 
-    // --- Load MediaPipe Vision Models via WASM ---
-    async function initMediaPipeVision() {
+    // --- MediaPipe Holistic Model Initialization ---
+    function initMediaPipe() {
       try {
-        const { VisionFilesetResolver, FaceLandmarker, HandLandmarker, PoseLandmarker } = window.mediapipeTasksVision || {};
-        
-        if (!VisionFilesetResolver) {
-          throw new Error("MediaPipe Tasks Vision library failed to load from CDN.");
+        if (typeof Holistic === 'undefined') {
+          throw new Error("Bibliotecile MediaPipe nu au putut fi încărcate din CDN.");
         }
 
-        cameraStatusText.innerText = 'Loading WASM Vision Core...';
-        const filesetResolver = await VisionFilesetResolver.forVisionTasks(
-          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
-        );
-
-        cameraStatusText.innerText = 'Loading Face Mesh Model...';
-        faceLandmarker = await FaceLandmarker.createFromOptions(filesetResolver, {
-          baseOptions: {
-            modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
-            delegate: "GPU"
-          },
-          runningMode: "VIDEO",
-          numFaces: 1,
-          outputFaceBlendshapes: true
+        holistic = new Holistic({
+          locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}`
         });
 
-        cameraStatusText.innerText = 'Loading Hand Tracker Model...';
-        handLandmarker = await HandLandmarker.createFromOptions(filesetResolver, {
-          baseOptions: {
-            modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
-            delegate: "GPU"
-          },
-          runningMode: "VIDEO",
-          numHands: 2
+        holistic.setOptions({
+          modelComplexity: 1,
+          smoothLandmarks: true,
+          enableSegmentation: false,
+          refineFaceLandmarks: true,
+          minDetectionConfidence: 0.5,
+          minTrackingConfidence: 0.5
         });
 
-        cameraStatusText.innerText = 'Loading Pose Skeleton Model...';
-        poseLandmarker = await PoseLandmarker.createFromOptions(filesetResolver, {
-          baseOptions: {
-            modelAssetPath: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task",
-            delegate: "GPU"
-          },
-          runningMode: "VIDEO",
-          numPoses: 1
-        });
+        holistic.onResults(onHolisticResults);
 
-        visionTasksLoaded = true;
-        cameraStatusBadge.className = "flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-        cameraStatusText.innerText = "Vision AI Models Ready";
+        updateStatus("Modelele AI MediaPipe Holistic sunt pregătite!", "success");
+        statMode.innerText = "MediaPipe AI";
         
-        // Auto attempt camera
-        startCamera();
+        enumerateCameras();
+        startWebcam(); // Auto start camera
       } catch (err) {
-        console.warn("AI Models loading fallback to synthetic demo mode:", err);
-        visionTasksLoaded = false;
-        demoMode = true;
-        cameraStatusBadge.className = "flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
-        cameraStatusText.innerText = "Demo Mode (Model CDN fallback)";
+        console.warn("Eroare inițializare MediaPipe, trecere în Mod Demo Simulativ:", err);
+        enableDemoMode("Modele AI indisponibile. Mod Demo activat.");
       }
     }
 
-    // --- Gesture Intuition & Logic Classifiers ---
+    // --- Status Banner Helper ---
+    function updateStatus(msg, type = "info") {
+      statusMessage.innerText = msg;
+      if (type === "success") {
+        statusDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400";
+        statusBanner.className = "bg-emerald-950/80 border-b border-emerald-800/60 px-4 py-2 text-xs font-mono text-emerald-200 flex items-center justify-between";
+      } else if (type === "error") {
+        statusDot.className = "w-2.5 h-2.5 rounded-full bg-rose-400 animate-bounce";
+        statusBanner.className = "bg-rose-950/80 border-b border-rose-800/60 px-4 py-2 text-xs font-mono text-rose-200 flex items-center justify-between";
+      } else {
+        statusDot.className = "w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping";
+        statusBanner.className = "bg-amber-950/80 border-b border-amber-800/60 px-4 py-2 text-xs font-mono text-amber-200 flex items-center justify-between";
+      }
+    }
 
-    /** Classify Hand Gestures from 21 Landmarks */
+    // --- Camera Enumeration ---
+    async function enumerateCameras() {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(d => d.kind === 'videoinput');
+        cameraSelect.innerHTML = '';
+        
+        if (videoDevices.length === 0) {
+          cameraSelect.innerHTML = '<option value="">Fără cameră detectată</option>';
+          return;
+        }
+
+        videoDevices.forEach((device, i) => {
+          const opt = document.createElement('option');
+          opt.value = device.deviceId;
+          opt.innerText = device.label || `Cameră ${i + 1}`;
+          cameraSelect.appendChild(opt);
+        });
+      } catch (e) {
+        console.warn("Eroare enumerare camere:", e);
+      }
+    }
+
+    // --- Webcam Capture Setup ---
+    async function startWebcam(deviceId = null) {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        enableDemoMode("Browserul nu suportă accesul la cameră.");
+        return;
+      }
+
+      updateStatus("Pornire cameră video...", "info");
+
+      if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+      }
+
+      const constraints = {
+        video: {
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+          deviceId: deviceId ? { exact: deviceId } : undefined
+        },
+        audio: false
+      };
+
+      try {
+        videoStream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = videoStream;
+        video.setAttribute('playsinline', '');
+        await video.play();
+
+        isWebcamActive = true;
+        demoMode = false;
+        toggleCameraBtnText.innerText = "Oprește Camera";
+        updateStatus("Cameră conectată. Detecție AI activă!", "success");
+
+        // Run holistic loop via custom requestAnimationFrame for maximum resilience
+        runFrameProcessing();
+      } catch (err) {
+        console.error("Eroare acces webcam:", err);
+        enableDemoMode("Accesul la cameră a fost refuzat sau indisponibil.");
+      }
+    }
+
+    function stopWebcam() {
+      if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+      }
+      isWebcamActive = false;
+      toggleCameraBtnText.innerText = "Pornește Camera";
+      enableDemoMode("Cameră oprită de utilizator.");
+    }
+
+    function enableDemoMode(reason) {
+      demoMode = true;
+      isWebcamActive = false;
+      statMode.innerText = "Mod Simulare Demo";
+      updateStatus(`${reason} Rulare Mod Demo Interactiv.`, "error");
+    }
+
+    // --- Main Processing Frame Loop ---
+    async function runFrameProcessing() {
+      if (!isWebcamActive) return;
+
+      if (video.readyState >= 2 && holistic) {
+        try {
+          await holistic.send({ image: video });
+        } catch (err) {
+          console.warn("Eroare procesare cadru AI:", err);
+        }
+      }
+
+      if (isWebcamActive) {
+        requestAnimationFrame(runFrameProcessing);
+      }
+    }
+
+    // --- MediaPipe Holistic Results Callback ---
+    function onHolisticResults(results) {
+      const now = performance.now();
+      const dt = Math.max((now - lastFrameTime) / 1000, 0.001);
+      lastFrameTime = now;
+
+      frameCount++;
+      if (frameCount % 8 === 0) {
+        fps = Math.round(1 / dt);
+        statFPS.innerText = `${fps} FPS`;
+      }
+
+      // Sync canvas sizing
+      const w = results.image ? results.image.width : (video.videoWidth || 640);
+      const h = results.image ? results.image.height : (video.videoHeight || 480);
+      
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+      }
+
+      ctx.save();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw mirrored / normal video background
+      if (results.image) {
+        if (config.flipHorizontal) {
+          ctx.translate(canvas.width, 0);
+          ctx.scale(-1, 1);
+        }
+        ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
+      }
+      ctx.restore();
+
+      let maxSpeed = 0;
+
+      // 1. FACE MESH RENDER & CLASSIFICATION
+      if (results.faceLandmarks) {
+        statFaceLandmarks.innerText = `${results.faceLandmarks.length} Pts`;
+        if (config.showFace) {
+          drawLandmarks(ctx, results.faceLandmarks, {
+            color: '#38bdf8',
+            lineWidth: 0.5,
+            radius: 1,
+            flip: config.flipHorizontal,
+            canvasWidth: canvas.width,
+            canvasHeight: canvas.height
+          });
+        }
+
+        const faceMetrics = analyzeFace(results.faceLandmarks);
+        hudFaceExpression.innerText = faceMetrics.expr;
+        valSmile.innerText = `${faceMetrics.smile}%`;
+        valBlink.innerText = `${faceMetrics.blink}%`;
+        valMouth.innerText = `${faceMetrics.mouth}%`;
+        valBrows.innerText = `${faceMetrics.brows}%`;
+      } else {
+        statFaceLandmarks.innerText = "0 Pts";
+      }
+
+      // 2. HANDS TRACKING & GESTURES
+      let activeHands = 0;
+      let handGestures = [];
+
+      // Left Hand
+      if (results.leftHandLandmarks) {
+        activeHands++;
+        const g = classifyHandGesture(results.leftHandLandmarks);
+        handGestures.push(`Stânga: ${g}`);
+        leftHandStatus.innerText = `Stânga: ${g}`;
+        
+        if (config.showHands) {
+          drawConnectors(results.leftHandLandmarks, HAND_CONNECTIONS, '#f43f5e');
+        }
+
+        const wrist = results.leftHandLandmarks[0];
+        const pt = { x: config.flipHorizontal ? (1 - wrist.x) : wrist.x, y: wrist.y };
+        pushHistory(history.leftHand, pt);
+        const pred = calculateTrajectory(history.leftHand);
+        maxSpeed = Math.max(maxSpeed, pred.speed * canvas.width);
+
+        drawTrajectoryTrail(history.leftHand, '#f43f5e');
+        drawPredictionVector(pt, pred, '#f43f5e');
+      } else {
+        leftHandStatus.innerText = "Stânga: Inactiv";
+      }
+
+      // Right Hand
+      if (results.rightHandLandmarks) {
+        activeHands++;
+        const g = classifyHandGesture(results.rightHandLandmarks);
+        handGestures.push(`Dreapta: ${g}`);
+        rightHandStatus.innerText = `Dreapta: ${g}`;
+
+        if (config.showHands) {
+          drawConnectors(results.rightHandLandmarks, HAND_CONNECTIONS, '#38bdf8');
+        }
+
+        const wrist = results.rightHandLandmarks[0];
+        const pt = { x: config.flipHorizontal ? (1 - wrist.x) : wrist.x, y: wrist.y };
+        pushHistory(history.rightHand, pt);
+        const pred = calculateTrajectory(history.rightHand);
+        maxSpeed = Math.max(maxSpeed, pred.speed * canvas.width);
+
+        drawTrajectoryTrail(history.rightHand, '#38bdf8');
+        drawPredictionVector(pt, pred, '#38bdf8');
+      } else {
+        rightHandStatus.innerText = "Dreapta: Inactiv";
+      }
+
+      statHandsCount.innerText = `${activeHands} Detectate`;
+      hudHandGesture.innerText = handGestures.length > 0 ? handGestures.join(' | ') : 'Niciunul';
+
+      // 3. POSE SKELETON & ACTION INTUITION
+      if (results.poseLandmarks) {
+        statPoseLandmarks.innerText = `${results.poseLandmarks.length} Pts`;
+        if (config.showPose) {
+          drawConnectors(results.poseLandmarks, POSE_CONNECTIONS, '#a855f7');
+        }
+
+        const actionState = analyzeBodyPose(results.poseLandmarks, maxSpeed);
+        hudActionState.innerText = actionState;
+        bodyActionDetails.innerText = actionState;
+      } else {
+        statPoseLandmarks.innerText = "0 Pts";
+      }
+
+      statHandVelocity.innerText = `${Math.round(maxSpeed)} px/s`;
+      hudMotionVector.innerText = maxSpeed > 40 ? `În Mișcare (${Math.round(maxSpeed)} px/s)` : 'Static (0 px/s)';
+    }
+
+    // --- Gesture & Face Classifiers ---
+
     function classifyHandGesture(landmarks) {
-      if (!landmarks || landmarks.length < 21) return 'Unknown';
+      if (!landmarks || landmarks.length < 21) return 'Necunoscut';
 
-      // Landmark indices: Wrist=0, Thumb Tip=4, Index Tip=8, Middle Tip=12, Ring Tip=16, Pinky Tip=20
-      const wrist = landmarks[0];
       const thumbTip = landmarks[4];
       const indexTip = landmarks[8];
       const middleTip = landmarks[12];
       const ringTip = landmarks[16];
       const pinkyTip = landmarks[20];
 
-      // Distances helper
       const dist = (p1, p2) => Math.hypot(p1.x - p2.x, p1.y - p2.y);
-
       const pinchDist = dist(thumbTip, indexTip);
+
       const isIndexOpen = indexTip.y < landmarks[6].y;
       const isMiddleOpen = middleTip.y < landmarks[10].y;
       const isRingOpen = ringTip.y < landmarks[14].y;
       const isPinkyOpen = pinkyTip.y < landmarks[18].y;
 
-      if (pinchDist < 0.05) return 'Pinch / Precision Grip';
-      if (isIndexOpen && isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'Peace / Victory ✌️';
-      if (isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'Pointing 👆';
-      if (isIndexOpen && isMiddleOpen && isRingOpen && isPinkyOpen) return 'Open Palm 🖐️';
-      if (!isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'Fist ✊';
+      if (pinchDist < 0.045) return 'Pinch / Prindere 👌';
+      if (isIndexOpen && isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'Pace / Victorie ✌️';
+      if (isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'Arată cu degetul 👆';
+      if (isIndexOpen && isMiddleOpen && isRingOpen && isPinkyOpen) return 'Palmă Deschisă 🖐️';
+      if (!isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'Pumn ✊';
 
-      return 'Active Hand';
+      return 'Mână Activă';
     }
 
-    /** Classify Face Expression & Eye/Mouth Metrics */
-    function classifyFaceExpression(landmarks, blendshapes) {
-      if (!landmarks || landmarks.length < 468) return { expr: 'Neutral', smile: 0, blink: 0, mouth: 0, brows: 0 };
+    function analyzeFace(landmarks) {
+      if (!landmarks || landmarks.length < 468) return { expr: 'Neutru', smile: 0, blink: 0, mouth: 0, brows: 0 };
 
-      let smileScore = 0, blinkScore = 0, mouthOpenScore = 0, browScore = 0;
+      // Landmark geometric calculations
+      const mouthTop = landmarks[13];
+      const mouthBottom = landmarks[14];
+      const mouthLeft = landmarks[61];
+      const mouthRight = landmarks[291];
 
-      // Extract blendshape scores if present
-      if (blendshapes && blendshapes.length > 0) {
-        const categories = blendshapes[0].categories;
-        categories.forEach(c => {
-          if (c.categoryName.includes('mouthSmile')) smileScore = Math.max(smileScore, c.score);
-          if (c.categoryName.includes('eyeBlink')) blinkScore = Math.max(blinkScore, c.score);
-          if (c.categoryName.includes('jawOpen')) mouthOpenScore = Math.max(mouthOpenScore, c.score);
-          if (c.categoryName.includes('browOuterUp')) browScore = Math.max(browScore, c.score);
-        });
-      } else {
-        // Fallback distance geometric approximation
-        const mouthTop = landmarks[13];
-        const mouthBottom = landmarks[14];
-        const mouthLeft = landmarks[61];
-        const mouthRight = landmarks[291];
+      const mouthHeight = Math.hypot(mouthTop.x - mouthBottom.x, mouthTop.y - mouthBottom.y);
+      const mouthWidth = Math.hypot(mouthLeft.x - mouthRight.x, mouthLeft.y - mouthRight.y);
 
-        const mouthHeight = Math.hypot(mouthTop.x - mouthBottom.x, mouthTop.y - mouthBottom.y);
-        const mouthWidth = Math.hypot(mouthLeft.x - mouthRight.x, mouthLeft.y - mouthRight.y);
+      const smileScore = Math.min(Math.max((mouthWidth - 0.15) * 4, 0), 1);
+      const mouthOpenScore = Math.min(Math.max((mouthHeight - 0.02) * 20, 0), 1);
 
-        smileScore = Math.min(Math.max((mouthWidth - 0.15) * 4, 0), 1);
-        mouthOpenScore = Math.min(Math.max((mouthHeight - 0.02) * 20, 0), 1);
-      }
-
-      let expr = 'Neutral';
-      if (smileScore > 0.45) expr = 'Smiling 😀';
-      else if (mouthOpenScore > 0.5) expr = 'Surprised / Mouth Open 😮';
-      else if (blinkScore > 0.6) expr = 'Blinking 😉';
-      else if (browScore > 0.4) expr = 'Focused / Raised Brows 🤨';
+      let expr = 'Neutru';
+      if (smileScore > 0.45) expr = 'Zâmbitor 😀';
+      else if (mouthOpenScore > 0.5) expr = 'Surprins / Gură Deschisă 😮';
+      else if (mouthOpenScore < 0.05 && smileScore < 0.2) expr = 'Concentrat / Neutru 😐';
 
       return {
         expr,
         smile: Math.round(smileScore * 100),
-        blink: Math.round(blinkScore * 100),
+        blink: 0,
         mouth: Math.round(mouthOpenScore * 100),
-        brows: Math.round(browScore * 100)
+        brows: 0
       };
     }
 
-    /** Classify Full Body Action Intuition */
-    function classifyBodyAction(poseLandmarks, handVelocities) {
-      if (!poseLandmarks || poseLandmarks.length < 33) return 'Standing / Resting';
+    function analyzeBodyPose(poseLandmarks, maxSpeed) {
+      if (!poseLandmarks || poseLandmarks.length < 33) return 'Stationar';
 
       const leftWrist = poseLandmarks[15];
       const rightWrist = poseLandmarks[16];
       const nose = poseLandmarks[0];
-      const leftAnkle = poseLandmarks[27];
-      const rightAnkle = poseLandmarks[28];
 
-      const isLeftHandRaised = leftWrist.y < nose.y;
-      const isRightHandRaised = rightWrist.y < nose.y;
+      const isLeftHandRaised = leftWrist && nose && leftWrist.y < nose.y;
+      const isRightHandRaised = rightWrist && nose && rightWrist.y < nose.y;
 
-      if (isLeftHandRaised && isRightHandRaised) return 'Arms Raised / Cheering 🙌';
-      if (isLeftHandRaised || isRightHandRaised) return 'Waving Hand 👋';
+      if (isLeftHandRaised && isRightHandRaised) return 'Brațe Ridicate / Salut 🙌';
+      if (isLeftHandRaised || isRightHandRaised) return 'Fluturare Mână 👋';
+      if (maxSpeed > 350) return 'Mișcare Rapidă / Gesturi ⚡';
 
-      if (handVelocities > 350) return 'Fast Motion / Gesturing ⚡';
-      if (Math.abs(leftAnkle.y - rightAnkle.y) > 0.1) return 'Walking / Step Motion 🚶';
-
-      return 'Standing / Neutral Posture';
+      return 'Postură Neutrală / Staționară';
     }
 
-    // --- Trajectory & Velocity Prediction Engine ---
+    // --- Trajectory & Vector Engine ---
 
-    function pushHistoryPoint(list, pt) {
+    function pushHistory(list, pt) {
       list.push({ ...pt, timestamp: performance.now() });
       if (list.length > config.trailLength) {
         list.shift();
       }
     }
 
-    function calculateVelocityAndPrediction(historyList) {
-      if (!historyList || historyList.length < 2) {
-        return { vx: 0, vy: 0, speed: 0, predictedX: 0, predictedY: 0 };
-      }
+    function calculateTrajectory(list) {
+      if (!list || list.length < 2) return { vx: 0, vy: 0, speed: 0, px: 0, py: 0 };
 
-      const p1 = historyList[historyList.length - 1];
-      const p2 = historyList[historyList.length - 2];
+      const p1 = list[list.length - 1];
+      const p2 = list[list.length - 2];
       const dt = Math.max((p1.timestamp - p2.timestamp) / 1000, 0.001);
 
       const vx = (p1.x - p2.x) / dt;
       const vy = (p1.y - p2.y) / dt;
       const speed = Math.hypot(vx, vy);
 
-      // Predicted future coordinate
-      const horizon = config.predictionHorizon;
-      const predictedX = p1.x + vx * horizon;
-      const predictedY = p1.y + vy * horizon;
+      const px = p1.x + vx * config.predictionHorizon;
+      const py = p1.y + vy * config.predictionHorizon;
 
-      return { vx, vy, speed, predictedX, predictedY };
+      return { vx, vy, speed, px, py };
     }
 
-    // --- Rendering Functions ---
-
-    function drawSkeletonConnections(landmarks, connections, color, width = 2) {
-      ctx.save();
-      ctx.strokeStyle = color;
-      ctx.lineWidth = width;
-      connections.forEach(([i, j]) => {
-        if (landmarks[i] && landmarks[j]) {
-          ctx.beginPath();
-          ctx.moveTo(landmarks[i].x * canvas.width, landmarks[i].y * canvas.height);
-          ctx.lineTo(landmarks[j].x * canvas.width, landmarks[j].y * canvas.height);
-          ctx.stroke();
-        }
-      });
-      ctx.restore();
-    }
-
-    function drawTrajectoryTrail(historyList, color) {
-      if (!config.showTrajectory || historyList.length < 2) return;
+    function drawTrajectoryTrail(list, color) {
+      if (!config.showTrajectory || list.length < 2) return;
 
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(historyList[0].x * canvas.width, historyList[0].y * canvas.height);
+      ctx.moveTo(list[0].x * canvas.width, list[0].y * canvas.height);
 
-      for (let i = 1; i < historyList.length; i++) {
-        const pt = historyList[i];
-        ctx.lineTo(pt.x * canvas.width, pt.y * canvas.height);
+      for (let i = 1; i < list.length; i++) {
+        ctx.lineTo(list[i].x * canvas.width, list[i].y * canvas.height);
       }
 
       ctx.strokeStyle = color;
@@ -564,323 +738,133 @@
       ctx.restore();
     }
 
-    function drawPredictionVector(currentPt, prediction, color) {
-      if (!config.showVectors || prediction.speed < 20) return;
+    function drawPredictionVector(curr, pred, color) {
+      if (!config.showVectors || pred.speed < 0.1) return;
 
-      const currX = currentPt.x * canvas.width;
-      const currY = currentPt.y * canvas.height;
-      const predX = prediction.predictedX * canvas.width;
-      const predY = prediction.predictedY * canvas.height;
+      const x1 = curr.x * canvas.width;
+      const y1 = curr.y * canvas.height;
+      const x2 = pred.px * canvas.width;
+      const y2 = pred.py * canvas.height;
 
       ctx.save();
-      // Dash line to predicted trajectory
       ctx.beginPath();
-      ctx.setLineDash([5, 5]);
-      ctx.moveTo(currX, currY);
-      ctx.lineTo(predX, predY);
+      ctx.setLineDash([4, 4]);
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
       ctx.strokeStyle = color;
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Future predicted location halo
+      // Predicted destination halo
       ctx.beginPath();
       ctx.setLineDash([]);
-      ctx.arc(predX, predY, 10, 0, Math.PI * 2);
+      ctx.arc(x2, y2, 8, 0, Math.PI * 2);
       ctx.fillStyle = color;
-      ctx.globalAlpha = 0.4;
+      ctx.globalAlpha = 0.5;
       ctx.fill();
       ctx.strokeStyle = '#ffffff';
       ctx.stroke();
       ctx.restore();
     }
 
-    // --- Main Synthetic Demo Loop (If Video Stream or CDN Models Offline) ---
-    function renderDemoMode() {
-      demoAngle += 0.03;
-      const centerX = 0.5 + Math.sin(demoAngle) * 0.2;
-      const centerY = 0.5 + Math.cos(demoAngle * 0.8) * 0.15;
+    function drawConnectors(landmarks, connections, color) {
+      if (!landmarks) return;
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      connections.forEach(([i, j]) => {
+        const p1 = landmarks[i];
+        const p2 = landmarks[j];
+        if (p1 && p2) {
+          const x1 = config.flipHorizontal ? (1 - p1.x) * canvas.width : p1.x * canvas.width;
+          const y1 = p1.y * canvas.height;
+          const x2 = config.flipHorizontal ? (1 - p2.x) * canvas.width : p2.x * canvas.width;
+          const y2 = p2.y * canvas.height;
 
-      pushHistoryPoint(history.rightHand, { x: centerX, y: centerY });
-      const pred = calculateVelocityAndPrediction(history.rightHand);
-
-      // Render dark synthetic grid background
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Draw synthetic hand trail
-      drawTrajectoryTrail(history.rightHand, '#38bdf8');
-      drawPredictionVector({ x: centerX, y: centerY }, pred, '#f43f5e');
-
-      // Hand representation
-      ctx.beginPath();
-      ctx.arc(centerX * canvas.width, centerY * canvas.height, 12, 0, Math.PI * 2);
-      ctx.fillStyle = '#38bdf8';
-      ctx.fill();
-
-      // Diagnostics update
-      hudActionState.innerText = "Demo Motion Active";
-      hudHandGesture.innerText = "Synthetic Orbiting Point";
-      hudFaceExpression.innerText = "Demo Synthetic Mode";
-      hudMotionVector.innerText = `Vx: ${Math.round(pred.vx)} px/s`;
-      statHandVelocity.innerText = `${Math.round(pred.speed * canvas.width)} px/s`;
-      statHandsCount.innerText = "1 Demo Hand";
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+        }
+      });
+      ctx.restore();
     }
 
-    // --- Main Vision Inference Frame Loop ---
-    async function processFrame(now) {
-      const deltaTime = Math.max((now - lastFrameTime) / 1000, 0.001);
-      lastFrameTime = now;
-
-      frameCount++;
-      if (frameCount % 10 === 0) {
-        fps = Math.round(1 / deltaTime);
-        statFPS.innerText = `${fps} FPS`;
-      }
-
-      // Sync canvas dimensions
-      if (isWebcamActive && video.videoWidth) {
-        if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
+    function drawLandmarks(ctx, landmarks, opts) {
+      ctx.save();
+      ctx.fillStyle = opts.color;
+      landmarks.forEach((pt, idx) => {
+        if (idx % 3 === 0) { // Subsample face mesh for performance
+          const x = opts.flip ? (1 - pt.x) * opts.canvasWidth : pt.x * opts.canvasWidth;
+          const y = pt.y * opts.canvasHeight;
+          ctx.beginPath();
+          ctx.arc(x, y, opts.radius, 0, Math.PI * 2);
+          ctx.fill();
         }
-      } else if (canvas.width !== 640 || canvas.height !== 480) {
+      });
+      ctx.restore();
+    }
+
+    // --- Demo Mode Animation Loop (Offline Fallback) ---
+    function renderDemoLoop() {
+      if (!demoMode) return;
+
+      demoAngle += 0.04;
+      const w = canvas.width || 640;
+      const h = canvas.height || 480;
+
+      if (canvas.width !== 640 || canvas.height !== 480) {
         canvas.width = 640;
         canvas.height = 480;
       }
 
-      // Draw camera background
-      ctx.save();
-      if (isWebcamActive) {
-        if (config.flipHorizontal) {
-          ctx.translate(canvas.width, 0);
-          ctx.scale(-1, 1);
-        }
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      }
-      ctx.restore();
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      if (visionTasksLoaded && isWebcamActive && video.readyState >= 2) {
-        const timestamp = performance.now();
+      // Orbital points calculation
+      const x = 0.5 + Math.sin(demoAngle) * 0.25;
+      const y = 0.5 + Math.cos(demoAngle * 0.8) * 0.2;
 
-        // 1. Run Face Mesh Detection
-        let faceResults = null;
-        if (config.showFace && faceLandmarker) {
-          faceResults = faceLandmarker.detectForVideo(video, timestamp);
-        }
+      const pt = { x, y };
+      pushHistory(history.rightHand, pt);
+      const pred = calculateTrajectory(history.rightHand);
 
-        // 2. Run Hand Tracking Detection
-        let handResults = null;
-        if (config.showHands && handLandmarker) {
-          handResults = handLandmarker.detectForVideo(video, timestamp);
-        }
+      drawTrajectoryTrail(history.rightHand, '#38bdf8');
+      drawPredictionVector(pt, pred, '#38bdf8');
 
-        // 3. Run Pose Skeleton Detection
-        let poseResults = null;
-        if (config.showPose && poseLandmarker) {
-          poseResults = poseLandmarker.detectForVideo(video, timestamp);
-        }
+      // Animated target dot
+      ctx.beginPath();
+      ctx.arc(x * canvas.width, y * canvas.height, 12, 0, Math.PI * 2);
+      ctx.fillStyle = '#38bdf8';
+      ctx.fill();
 
-        let maxSpeedDetected = 0;
+      // UI Text updates
+      hudActionState.innerText = "Simulare Mișcare Demo";
+      hudHandGesture.innerText = "Punct Orbitar Demo";
+      hudFaceExpression.innerText = "Mod Simulare";
+      hudMotionVector.innerText = `Vx: ${Math.round(pred.vx)} px/s`;
+      statHandVelocity.innerText = `${Math.round(pred.speed * canvas.width)} px/s`;
+      statFPS.innerText = "60 FPS";
 
-        // Render & Classify Face Mesh
-        if (faceResults && faceResults.faceLandmarks.length > 0) {
-          const landmarks = faceResults.faceLandmarks[0];
-          statFaceLandmarks.innerText = `${landmarks.length} Pts`;
-
-          if (config.showFace) {
-            ctx.save();
-            ctx.fillStyle = 'rgba(56, 189, 248, 0.6)';
-            landmarks.forEach((pt, idx) => {
-              if (idx % 4 === 0) { // Subsample face mesh dots for performance & sleek aesthetics
-                const x = config.flipHorizontal ? (1 - pt.x) * canvas.width : pt.x * canvas.width;
-                const y = pt.y * canvas.height;
-                ctx.beginPath();
-                ctx.arc(x, y, 1.2, 0, Math.PI * 2);
-                ctx.fill();
-              }
-            });
-            ctx.restore();
-          }
-
-          const faceMetrics = classifyFaceExpression(landmarks, faceResults.faceBlendshapes);
-          hudFaceExpression.innerText = faceMetrics.expr;
-          valSmile.innerText = `${faceMetrics.smile}%`;
-          valBlink.innerText = `${faceMetrics.blink}%`;
-          valMouth.innerText = `${faceMetrics.mouth}%`;
-          valBrows.innerText = `${faceMetrics.brows}%`;
-        } else {
-          statFaceLandmarks.innerText = "None";
-        }
-
-        // Render & Classify Hands
-        if (handResults && handResults.landmarks.length > 0) {
-          statHandsCount.innerText = `${handResults.landmarks.length} Active`;
-          let activeGestures = [];
-
-          handResults.landmarks.forEach((landmarks, hIdx) => {
-            const handedness = handResults.handedness[hIdx]?.[0]?.displayName || 'Hand';
-            const gestureName = classifyHandGesture(landmarks);
-            activeGestures.push(`${handedness}: ${gestureName}`);
-
-            const wrist = landmarks[0];
-            const wristPt = {
-              x: config.flipHorizontal ? (1 - wrist.x) : wrist.x,
-              y: wrist.y
-            };
-
-            const handHistory = hIdx === 0 ? history.rightHand : history.leftHand;
-            pushHistoryPoint(handHistory, wristPt);
-
-            const pred = calculateVelocityAndPrediction(handHistory);
-            maxSpeedDetected = Math.max(maxSpeedDetected, pred.speed * canvas.width);
-
-            // Draw Trails & Vector Prediction
-            drawTrajectoryTrail(handHistory, hIdx === 0 ? '#38bdf8' : '#f43f5e');
-            drawPredictionVector(wristPt, pred, hIdx === 0 ? '#38bdf8' : '#f43f5e');
-
-            // Draw Hand Joints
-            if (config.showHands) {
-              ctx.save();
-              landmarks.forEach(pt => {
-                const x = config.flipHorizontal ? (1 - pt.x) * canvas.width : pt.x * canvas.width;
-                const y = pt.y * canvas.height;
-                ctx.beginPath();
-                ctx.arc(x, y, 4, 0, Math.PI * 2);
-                ctx.fillStyle = hIdx === 0 ? '#38bdf8' : '#f43f5e';
-                ctx.fill();
-                ctx.strokeStyle = '#ffffff';
-                ctx.stroke();
-              });
-              ctx.restore();
-            }
-          });
-
-          hudHandGesture.innerText = activeGestures.join(' | ');
-          if (handResults.landmarks.length > 0) {
-            rightHandStatus.innerText = activeGestures[0] || 'None';
-            leftHandStatus.innerText = activeGestures[1] || 'None';
-          }
-        } else {
-          statHandsCount.innerText = "0 Detected";
-          hudHandGesture.innerText = "None";
-          leftHandStatus.innerText = "Left: None";
-          rightHandStatus.innerText = "Right: None";
-        }
-
-        // Render Pose Skeleton
-        if (poseResults && poseResults.landmarks.length > 0) {
-          const pose = poseResults.landmarks[0];
-          statPoseLandmarks.innerText = `${pose.length} Pts`;
-
-          if (config.showPose) {
-            ctx.save();
-            pose.forEach(pt => {
-              const x = config.flipHorizontal ? (1 - pt.x) * canvas.width : pt.x * canvas.width;
-              const y = pt.y * canvas.height;
-              ctx.beginPath();
-              ctx.arc(x, y, 4, 0, Math.PI * 2);
-              ctx.fillStyle = '#a855f7';
-              ctx.fill();
-            });
-            ctx.restore();
-          }
-
-          const actionState = classifyBodyAction(pose, maxSpeedDetected);
-          hudActionState.innerText = actionState;
-          bodyActionDetails.innerText = actionState;
-        } else {
-          statPoseLandmarks.innerText = "None";
-        }
-
-        statHandVelocity.innerText = `${Math.round(maxSpeedDetected)} px/s`;
-        hudMotionVector.innerText = maxSpeedDetected > 50 ? `Moving (${Math.round(maxSpeedDetected)} px/s)` : 'Static / Resting';
-
-      } else if (demoMode || !isWebcamActive) {
-        renderDemoMode();
-      }
-
-      requestAnimationFrame(processFrame);
+      requestAnimationFrame(renderDemoLoop);
     }
 
-    // --- Camera Media Control ---
-    async function startCamera() {
-      try {
-        cameraStatusText.innerText = 'Connecting Camera...';
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' },
-          audio: false
-        });
-
-        videoStream = stream;
-        video.srcObject = stream;
-        await video.play();
-
-        isWebcamActive = true;
-        demoMode = false;
-        cameraStatusBadge.className = "flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-        cameraStatusText.innerText = "Live AI Tracking";
-        toggleCameraBtnText.innerText = "Stop Camera";
-      } catch (err) {
-        console.warn("Webcam access rejected/unavailable:", err);
-        isWebcamActive = false;
-        demoMode = true;
-        cameraStatusBadge.className = "flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
-        cameraStatusText.innerText = "Demo Mode (No Cam)";
-        toggleCameraBtnText.innerText = "Request Camera";
-      }
-    }
-
-    function stopCamera() {
-      if (videoStream) {
-        videoStream.getTracks().forEach(track => track.stop());
-        videoStream = null;
-      }
-      isWebcamActive = false;
-      demoMode = true;
-      cameraStatusBadge.className = "flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
-      cameraStatusText.innerText = "Demo Mode";
-      toggleCameraBtnText.innerText = "Request Camera";
-    }
-
+    // --- Control Listeners & App Launch ---
     toggleCameraBtn.addEventListener('click', () => {
       if (isWebcamActive) {
-        stopCamera();
+        stopWebcam();
       } else {
-        startCamera();
+        startWebcam(cameraSelect.value);
       }
     });
 
-    // --- Export & Snapshot Handlers ---
-    document.getElementById('snapshotBtn').addEventListener('click', () => {
-      const link = document.createElement('a');
-      link.download = `omnivision-snapshot-${Date.now()}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+    cameraSelect.addEventListener('change', (e) => {
+      if (isWebcamActive) {
+        startWebcam(e.target.value);
+      }
     });
 
-    document.getElementById('exportJsonBtn').addEventListener('click', () => {
-      const telemetryExport = {
-        timestamp: new Date().toISOString(),
-        fps,
-        history,
-        hudState: {
-          action: hudActionState.innerText,
-          gesture: hudHandGesture.innerText,
-          expression: hudFaceExpression.innerText,
-          motionVector: hudMotionVector.innerText
-        }
-      };
-
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(telemetryExport, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `ai-telemetry-${Date.now()}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    });
-
-    // Control Listeners
+    // Option Toggles
     chkFace.addEventListener('change', (e) => config.showFace = e.target.checked);
     chkHands.addEventListener('change', (e) => config.showHands = e.target.checked);
     chkPose.addEventListener('change', (e) => config.showPose = e.target.checked);
@@ -895,14 +879,54 @@
 
     trailLengthInput.addEventListener('input', (e) => {
       config.trailLength = parseInt(e.target.value);
-      document.getElementById('trailLengthVal').innerText = `${config.trailLength} frames`;
+      document.getElementById('trailLengthVal').innerText = `${config.trailLength} cadru`;
     });
 
-    // On App Launch
+    // Exporters
+    document.getElementById('snapshotBtn').addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = `omnivision-snapshot-${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+
+    document.getElementById('exportJsonBtn').addEventListener('click', () => {
+      const data = {
+        timestamp: new Date().toISOString(),
+        fps,
+        history,
+        state: {
+          action: hudActionState.innerText,
+          gesture: hudHandGesture.innerText,
+          expression: hudFaceExpression.innerText
+        }
+      };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+      const a = document.createElement('a');
+      a.href = dataStr;
+      a.download = `omnivision-telemetry-${Date.now()}.json`;
+      a.click();
+    });
+
+    // Connections Definitions for MediaPipe Holistic
+    const HAND_CONNECTIONS = [
+      [0, 1], [1, 2], [2, 3], [3, 4],
+      [0, 5], [5, 6], [6, 7], [7, 8],
+      [5, 9], [9, 10], [10, 11], [11, 12],
+      [9, 13], [13, 14], [14, 15], [15, 16],
+      [13, 17], [0, 17], [17, 18], [18, 19], [19, 20]
+    ];
+
+    const POSE_CONNECTIONS = [
+      [11, 12], [11, 13], [13, 15], [12, 14], [14, 16],
+      [11, 23], [12, 24], [23, 24], [23, 25], [24, 26], [25, 27], [26, 28]
+    ];
+
+    // On Load Initialization
     window.addEventListener('load', () => {
       lucide.createIcons();
-      initMediaPipeVision();
-      requestAnimationFrame(processFrame);
+      initMediaPipe();
+      renderDemoLoop();
     });
   </script>
 </body>
