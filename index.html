@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FACE//RECON - educational biometric lab</title>
 <style>
-:root{--bg:#03080a;--pn:#07130f;--ln:#0f3b2a;--tx:#b8ffd9;--mut:#5fae8a;--g:#3dff9a;--a:#ffb020;--r:#ff4d5e;color-scheme:dark}
+:root{--bg:#03080a;--pn:#07130f;--ln:#0f3b2a;--tx:#b8ffd9;--mut:#5fae8a;--g:#3dff9a;--a:#ffb020;--r:#ff4d5e;--h:#38bdf8;color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0 auto;max-width:1240px;padding:16px;background:var(--bg);color:var(--tx);font:14px/1.5 ui-monospace,"JetBrains Mono","Fira Code",Menlo,Consolas,monospace}
@@ -45,7 +45,7 @@ aside .box:first-child{margin-top:0}
 dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:0}
 dt{color:var(--mut)}
 dd{margin:0;text-align:right;overflow-wrap:anywhere}
-.g{color:var(--g)}.a{color:var(--a)}
+.g{color:var(--g)}.a{color:var(--a)}.h{color:var(--h)}
 .bar{display:grid;grid-template-columns:84px 1fr 48px;gap:8px;align-items:center;margin-top:5px;font-size:.85rem}
 .bar i{display:block;height:6px;background:#0c2a1f;position:relative}
 .bar i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:var(--g)}
@@ -58,6 +58,8 @@ dd{margin:0;text-align:right;overflow-wrap:anywhere}
 .prof>div{flex:1;min-width:0}
 .prof small{color:var(--mut)}
 .empty{padding:16px;border:1px dashed var(--ln);color:var(--mut)}
+.fbadge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:1px solid var(--ln);color:var(--mut);font-size:.75rem;font-weight:700}
+.fbadge.up{border-color:var(--h);color:var(--h);box-shadow:0 0 6px rgba(56,189,248,.5)}
 footer{margin-top:20px;color:var(--mut);font-size:.8rem}
 </style>
 </head>
@@ -78,12 +80,18 @@ footer{margin-top:20px;color:var(--mut);font-size:.8rem}
       <button class="pri" id="start">START SCAN</button>
       <button id="stop" disabled>STOP</button>
       <button id="calib" disabled title="Use the current head position as straight ahead">CALIBRATE HEAD</button>
+      <span class="tag" id="handstag"></span>
       <span id="fps"></span>
     </div>
     <div class="box"><h2>&gt; console</h2><div id="log" role="log"></div></div>
   </section>
   <aside>
     <div id="cards"><div class="empty">&gt; no scan running. Start the scan to see live target data.</div></div>
+    <div class="box">
+      <h2>&gt; hand input</h2>
+      <div id="hands"><p class="muted" style="margin:0">No hand in frame.</p></div>
+      <p class="muted" style="margin:10px 0 0">Separate dedicated hand-landmark model — does not trigger on the face, caps, hats or masks.</p>
+    </div>
     <div class="box">
       <h2>&gt; local intel: what any website can see about you</h2>
       <dl id="dev"></dl>
@@ -100,9 +108,10 @@ footer{margin-top:20px;color:var(--mut);font-size:.8rem}
     </div>
   </aside>
 </main>
-<footer>Educational demo. Face analysis runs locally in your browser; camera frames are never uploaded. Age and gender are model estimates and can be wrong.</footer>
+<footer>Educational demo. Face analysis and hand tracking run locally in your browser; camera frames are never uploaded. Age and gender are model estimates and can be wrong. This page does not identify strangers and has no connection to Instagram, YouTube or Facebook.</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous"></script>
 <script>
 const $=id=>document.getElementById(id);
 const v=$('v'),c=$('c'),ctx=c.getContext('2d');
@@ -111,7 +120,9 @@ const EXPR={neutral:'Neutral',happy:'Happy',sad:'Sad',angry:'Angry',fearful:'Fea
 const STEPS=['Look straight at the camera','Turn your head slightly left','Turn your head slightly right','Raise your chin slightly','Lower your chin slightly'];
 const INTRO='ACCESS REQUEST: video input. Frames are analysed locally in this page and never uploaded. Your browser will show its own permission prompt once: choose Allow.';
 const DENIED='ACCESS DENIED: the camera is blocked for this page. Click the lock or settings icon next to the address bar, set Camera to Allow, then retry.';
+const HAND_EDGES=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
 let running=false,enrolling=false,stream=null,loaded=false,matcher=null,lastRes=[],states=[],offs={yaw:0,pitch:0},raw0={yaw:0,pitch:0},fps=0,lastT=0,edges=null,hadFace=false;
+let handsModel=null,handsReady=false,lastHands=[],hadHand=false;
 
 const esc=s=>String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
@@ -122,6 +133,44 @@ const hint=t=>{$('hint').textContent=t};
 const busy=b=>{$('start').disabled=b;$('allow').disabled=b};
 function log(m,cls){const l=$('log'),d=document.createElement('div');d.textContent=new Date().toLocaleTimeString('en-GB')+'  '+m;if(cls)d.className=cls;l.appendChild(d);while(l.children.length>60)l.firstChild.remove();l.scrollTop=l.scrollHeight}
 function setMsg(t,btn,label){$('msgt').textContent=t;$('allow').hidden=!btn;$('allow').textContent=label||'[ GRANT CAMERA ACCESS ]';$('msg').hidden=!t}
+
+/* ---------- finger / gesture math ---------- */
+function fingerStates(p){
+  const ext=(tip,pip)=>dist(p[tip],p[0])>dist(p[pip],p[0])*1.08;
+  const thumb=dist(p[4],p[0])>dist(p[2],p[0])*1.15;
+  return [thumb, ext(8,6), ext(12,10), ext(16,14), ext(20,18)];
+}
+function gestureFor(st,p,hs){
+  const[T,I,M,R,P]=st,cnt=st.filter(Boolean).length,pinch=dist(p[4],p[8])/hs;
+  if(I&&M&&!R&&!P)return'Peace sign';
+  if(pinch<0.4&&M&&R&&P)return'OK sign';
+  if(cnt===0)return'Fist';
+  if(cnt===5)return'Open palm';
+  if(I&&!M&&!R&&!P)return'Pointing';
+  if(T&&!I&&!M&&!R&&!P)return'Thumbs up';
+  return cnt+' finger'+(cnt===1?'':'s')+' raised';
+}
+function drawHandsOverlay(W,fx){
+  const list=lastHands||[];
+  if(!!list.length!==hadHand){hadHand=!!list.length;log(hadHand?'Hand input acquired':'Hand input lost',hadHand?'ok':'warn')}
+  $('handstag').textContent=list.length?('hands: '+list.length):'';
+  if(!list.length){$('hands').innerHTML='<p class="muted" style="margin:0">No hand in frame.</p>';return}
+  const names=['Thumb','Index','Middle','Ring','Pinky'];
+  const rows=list.slice(0,2).map((h,i)=>{
+    const px=h.lm.map(q=>({x:q.x*W,y:q.y*c.height}));
+    ctx.strokeStyle='rgba(56,189,248,.55)';ctx.lineWidth=1.4;ctx.beginPath();
+    HAND_EDGES.forEach(([a,z])=>{ctx.moveTo(fx(px[a].x),px[a].y);ctx.lineTo(fx(px[z].x),px[z].y)});ctx.stroke();
+    ctx.fillStyle='#38bdf8';px.forEach(q=>{ctx.beginPath();ctx.arc(fx(q.x),q.y,2.4,0,6.283);ctx.fill()});
+    const hs=dist(px[0],px[9])||1,st=fingerStates(px),g=gestureFor(st,px,hs);
+    const wx=fx(px[0].x),wy=px[0].y;
+    ctx.font='700 12px ui-monospace,Menlo,Consolas,monospace';
+    const tw=ctx.measureText(g).width;
+    ctx.fillStyle='#38bdf8';ctx.fillRect(wx-tw/2-6,wy+8,tw+12,18);
+    ctx.fillStyle='#02150d';ctx.fillText(g,wx-tw/2,wy+21);
+    return`<div style="margin-top:${i?10:0}"><b class="h">Hand ${i+1}</b> — ${esc(g)}<div class="row" style="margin:4px 0 0">${names.map((nm,k)=>`<span class="fbadge ${st[k]?'up':''}" title="${nm}">${nm[0]}</span>`).join('')}</div></div>`;
+  });
+  $('hands').innerHTML=rows.join('');
+}
 
 /* ---------- local intel (own device only) ---------- */
 const n=navigator,cn=n.connection||{},off=-new Date().getTimezoneOffset()/60;
@@ -197,10 +246,17 @@ async function start(){
   busy(true);
   try{
     if(!loaded){
-      setMsg('Loading neural models (first run only)...');log('Loading neural models...');
+      setMsg('Loading neural models (first run only)...');log('Loading face models...');
       await faceapi.tf.ready();
       await Promise.all([faceapi.nets.tinyFaceDetector,faceapi.nets.faceLandmark68Net,faceapi.nets.faceExpressionNet,faceapi.nets.ageGenderNet,faceapi.nets.faceRecognitionNet].map(m=>m.loadFromUri(MODEL_URL)));
-      loaded=true;log('Models ready','ok');
+      loaded=true;log('Face models ready','ok');
+    }
+    if(!handsReady){
+      log('Loading hand-tracking model...');
+      handsModel=new Hands({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/${f}`});
+      handsModel.setOptions({maxNumHands:2,modelComplexity:1,minDetectionConfidence:0.6,minTrackingConfidence:0.6});
+      handsModel.onResults(r=>{lastHands=(r.multiHandLandmarks||[]).map(lm=>({lm}))});
+      handsReady=true;log('Hand model ready','ok');
     }
     setMsg('Waiting for the camera permission prompt...');
     stream=await n.mediaDevices.getUserMedia({video:{width:{ideal:640},height:{ideal:480},facingMode:'user'},audio:false});
@@ -210,7 +266,7 @@ async function start(){
     running=true;states=[];lastT=performance.now();setMsg('');showPerm('granted');
     $('stop').disabled=false;$('calib').disabled=false;$('save').disabled=false;
     log('Camera online ('+v.videoWidth+'x'+v.videoHeight+'). Scan running.','ok');
-    loop();
+    loop();handLoop();
   }catch(e){
     busy(false);
     if(e&&e.name==='NotAllowedError'){showPerm('denied');setMsg(DENIED,true,'[ RETRY ]');log('Camera access denied','err')}
@@ -223,8 +279,10 @@ function stop(){
   if(stream)stream.getTracks().forEach(t=>t.stop());
   v.srcObject=null;ctx.clearRect(0,0,c.width,c.height);
   busy(false);$('stop').disabled=true;$('calib').disabled=true;$('save').disabled=true;$('guide').hidden=true;
-  $('fps').textContent='';setMsg('Scan stopped. Camera released.',true,'[ RESTART ]');log('Scan stopped');
+  $('fps').textContent='';$('handstag').textContent='';setMsg('Scan stopped. Camera released.',true,'[ RESTART ]');log('Scan stopped');
   $('cards').innerHTML='<div class="empty">&gt; no scan running. Start the scan to see live target data.</div>';
+  $('hands').innerHTML='<p class="muted" style="margin:0">No hand in frame.</p>';
+  lastHands=[];hadHand=false;
 }
 async function loop(){
   if(!running)return;
@@ -236,6 +294,11 @@ async function loop(){
     lastRes=res;render(res,dt);
   }catch(e){console.error(e)}
   requestAnimationFrame(loop);
+}
+async function handLoop(){
+  if(!running)return;
+  try{await handsModel.send({image:v})}catch(e){console.error(e)}
+  requestAnimationFrame(handLoop);
 }
 function buildEdges(p){
   const s=new Set();
@@ -275,11 +338,9 @@ function render(res,dt){
     s.prev={x:p[30].x,y:p[30].y};
     const mvLabel=s.mv<0.15?'still':s.mv<0.6?'low':'high';
     const col=name?'#3dff9a':'#ffb020';
-    /* wireframe mesh */
     ctx.strokeStyle='rgba(61,255,154,.4)';ctx.lineWidth=1;ctx.beginPath();
     edges.forEach(([a,z])=>{ctx.moveTo(fx(p[a].x),p[a].y);ctx.lineTo(fx(p[z].x),p[z].y)});ctx.stroke();
     ctx.fillStyle=col;p.forEach(q=>ctx.fillRect(fx(q.x)-1.5,q.y-1.5,3,3));
-    /* brackets + scan line */
     const bx=fx(b.x+b.width),by=b.y,bw=b.width,bh=b.height,L=Math.min(bw,bh)*.18;
     ctx.strokeStyle=col;ctx.lineWidth=2;ctx.beginPath();
     [[bx,by,1,1],[bx+bw,by,-1,1],[bx,by+bh,1,-1],[bx+bw,by+bh,-1,-1]].forEach(([x,y,dx,dy])=>{ctx.moveTo(x+dx*L,y);ctx.lineTo(x,y);ctx.lineTo(x,y+dy*L)});ctx.stroke();
@@ -304,6 +365,7 @@ ${top.map(([k,val])=>`<div class="bar"><span>${EXPR[k]}</span><i style="--w:${Ma
 <div class="bar mv"><span>Motion</span><i style="--w:${Math.min(100,Math.round(s.mv/1.5*100))}%"></i><b>${mvLabel}</b></div></article>`);
   });
   $('cards').innerHTML=html.join('')||'<div class="empty">&gt; no target in frame. Face the camera in a well-lit spot.</div>';
+  drawHandsOverlay(W,fx);
   $('fps').textContent=fps.toFixed(0)+' FPS';
 }
 
@@ -352,7 +414,7 @@ $('calib').onclick=()=>{offs={yaw:raw0.yaw,pitch:raw0.pitch};log('Head calibrate
 $('known').onclick=e=>{const t=e.target.closest('[data-del]');if(!t)return;known=known.filter(k=>k.id!==t.dataset.del);persist();buildMatcher();hint('Profile deleted.')};
 $('clear').onclick=()=>{if(known.length&&!confirm('Delete all saved profiles?'))return;known=[];persist();buildMatcher();hint('Registry wiped.')};
 setInterval(()=>{$('clock').textContent=new Date().toLocaleTimeString('en-GB')},1000);
-['FACE//RECON kernel 1.0 loaded','Educational build: all face analysis stays in this browser','Local device intel collected','Awaiting camera access'].forEach((m,i)=>setTimeout(()=>log(m,i===3?'warn':''),i*250));
+['FACE//RECON kernel 1.1 loaded','Educational build: all analysis stays in this browser','Local device intel collected','Awaiting camera access'].forEach((m,i)=>setTimeout(()=>log(m,i===3?'warn':''),i*250));
 initPerm();
 </script>
 </body>
