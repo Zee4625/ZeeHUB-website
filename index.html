@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OmniVision AI - Face, Hand & Pose Tracking</title>
+  <title>OmniVision AI - IR Night Vision & AI Tracking</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -61,32 +61,32 @@
   <div id="statusBanner" class="bg-cyan-950/80 border-b border-cyan-800/60 px-4 py-2 text-xs font-mono text-cyan-200 flex items-center justify-between transition-all">
     <div class="flex items-center space-x-2">
       <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
-      <span id="statusMessage">Se inițializează modelele AI MediaPipe Holistic...</span>
+      <span id="statusMessage">Se inițializează modelele AI MediaPipe Holistic și Shader-ele Optice IR...</span>
     </div>
-    <span id="modelSourceTag" class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] text-slate-300">Sursa: MediaPipe CDN</span>
+    <span id="modelSourceTag" class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] text-slate-300">Sursa: MediaPipe CDN + Shaders</span>
   </div>
 
   <!-- Header Section -->
   <header class="w-full glass-panel z-30 px-6 py-3 flex flex-wrap items-center justify-between border-b border-slate-800 shrink-0">
     <div class="flex items-center space-x-3">
-      <div class="p-2 bg-cyan-500/20 text-cyan-400 rounded-xl border border-cyan-500/30">
-        <i data-lucide="brain-circuit" class="w-6 h-6 animate-pulse"></i>
+      <div class="p-2 bg-emerald-500/20 text-emerald-400 rounded-xl border border-emerald-500/30">
+        <i data-lucide="eye" class="w-6 h-6 animate-pulse"></i>
       </div>
       <div>
-        <h1 class="text-xl font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-400">
-          OmniVision AI <span class="text-xs font-normal px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 ml-2">v3.0 Ultra</span>
+        <h1 class="text-xl font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-400">
+          OmniVision IR <span class="text-xs font-normal px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 ml-2">v4.0 Tactical</span>
         </h1>
-        <p class="text-xs text-slate-400">Detecție Facială, Corp, Mâini și Intuiție Mișcare Traiectorie</p>
+        <p class="text-xs text-slate-400">Sistem Tactic Infra-Roșu, Termic FLIR & Intuiție AI AI Motion</p>
       </div>
     </div>
 
     <!-- Header Actions -->
     <div class="flex items-center space-x-3 mt-2 sm:mt-0 flex-wrap gap-y-2">
-      <select id="cameraSelect" class="bg-slate-900 border border-slate-700 text-xs rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-cyan-500">
+      <select id="cameraSelect" class="bg-slate-900 border border-slate-700 text-xs rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-emerald-500">
         <option value="">Se caută camere...</option>
       </select>
 
-      <button id="toggleCameraBtn" class="flex items-center space-x-2 px-3 py-1.5 text-xs font-semibold rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white transition-colors shadow-lg shadow-cyan-950/50">
+      <button id="toggleCameraBtn" class="flex items-center space-x-2 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-colors shadow-lg shadow-emerald-950/50">
         <i data-lucide="camera" class="w-4 h-4"></i>
         <span id="toggleCameraBtnText">Pornește Camera</span>
       </button>
@@ -113,16 +113,44 @@
       <video id="webcamVideo" class="hidden" playsinline muted></video>
 
       <!-- Viewport Canvas -->
-      <div id="canvasContainer" class="relative w-full h-full flex items-center justify-center bg-black/40">
+      <div id="canvasContainer" class="relative w-full h-full flex items-center justify-center bg-black/80">
         <canvas id="outputCanvas" class="max-w-full max-h-full object-contain rounded-lg shadow-lg"></canvas>
 
+        <!-- Dynamic Vision Filter Quick Bar -->
+        <div class="absolute bottom-16 left-1/2 -translate-x-1/2 glass-panel px-3 py-1.5 rounded-full border border-slate-700/80 flex items-center gap-2 shadow-2xl z-20 overflow-x-auto max-w-[90vw]">
+          <button data-mode="ir" class="btn-vision-mode px-3 py-1 rounded-full text-xs font-semibold bg-emerald-600 text-white shadow-md flex items-center gap-1.5 transition-all">
+            <i data-lucide="eye" class="w-3.5 h-3.5"></i> Night Vision IR
+          </button>
+          <button data-mode="thermal" class="btn-vision-mode px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all">
+            <i data-lucide="flame" class="w-3.5 h-3.5"></i> Termic FLIR
+          </button>
+          <button data-mode="whitehot" class="btn-vision-mode px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all">
+            <i data-lucide="sun" class="w-3.5 h-3.5"></i> Alb Fierbinte
+          </button>
+          <button data-mode="cyberhud" class="btn-vision-mode px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all">
+            <i data-lucide="crosshair" class="w-3.5 h-3.5"></i> CyberHUD
+          </button>
+          <button data-mode="normal" class="btn-vision-mode px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all">
+            <i data-lucide="aperture" class="w-3.5 h-3.5"></i> Normal RGB
+          </button>
+        </div>
+
+        <!-- Tactical Crosshair & Grid Overlay -->
+        <div id="tacticalGridOverlay" class="absolute inset-0 pointer-events-none opacity-40 border border-emerald-500/20 flex items-center justify-center">
+          <div class="w-full h-[1px] bg-emerald-500/30 absolute top-1/2"></div>
+          <div class="h-full w-[1px] bg-emerald-500/30 absolute left-1/2"></div>
+          <div class="w-48 h-48 border border-emerald-500/30 rounded-full absolute flex items-center justify-center">
+            <div class="w-24 h-24 border border-dashed border-emerald-400/40 rounded-full"></div>
+          </div>
+        </div>
+
         <!-- Motion Intuition Overlay Box -->
-        <div class="absolute top-4 left-4 glass-panel p-3.5 rounded-xl max-w-xs space-y-2 border border-cyan-500/30 text-xs shadow-2xl">
+        <div class="absolute top-4 left-4 glass-panel p-3.5 rounded-xl max-w-xs space-y-2 border border-emerald-500/30 text-xs shadow-2xl z-10">
           <div class="flex items-center justify-between border-b border-slate-700/60 pb-1.5">
-            <span class="font-bold text-cyan-400 flex items-center gap-1.5">
-              <i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i> Intuiție Mișcare AI
+            <span class="font-bold text-emerald-400 flex items-center gap-1.5">
+              <i data-lucide="activity" class="w-4 h-4 text-emerald-400"></i> Intuiție AI & Senzori
             </span>
-            <span id="aiConfidenceBadge" class="text-[10px] px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 font-mono">Activ</span>
+            <span id="aiConfidenceBadge" class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 font-mono border border-emerald-800">IR Activ</span>
           </div>
           
           <div class="space-y-1 font-mono">
@@ -130,6 +158,7 @@
             <p><span class="text-slate-400">Gest Mâini:</span> <span id="hudHandGesture" class="text-amber-400 font-bold">Niciunul</span></p>
             <p><span class="text-slate-400">Expresie Față:</span> <span id="hudFaceExpression" class="text-purple-400 font-bold">Neutru</span></p>
             <p><span class="text-slate-400">Vector Viteză:</span> <span id="hudMotionVector" class="text-sky-400 font-bold">Static (0 px/s)</span></p>
+            <p><span class="text-slate-400">Semnătură Termică:</span> <span id="hudThermalHeat" class="text-rose-400 font-bold">36.6 °C (Nominal)</span></p>
           </div>
         </div>
       </div>
@@ -138,11 +167,11 @@
       <div class="w-full glass-panel px-4 py-2.5 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-6 gap-2 text-center text-xs">
         <div class="p-1.5 rounded-lg bg-slate-800/40">
           <span class="block text-slate-400 text-[10px] uppercase font-semibold">Framerate</span>
-          <span id="statFPS" class="font-mono text-sm font-bold text-cyan-400">0 FPS</span>
+          <span id="statFPS" class="font-mono text-sm font-bold text-emerald-400">0 FPS</span>
         </div>
         <div class="p-1.5 rounded-lg bg-slate-800/40">
           <span class="block text-slate-400 text-[10px] uppercase font-semibold">Mesh Față</span>
-          <span id="statFaceLandmarks" class="font-mono text-sm font-bold text-emerald-400">0 Puncte</span>
+          <span id="statFaceLandmarks" class="font-mono text-sm font-bold text-cyan-400">0 Puncte</span>
         </div>
         <div class="p-1.5 rounded-lg bg-slate-800/40">
           <span class="block text-slate-400 text-[10px] uppercase font-semibold">Mâini Active</span>
@@ -166,37 +195,83 @@
     <!-- Right Sidebar Dashboard Controls -->
     <aside class="w-full lg:w-96 glass-panel rounded-2xl p-4 border border-slate-800 flex flex-col gap-5 overflow-y-auto custom-scrollbar max-h-[calc(100vh-6rem)]">
       
+      <!-- Shader & Optical Parameters -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+            <i data-lucide="sliders-horizontal" class="w-4 h-4 text-emerald-400"></i> Parametri Filtru Optic & Senzori
+          </h2>
+        </div>
+
+        <div class="space-y-3 text-xs">
+          <div class="space-y-1">
+            <div class="flex justify-between">
+              <label for="noiseIntensity" class="text-slate-300">Intensitate Zgomot Granulat (IR Grain)</label>
+              <span id="noiseVal" class="font-mono text-emerald-400 font-bold">35%</span>
+            </div>
+            <input type="range" id="noiseIntensity" min="0" max="100" value="35" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex justify-between">
+              <label for="gainBrightness" class="text-slate-300">Amplificare Gain / Luminozitate IR</label>
+              <span id="gainVal" class="font-mono text-emerald-400 font-bold">1.3x</span>
+            </div>
+            <input type="range" id="gainBrightness" min="0.5" max="2.5" step="0.1" value="1.3" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex justify-between">
+              <label for="contrastBoost" class="text-slate-300">Boost Contrast Termic / IR</label>
+              <span id="contrastVal" class="font-mono text-emerald-400 font-bold">1.4x</span>
+            </div>
+            <input type="range" id="contrastBoost" min="0.8" max="2.5" step="0.1" value="1.4" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
+              <input type="checkbox" id="chkScanlines" checked class="rounded accent-emerald-500">
+              <span class="text-slate-300">Linii Scanare IR</span>
+            </label>
+            <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
+              <input type="checkbox" id="chkBloom" checked class="rounded accent-emerald-500">
+              <span class="text-slate-300">Efect Bloom / Glow</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
       <!-- Overlay Toggles -->
       <div class="space-y-3">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
           <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i data-lucide="layers" class="w-4 h-4 text-cyan-400"></i> Strat Grafic Vizual (Overlays)
+            <i data-lucide="layers" class="w-4 h-4 text-emerald-400"></i> Strat Grafic Vizual (Overlays)
           </h2>
         </div>
 
         <div class="grid grid-cols-2 gap-2 text-xs">
           <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
-            <input type="checkbox" id="chkFace" checked class="rounded accent-cyan-500">
+            <input type="checkbox" id="chkFace" checked class="rounded accent-emerald-500">
             <span class="text-slate-300">Mesh Față (468)</span>
           </label>
           <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
-            <input type="checkbox" id="chkHands" checked class="rounded accent-cyan-500">
+            <input type="checkbox" id="chkHands" checked class="rounded accent-emerald-500">
             <span class="text-slate-300">Mâini (21 Pts)</span>
           </label>
           <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
-            <input type="checkbox" id="chkPose" checked class="rounded accent-cyan-500">
+            <input type="checkbox" id="chkPose" checked class="rounded accent-emerald-500">
             <span class="text-slate-300">Schelet Corp</span>
           </label>
           <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
-            <input type="checkbox" id="chkTrajectory" checked class="rounded accent-cyan-500">
+            <input type="checkbox" id="chkTrajectory" checked class="rounded accent-emerald-500">
             <span class="text-slate-300">Traiectorie Trai</span>
           </label>
           <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
-            <input type="checkbox" id="chkVectors" checked class="rounded accent-cyan-500">
+            <input type="checkbox" id="chkVectors" checked class="rounded accent-emerald-500">
             <span class="text-slate-300">Vectori Predicție</span>
           </label>
           <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
-            <input type="checkbox" id="chkFlip" checked class="rounded accent-cyan-500">
+            <input type="checkbox" id="chkFlip" checked class="rounded accent-emerald-500">
             <span class="text-slate-300">Oglindire Video</span>
           </label>
         </div>
@@ -206,24 +281,24 @@
       <div class="space-y-4">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
           <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i data-lucide="sliders" class="w-4 h-4 text-cyan-400"></i> Setări Intuiție & Traiectorie
+            <i data-lucide="sliders" class="w-4 h-4 text-emerald-400"></i> Setări Intuiție & Traiectorie
           </h2>
         </div>
 
         <div class="space-y-1">
           <div class="flex justify-between text-xs">
             <label for="predictionScale" class="text-slate-300">Orizont Predicție (Secunde)</label>
-            <span id="predictionScaleVal" class="font-mono text-cyan-400 font-bold">0.8 sec</span>
+            <span id="predictionScaleVal" class="font-mono text-emerald-400 font-bold">0.8 sec</span>
           </div>
-          <input type="range" id="predictionScale" min="0.1" max="2.0" step="0.1" value="0.8" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+          <input type="range" id="predictionScale" min="0.1" max="2.0" step="0.1" value="0.8" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
         </div>
 
         <div class="space-y-1">
           <div class="flex justify-between text-xs">
             <label for="trailLength" class="text-slate-300">Istoric Urmă Mișcare</label>
-            <span id="trailLengthVal" class="font-mono text-cyan-400 font-bold">25 cadru</span>
+            <span id="trailLengthVal" class="font-mono text-emerald-400 font-bold">25 cadru</span>
           </div>
-          <input type="range" id="trailLength" min="5" max="60" value="25" step="5" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+          <input type="range" id="trailLength" min="5" max="60" value="25" step="5" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
         </div>
       </div>
 
@@ -231,7 +306,7 @@
       <div class="space-y-3">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
           <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i data-lucide="scan" class="w-4 h-4 text-cyan-400"></i> Telemetrie Detecție
+            <i data-lucide="scan" class="w-4 h-4 text-emerald-400"></i> Telemetrie Detecție
           </h2>
         </div>
 
@@ -249,17 +324,17 @@
           <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
             <span class="text-slate-400 text-[10px] uppercase font-bold block mb-1">Analiză Expresie Facială</span>
             <div class="grid grid-cols-2 gap-1 font-mono text-[11px]">
-              <div>Zâmbet: <span id="valSmile" class="text-cyan-400">0%</span></div>
-              <div>Clipit: <span id="valBlink" class="text-cyan-400">0%</span></div>
-              <div>Gură Deschisă: <span id="valMouth" class="text-cyan-400">0%</span></div>
-              <div>Sprâncene: <span id="valBrows" class="text-cyan-400">0%</span></div>
+              <div>Zâmbet: <span id="valSmile" class="text-emerald-400">0%</span></div>
+              <div>Clipit: <span id="valBlink" class="text-emerald-400">0%</span></div>
+              <div>Gură Deschisă: <span id="valMouth" class="text-emerald-400">0%</span></div>
+              <div>Sprâncene: <span id="valBrows" class="text-emerald-400">0%</span></div>
             </div>
           </div>
 
           <!-- Pose Action -->
           <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
             <span class="text-slate-400 text-[10px] uppercase font-bold block mb-1">Intuiție Corp & Mișcare Globală</span>
-            <div class="font-mono text-cyan-300 font-semibold" id="bodyActionDetails">
+            <div class="font-mono text-emerald-300 font-semibold" id="bodyActionDetails">
               Stationar / Neutru
             </div>
           </div>
@@ -269,10 +344,19 @@
     </aside>
   </main>
 
+  <!-- Hidden Offscreen Canvas for Optical Shader Processing -->
+  <canvas id="offscreenCanvas" class="hidden"></canvas>
+
   <!-- Javascript Logic -->
   <script>
     // --- Configuration State ---
     const config = {
+      visionMode: 'ir', // 'ir', 'thermal', 'whitehot', 'cyberhud', 'normal'
+      noiseIntensity: 0.35,
+      gainBrightness: 1.3,
+      contrastBoost: 1.4,
+      showScanlines: true,
+      showBloom: true,
       showFace: true,
       showHands: true,
       showPose: true,
@@ -286,7 +370,6 @@
     let isWebcamActive = false;
     let videoStream = null;
     let holistic = null;
-    let cameraUtil = null;
     let demoMode = false;
     let demoAngle = 0;
 
@@ -306,6 +389,9 @@
     const video = document.getElementById('webcamVideo');
     const canvas = document.getElementById('outputCanvas');
     const ctx = canvas.getContext('2d');
+    const offscreenCanvas = document.getElementById('offscreenCanvas');
+    const offscreenCtx = offscreenCanvas.getContext('2d');
+
     const toggleCameraBtn = document.getElementById('toggleCameraBtn');
     const toggleCameraBtnText = document.getElementById('toggleCameraBtnText');
     const cameraSelect = document.getElementById('cameraSelect');
@@ -313,6 +399,14 @@
     const statusMessage = document.getElementById('statusMessage');
     const statusDot = document.getElementById('statusDot');
     const statMode = document.getElementById('statMode');
+    const tacticalGridOverlay = document.getElementById('tacticalGridOverlay');
+
+    // Vision Shader Controls
+    const noiseIntensityInput = document.getElementById('noiseIntensity');
+    const gainBrightnessInput = document.getElementById('gainBrightness');
+    const contrastBoostInput = document.getElementById('contrastBoost');
+    const chkScanlines = document.getElementById('chkScanlines');
+    const chkBloom = document.getElementById('chkBloom');
 
     // UI Input Elements
     const chkFace = document.getElementById('chkFace');
@@ -334,6 +428,7 @@
     const hudHandGesture = document.getElementById('hudHandGesture');
     const hudFaceExpression = document.getElementById('hudFaceExpression');
     const hudMotionVector = document.getElementById('hudMotionVector');
+    const hudThermalHeat = document.getElementById('hudThermalHeat');
     const leftHandStatus = document.getElementById('leftHandStatus');
     const rightHandStatus = document.getElementById('rightHandStatus');
     const valSmile = document.getElementById('valSmile');
@@ -364,8 +459,8 @@
 
         holistic.onResults(onHolisticResults);
 
-        updateStatus("Modelele AI MediaPipe Holistic sunt pregătite!", "success");
-        statMode.innerText = "MediaPipe AI";
+        updateStatus("Sistem Optic IR & Modele AI pregătite!", "success");
+        statMode.innerText = "IR AI Hybrid";
         
         enumerateCameras();
         startWebcam(); // Auto start camera
@@ -405,7 +500,7 @@
         videoDevices.forEach((device, i) => {
           const opt = document.createElement('option');
           opt.value = device.deviceId;
-          opt.innerText = device.label || `Cameră ${i + 1}`;
+          opt.innerText = device.label || `Cameră IR ${i + 1}`;
           cameraSelect.appendChild(opt);
         });
       } catch (e) {
@@ -420,7 +515,7 @@
         return;
       }
 
-      updateStatus("Pornire cameră video...", "info");
+      updateStatus("Pornire cameră video IR...", "info");
 
       if (videoStream) {
         videoStream.getTracks().forEach(track => track.stop());
@@ -444,9 +539,8 @@
         isWebcamActive = true;
         demoMode = false;
         toggleCameraBtnText.innerText = "Oprește Camera";
-        updateStatus("Cameră conectată. Detecție AI activă!", "success");
+        updateStatus("Senzor IR Conectat. Detecție AI Activă!", "success");
 
-        // Run holistic loop via custom requestAnimationFrame for maximum resilience
         runFrameProcessing();
       } catch (err) {
         console.error("Eroare acces webcam:", err);
@@ -468,7 +562,7 @@
       demoMode = true;
       isWebcamActive = false;
       statMode.innerText = "Mod Simulare Demo";
-      updateStatus(`${reason} Rulare Mod Demo Interactiv.`, "error");
+      updateStatus(`${reason} Rulare Mod Simulare Tactică.`, "error");
     }
 
     // --- Main Processing Frame Loop ---
@@ -485,6 +579,110 @@
 
       if (isWebcamActive) {
         requestAnimationFrame(runFrameProcessing);
+      }
+    }
+
+    // --- OPTICAL SHADER ENGINE (Night Vision, Thermal FLIR, White Hot) ---
+    function applyVisionShaders(sourceImage, width, height) {
+      offscreenCanvas.width = width;
+      offscreenCanvas.height = height;
+
+      // Draw source image to offscreen buffer
+      offscreenCtx.save();
+      if (config.flipHorizontal) {
+        offscreenCtx.translate(width, 0);
+        offscreenCtx.scale(-1, 1);
+      }
+      offscreenCtx.drawImage(sourceImage, 0, 0, width, height);
+      offscreenCtx.restore();
+
+      if (config.visionMode === 'normal') {
+        ctx.drawImage(offscreenCanvas, 0, 0, width, height);
+        return;
+      }
+
+      const imgData = offscreenCtx.getImageData(0, 0, width, height);
+      const data = imgData.data;
+
+      const gain = config.gainBrightness;
+      const contrast = config.contrastBoost;
+      const mode = config.visionMode;
+
+      // Pixel Shading Loop
+      for (let i = 0; i < data.length; i += 4) {
+        let r = data[i];
+        let g = data[i + 1];
+        let b = data[i + 2];
+
+        // Gray luminance conversion
+        let lum = (0.299 * r + 0.587 * g + 0.114 * b);
+        
+        // Contrast & Gain adjustments
+        lum = ((lum - 128) * contrast + 128) * gain;
+        lum = Math.min(255, Math.max(0, lum));
+
+        if (mode === 'ir') {
+          // Night Vision Green Phosphor
+          data[i] = lum * 0.15;            // Red channel minimal
+          data[i + 1] = Math.min(255, lum * 1.35); // Green channel amplified
+          data[i + 2] = lum * 0.25;          // Blue channel subtle cyan
+        } else if (mode === 'thermal') {
+          // FLIR Rainbow Heatmap (Blue -> Purple -> Red -> Yellow -> White)
+          const norm = lum / 255;
+          if (norm < 0.25) { // Cold / Deep Blue
+            data[i] = 0;
+            data[i + 1] = Math.round(norm * 4 * 255);
+            data[i + 2] = 255;
+          } else if (norm < 0.5) { // Purple to Red
+            data[i] = Math.round((norm - 0.25) * 4 * 255);
+            data[i + 1] = 0;
+            data[i + 2] = Math.round((1 - (norm - 0.25) * 4) * 255);
+          } else if (norm < 0.75) { // Red to Yellow
+            data[i] = 255;
+            data[i + 1] = Math.round((norm - 0.5) * 4 * 255);
+            data[i + 2] = 0;
+          } else { // Yellow to White Hot
+            data[i] = 255;
+            data[i + 1] = 255;
+            data[i + 2] = Math.round((norm - 0.75) * 4 * 255);
+          }
+        } else if (mode === 'whitehot') {
+          // High contrast White Hot Thermal
+          const whiteHot = Math.pow(lum / 255, 1.3) * 255;
+          data[i] = whiteHot;
+          data[i + 1] = whiteHot;
+          data[i + 2] = whiteHot;
+        } else if (mode === 'cyberhud') {
+          // Tactical Cyan / Magenta High-tech Filter
+          data[i] = lum * 0.2;
+          data[i + 1] = Math.min(255, lum * 1.2);
+          data[i + 2] = Math.min(255, lum * 1.4);
+        }
+      }
+
+      ctx.putImageData(imgData, 0, 0);
+
+      // Noise & Grain Overlay
+      if (config.noiseIntensity > 0) {
+        ctx.save();
+        const noiseAmount = config.noiseIntensity * 40;
+        ctx.fillStyle = mode === 'ir' ? 'rgba(56, 239, 125, 0.05)' : 'rgba(255, 255, 255, 0.05)';
+        for (let j = 0; j < 400; j++) {
+          const nx = Math.random() * width;
+          const ny = Math.random() * height;
+          ctx.fillRect(nx, ny, 1.5, 1.5);
+        }
+        ctx.restore();
+      }
+
+      // Scanlines Layer
+      if (config.showScanlines && (mode === 'ir' || mode === 'cyberhud')) {
+        ctx.save();
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
+        for (let y = 0; y < height; y += 4) {
+          ctx.fillRect(0, y, width, 1.5);
+        }
+        ctx.restore();
       }
     }
 
@@ -509,27 +707,20 @@
         canvas.height = h;
       }
 
-      ctx.save();
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw mirrored / normal video background
+      // 0. Render Shader Video Frame
       if (results.image) {
-        if (config.flipHorizontal) {
-          ctx.translate(canvas.width, 0);
-          ctx.scale(-1, 1);
-        }
-        ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
+        applyVisionShaders(results.image, canvas.width, canvas.height);
       }
-      ctx.restore();
 
       let maxSpeed = 0;
+      const themeColor = getVisionThemeColor();
 
       // 1. FACE MESH RENDER & CLASSIFICATION
       if (results.faceLandmarks) {
         statFaceLandmarks.innerText = `${results.faceLandmarks.length} Pts`;
         if (config.showFace) {
           drawLandmarks(ctx, results.faceLandmarks, {
-            color: '#38bdf8',
+            color: themeColor.face,
             lineWidth: 0.5,
             radius: 1,
             flip: config.flipHorizontal,
@@ -544,6 +735,10 @@
         valBlink.innerText = `${faceMetrics.blink}%`;
         valMouth.innerText = `${faceMetrics.mouth}%`;
         valBrows.innerText = `${faceMetrics.brows}%`;
+
+        // Simulated Thermal Body Temp reading
+        const estTemp = (36.4 + (faceMetrics.smile / 100) * 0.4).toFixed(1);
+        hudThermalHeat.innerText = `${estTemp} °C (Nominal)`;
       } else {
         statFaceLandmarks.innerText = "0 Pts";
       }
@@ -560,7 +755,7 @@
         leftHandStatus.innerText = `Stânga: ${g}`;
         
         if (config.showHands) {
-          drawConnectors(results.leftHandLandmarks, HAND_CONNECTIONS, '#f43f5e');
+          drawConnectors(results.leftHandLandmarks, HAND_CONNECTIONS, themeColor.handLeft);
         }
 
         const wrist = results.leftHandLandmarks[0];
@@ -569,8 +764,8 @@
         const pred = calculateTrajectory(history.leftHand);
         maxSpeed = Math.max(maxSpeed, pred.speed * canvas.width);
 
-        drawTrajectoryTrail(history.leftHand, '#f43f5e');
-        drawPredictionVector(pt, pred, '#f43f5e');
+        drawTrajectoryTrail(history.leftHand, themeColor.handLeft);
+        drawPredictionVector(pt, pred, themeColor.handLeft);
       } else {
         leftHandStatus.innerText = "Stânga: Inactiv";
       }
@@ -583,7 +778,7 @@
         rightHandStatus.innerText = `Dreapta: ${g}`;
 
         if (config.showHands) {
-          drawConnectors(results.rightHandLandmarks, HAND_CONNECTIONS, '#38bdf8');
+          drawConnectors(results.rightHandLandmarks, HAND_CONNECTIONS, themeColor.handRight);
         }
 
         const wrist = results.rightHandLandmarks[0];
@@ -592,8 +787,8 @@
         const pred = calculateTrajectory(history.rightHand);
         maxSpeed = Math.max(maxSpeed, pred.speed * canvas.width);
 
-        drawTrajectoryTrail(history.rightHand, '#38bdf8');
-        drawPredictionVector(pt, pred, '#38bdf8');
+        drawTrajectoryTrail(history.rightHand, themeColor.handRight);
+        drawPredictionVector(pt, pred, themeColor.handRight);
       } else {
         rightHandStatus.innerText = "Dreapta: Inactiv";
       }
@@ -605,7 +800,7 @@
       if (results.poseLandmarks) {
         statPoseLandmarks.innerText = `${results.poseLandmarks.length} Pts`;
         if (config.showPose) {
-          drawConnectors(results.poseLandmarks, POSE_CONNECTIONS, '#a855f7');
+          drawConnectors(results.poseLandmarks, POSE_CONNECTIONS, themeColor.pose);
         }
 
         const actionState = analyzeBodyPose(results.poseLandmarks, maxSpeed);
@@ -617,6 +812,20 @@
 
       statHandVelocity.innerText = `${Math.round(maxSpeed)} px/s`;
       hudMotionVector.innerText = maxSpeed > 40 ? `În Mișcare (${Math.round(maxSpeed)} px/s)` : 'Static (0 px/s)';
+    }
+
+    // --- Dynamic Vision Colors based on Active Filter ---
+    function getVisionThemeColor() {
+      if (config.visionMode === 'ir') {
+        return { face: '#a7f3d0', handLeft: '#34d399', handRight: '#6ee7b7', pose: '#10b981' };
+      } else if (config.visionMode === 'thermal') {
+        return { face: '#fef08a', handLeft: '#f43f5e', handRight: '#38bdf8', pose: '#e11d48' };
+      } else if (config.visionMode === 'whitehot') {
+        return { face: '#ffffff', handLeft: '#cbd5e1', handRight: '#e2e8f0', pose: '#94a3b8' };
+      } else if (config.visionMode === 'cyberhud') {
+        return { face: '#38bdf8', handLeft: '#f43f5e', handRight: '#06b6d4', pose: '#c084fc' };
+      }
+      return { face: '#38bdf8', handLeft: '#f43f5e', handRight: '#38bdf8', pose: '#a855f7' };
     }
 
     // --- Gesture & Face Classifiers ---
@@ -650,7 +859,6 @@
     function analyzeFace(landmarks) {
       if (!landmarks || landmarks.length < 468) return { expr: 'Neutru', smile: 0, blink: 0, mouth: 0, brows: 0 };
 
-      // Landmark geometric calculations
       const mouthTop = landmarks[13];
       const mouthBottom = landmarks[14];
       const mouthLeft = landmarks[61];
@@ -794,7 +1002,7 @@
       ctx.save();
       ctx.fillStyle = opts.color;
       landmarks.forEach((pt, idx) => {
-        if (idx % 3 === 0) { // Subsample face mesh for performance
+        if (idx % 3 === 0) {
           const x = opts.flip ? (1 - pt.x) * opts.canvasWidth : pt.x * opts.canvasWidth;
           const y = pt.y * opts.canvasHeight;
           ctx.beginPath();
@@ -821,7 +1029,7 @@
       ctx.fillStyle = '#0f172a';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Orbital points calculation
+      // Orbital target calculation
       const x = 0.5 + Math.sin(demoAngle) * 0.25;
       const y = 0.5 + Math.cos(demoAngle * 0.8) * 0.2;
 
@@ -829,18 +1037,19 @@
       pushHistory(history.rightHand, pt);
       const pred = calculateTrajectory(history.rightHand);
 
-      drawTrajectoryTrail(history.rightHand, '#38bdf8');
-      drawPredictionVector(pt, pred, '#38bdf8');
+      const colors = getVisionThemeColor();
+      drawTrajectoryTrail(history.rightHand, colors.handLeft);
+      drawPredictionVector(pt, pred, colors.handLeft);
 
-      // Animated target dot
+      // Target point
       ctx.beginPath();
       ctx.arc(x * canvas.width, y * canvas.height, 12, 0, Math.PI * 2);
-      ctx.fillStyle = '#38bdf8';
+      ctx.fillStyle = colors.handLeft;
       ctx.fill();
 
-      // UI Text updates
-      hudActionState.innerText = "Simulare Mișcare Demo";
-      hudHandGesture.innerText = "Punct Orbitar Demo";
+      // Updates
+      hudActionState.innerText = "Simulare Tactică Demo";
+      hudHandGesture.innerText = "Tinta IR Demo";
       hudFaceExpression.innerText = "Mod Simulare";
       hudMotionVector.innerText = `Vx: ${Math.round(pred.vx)} px/s`;
       statHandVelocity.innerText = `${Math.round(pred.speed * canvas.width)} px/s`;
@@ -864,6 +1073,39 @@
       }
     });
 
+    // Vision Mode Switching Buttons
+    document.querySelectorAll('.btn-vision-mode').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.btn-vision-mode').forEach(b => {
+          b.className = "btn-vision-mode px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all";
+        });
+
+        const selectedBtn = e.currentTarget;
+        selectedBtn.className = "btn-vision-mode px-3 py-1 rounded-full text-xs font-semibold bg-emerald-600 text-white shadow-md flex items-center gap-1.5 transition-all";
+
+        config.visionMode = selectedBtn.dataset.mode;
+        document.getElementById('aiConfidenceBadge').innerText = `${config.visionMode.toUpperCase()} Activ`;
+      });
+    });
+
+    // Shader Controls
+    noiseIntensityInput.addEventListener('input', (e) => {
+      config.noiseIntensity = parseFloat(e.target.value) / 100;
+      document.getElementById('noiseVal').innerText = `${e.target.value}%`;
+    });
+
+    gainBrightnessInput.addEventListener('input', (e) => {
+      config.gainBrightness = parseFloat(e.target.value);
+      document.getElementById('gainVal').innerText = `${config.gainBrightness}x`;
+    });
+
+    contrastBoostInput.addEventListener('input', (e) => {
+      config.contrastBoost = parseFloat(e.target.value);
+      document.getElementById('contrastVal').innerText = `${config.contrastBoost}x`;
+    });
+
+    chkScanlines.addEventListener('change', (e) => config.showScanlines = e.target.checked);
+
     // Option Toggles
     chkFace.addEventListener('change', (e) => config.showFace = e.target.checked);
     chkHands.addEventListener('change', (e) => config.showHands = e.target.checked);
@@ -885,7 +1127,7 @@
     // Exporters
     document.getElementById('snapshotBtn').addEventListener('click', () => {
       const link = document.createElement('a');
-      link.download = `omnivision-snapshot-${Date.now()}.png`;
+      link.download = `omnivision-ir-snapshot-${Date.now()}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
     });
@@ -893,6 +1135,7 @@
     document.getElementById('exportJsonBtn').addEventListener('click', () => {
       const data = {
         timestamp: new Date().toISOString(),
+        visionMode: config.visionMode,
         fps,
         history,
         state: {
@@ -904,7 +1147,7 @@
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
       const a = document.createElement('a');
       a.href = dataStr;
-      a.download = `omnivision-telemetry-${Date.now()}.json`;
+      a.download = `omnivision-ir-telemetry-${Date.now()}.json`;
       a.click();
     });
 
