@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OmniVision AI - IR Night Vision & AI Tracking Engine</title>
+  <title>OmniVision AI - IR Night Vision & Smart Biological Thermal Engine</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -61,9 +61,9 @@
   <div id="statusBanner" class="bg-cyan-950/80 border-b border-cyan-800/60 px-4 py-2 text-xs font-mono text-cyan-200 flex items-center justify-between transition-all">
     <div class="flex items-center space-x-2">
       <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
-      <span id="statusMessage">Se inițializează GPU WebGL Shaders & AI MediaPipe Engine...</span>
+      <span id="statusMessage">Se inițializează GPU WebGL Shaders & AI Smart Thermal Engine...</span>
     </div>
-    <span id="modelSourceTag" class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] text-slate-300">GPU Shader: WebGL 2.0 + MediaPipe</span>
+    <span id="modelSourceTag" class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] text-slate-300">Biothermal Mask WebGL 2.0 + MediaPipe</span>
   </div>
 
   <!-- Header Section -->
@@ -74,16 +74,16 @@
       </div>
       <div>
         <h1 class="text-xl font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-400">
-          OmniVision Tactical <span class="text-xs font-normal px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 ml-2">v5.0 WebGL GPU</span>
+          OmniVision Tactical <span class="text-xs font-normal px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 ml-2">v6.0 BioThermal</span>
         </h1>
-        <p class="text-xs text-slate-400">Sistem Tactic Infra-Roșu WebGL, Termic FLIR & Intuiție AI Multi-Modală</p>
+        <p class="text-xs text-slate-400">Sistem Tactic Infra-Roșu WebGL, Termic FLIR Biologic & Intuiție AI Multi-Modală</p>
       </div>
     </div>
 
     <!-- Header Actions -->
     <div class="flex items-center space-x-3 mt-2 sm:mt-0 flex-wrap gap-y-2">
       <select id="cameraSelect" class="bg-slate-900 border border-slate-700 text-xs rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-emerald-500">
-        <option value="">Se caută senzori optic...</option>
+        <option value="">Se caută senzori optici...</option>
       </select>
 
       <button id="toggleCameraBtn" class="flex items-center space-x-2 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-colors shadow-lg shadow-emerald-950/50">
@@ -121,14 +121,14 @@
 
         <!-- Vision Mode Bar -->
         <div class="absolute bottom-16 left-1/2 -translate-x-1/2 glass-panel px-3 py-1.5 rounded-full border border-slate-700/80 flex items-center gap-2 shadow-2xl z-20 overflow-x-auto max-w-[90vw]">
-          <button data-mode="ir" class="btn-vision-mode px-3 py-1 rounded-full text-xs font-semibold bg-emerald-600 text-white shadow-md flex items-center gap-1.5 transition-all">
-            <i data-lucide="eye" class="w-3.5 h-3.5"></i> Night Vision IR
-          </button>
-          <button data-mode="thermal" class="btn-vision-mode px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all">
-            <i data-lucide="flame" class="w-3.5 h-3.5"></i> Termic FLIR
+          <button data-mode="thermal" class="btn-vision-mode px-3 py-1 rounded-full text-xs font-semibold bg-emerald-600 text-white shadow-md flex items-center gap-1.5 transition-all">
+            <i data-lucide="flame" class="w-3.5 h-3.5"></i> Termic FLIR Bio
           </button>
           <button data-mode="whitehot" class="btn-vision-mode px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all">
             <i data-lucide="sun" class="w-3.5 h-3.5"></i> Alb Fierbinte
+          </button>
+          <button data-mode="ir" class="btn-vision-mode px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all">
+            <i data-lucide="eye" class="w-3.5 h-3.5"></i> Night Vision IR
           </button>
           <button data-mode="cyberhud" class="btn-vision-mode px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all">
             <i data-lucide="crosshair" class="w-3.5 h-3.5"></i> CyberHUD
@@ -151,17 +151,19 @@
         <div class="absolute top-4 left-4 glass-panel p-3.5 rounded-xl max-w-xs space-y-2 border border-emerald-500/30 text-xs shadow-2xl z-20">
           <div class="flex items-center justify-between border-b border-slate-700/60 pb-1.5">
             <span class="font-bold text-emerald-400 flex items-center gap-1.5">
-              <i data-lucide="activity" class="w-4 h-4 text-emerald-400"></i> Intuiție AI & WebGL
+              <i data-lucide="activity" class="w-4 h-4 text-emerald-400"></i> Motor Termic Biologic AI
             </span>
-            <span id="aiConfidenceBadge" class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 font-mono border border-emerald-800">IR Activ</span>
+            <span id="aiConfidenceBadge" class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 font-mono border border-emerald-800">FLIR Activ</span>
           </div>
           
           <div class="space-y-1 font-mono text-[11px]">
+            <p><span class="text-slate-400">Detecție Căldură:</span> <span id="hudHeatType" class="text-rose-400 font-bold">CĂLDURĂ BIOLOGICĂ DETECTATĂ</span></p>
+            <p><span class="text-slate-400">Lumină Inanimată:</span> <span id="hudAmbientDisc" class="text-cyan-400 font-bold">Ignorată (Rece/Fluorescent)</span></p>
             <p><span class="text-slate-400">Postură/Acțiune:</span> <span id="hudActionState" class="text-emerald-400 font-bold">Inactiv</span></p>
             <p><span class="text-slate-400">Gest Mâini:</span> <span id="hudHandGesture" class="text-amber-400 font-bold">Niciunul</span></p>
             <p><span class="text-slate-400">Expresie Față:</span> <span id="hudFaceExpression" class="text-purple-400 font-bold">Neutru</span></p>
             <p><span class="text-slate-400">Vector Viteză:</span> <span id="hudMotionVector" class="text-sky-400 font-bold">Static (0 px/s)</span></p>
-            <p><span class="text-slate-400">Semnătură Termică:</span> <span id="hudThermalHeat" class="text-rose-400 font-bold">36.6 °C (Nominal)</span></p>
+            <p><span class="text-slate-400">Temp. Core Estimată:</span> <span id="hudThermalHeat" class="text-rose-400 font-bold">36.6 °C (Nominal)</span></p>
           </div>
         </div>
       </div>
@@ -185,8 +187,8 @@
           <span id="statPoseLandmarks" class="font-mono text-sm font-bold text-purple-400">0 Pts</span>
         </div>
         <div class="p-1.5 rounded-lg bg-slate-800/40">
-          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Viteză Max</span>
-          <span id="statHandVelocity" class="font-mono text-sm font-bold text-rose-400">0 px/s</span>
+          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Căldură Corp vs Mediu</span>
+          <span id="statBodyHeatRatio" class="font-mono text-sm font-bold text-rose-400">0% Biological</span>
         </div>
         <div class="p-1.5 rounded-lg bg-slate-800/40">
           <span class="block text-slate-400 text-[10px] uppercase font-semibold">Pipeline Optic</span>
@@ -198,34 +200,42 @@
     <!-- Sidebar Dashboard Controls -->
     <aside class="w-full lg:w-96 glass-panel rounded-2xl p-4 border border-slate-800 flex flex-col gap-5 overflow-y-auto custom-scrollbar max-h-[calc(100vh-6rem)]">
       
-      <!-- Shader & Optical Parameters -->
+      <!-- Thermal Physics & Shader Parameters -->
       <div class="space-y-3">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
           <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i data-lucide="sliders-horizontal" class="w-4 h-4 text-emerald-400"></i> Parametri Filtru Optic GPU
+            <i data-lucide="sliders-horizontal" class="w-4 h-4 text-emerald-400"></i> Parametri Termici & Filtru Optic
           </h2>
         </div>
 
         <div class="space-y-3 text-xs">
           <div class="space-y-1">
             <div class="flex justify-between">
-              <label for="noiseIntensity" class="text-slate-300">Zgomot Granulat GPU (IR Grain)</label>
-              <span id="noiseVal" class="font-mono text-emerald-400 font-bold">35%</span>
+              <label for="thermalGain" class="text-slate-300">Intensitate Căldură Biologică (Bio-Gain)</label>
+              <span id="thermalGainVal" class="font-mono text-emerald-400 font-bold">1.5x</span>
             </div>
-            <input type="range" id="noiseIntensity" min="0" max="100" value="35" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+            <input type="range" id="thermalGain" min="0.5" max="3.0" step="0.1" value="1.5" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
           </div>
 
           <div class="space-y-1">
             <div class="flex justify-between">
-              <label for="gainBrightness" class="text-slate-300">Amplificare Gain / Luminozitate IR</label>
-              <span id="gainVal" class="font-mono text-emerald-400 font-bold">1.3x</span>
+              <label for="noiseIntensity" class="text-slate-300">Zgomot Granulat Sensor (Noise Grain)</label>
+              <span id="noiseVal" class="font-mono text-emerald-400 font-bold">25%</span>
             </div>
-            <input type="range" id="gainBrightness" min="0.5" max="3.0" step="0.1" value="1.3" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+            <input type="range" id="noiseIntensity" min="0" max="100" value="25" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
           </div>
 
           <div class="space-y-1">
             <div class="flex justify-between">
-              <label for="contrastBoost" class="text-slate-300">Contrast Termic / IR</label>
+              <label for="gainBrightness" class="text-slate-300">Luminozitate / Gain Senzor IR</label>
+              <span id="gainVal" class="font-mono text-emerald-400 font-bold">1.2x</span>
+            </div>
+            <input type="range" id="gainBrightness" min="0.5" max="3.0" step="0.1" value="1.2" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex justify-between">
+              <label for="contrastBoost" class="text-slate-300">Contrast Termic / Dinamic</label>
               <span id="contrastVal" class="font-mono text-emerald-400 font-bold">1.4x</span>
             </div>
             <input type="range" id="contrastBoost" min="0.5" max="3.0" step="0.1" value="1.4" class="w-full accent-emerald-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
@@ -242,7 +252,7 @@
           <div class="grid grid-cols-2 gap-2 pt-1">
             <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
               <input type="checkbox" id="chkScanlines" checked class="rounded accent-emerald-500">
-              <span class="text-slate-300">Linii Scanare IR</span>
+              <span class="text-slate-300">Linii Scanare CRT</span>
             </label>
             <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
               <input type="checkbox" id="chkVignette" checked class="rounded accent-emerald-500">
@@ -358,10 +368,11 @@
   <script>
     // --- Configuration State ---
     const config = {
-      visionMode: 'ir', // 'ir', 'thermal', 'whitehot', 'cyberhud', 'normal'
-      noiseIntensity: 0.35,
-      gainBrightness: 1.3,
+      visionMode: 'thermal', // 'thermal', 'whitehot', 'ir', 'cyberhud', 'normal'
+      noiseIntensity: 0.25,
+      gainBrightness: 1.2,
       contrastBoost: 1.4,
+      thermalGain: 1.5,
       irIlluminator: 0.5,
       showScanlines: true,
       showVignette: true,
@@ -395,6 +406,10 @@
     const overlayCanvas = document.getElementById('overlayCanvas');
     const overlayCtx = overlayCanvas.getContext('2d');
 
+    // Thermal Mask Offscreen Canvas (Transferred as dynamic texture into WebGL)
+    const thermalMaskCanvas = document.createElement('canvas');
+    const thermalMaskCtx = thermalMaskCanvas.getContext('2d');
+
     const toggleCameraBtn = document.getElementById('toggleCameraBtn');
     const toggleCameraBtnText = document.getElementById('toggleCameraBtnText');
     const cameraSelect = document.getElementById('cameraSelect');
@@ -404,6 +419,7 @@
     const statPipeline = document.getElementById('statPipeline');
 
     // Shader UI Inputs
+    const thermalGainInput = document.getElementById('thermalGain');
     const noiseInput = document.getElementById('noiseIntensity');
     const gainInput = document.getElementById('gainBrightness');
     const contrastInput = document.getElementById('contrastBoost');
@@ -426,7 +442,9 @@
     const statFaceLandmarks = document.getElementById('statFaceLandmarks');
     const statHandsCount = document.getElementById('statHandsCount');
     const statPoseLandmarks = document.getElementById('statPoseLandmarks');
-    const statHandVelocity = document.getElementById('statHandVelocity');
+    const statBodyHeatRatio = document.getElementById('statBodyHeatRatio');
+    const hudHeatType = document.getElementById('hudHeatType');
+    const hudAmbientDisc = document.getElementById('hudAmbientDisc');
     const hudActionState = document.getElementById('hudActionState');
     const hudHandGesture = document.getElementById('hudHandGesture');
     const hudFaceExpression = document.getElementById('hudFaceExpression');
@@ -441,7 +459,8 @@
     const bodyActionDetails = document.getElementById('bodyActionDetails');
 
     // --- WebGL Shader Engine Initialization ---
-    let gl, glProgram, videoTexture;
+    let gl, glProgram;
+    let videoTexture, thermalMaskTexture;
     let uniforms = {};
 
     const vsSource = `
@@ -462,11 +481,13 @@
     const fsSource = `
       precision mediump float;
       uniform sampler2D u_image;
+      uniform sampler2D u_thermalMask;
       uniform vec2 u_resolution;
-      uniform int u_mode; // 0: Normal, 1: IR, 2: Thermal, 3: WhiteHot, 4: CyberHUD
+      uniform int u_mode; // 0: Normal, 1: FLIR Thermal, 2: WhiteHot, 3: Night Vision IR, 4: CyberHUD
       uniform float u_noise;
       uniform float u_gain;
       uniform float u_contrast;
+      uniform float u_thermalGain;
       uniform float u_illuminator;
       uniform bool u_scanlines;
       uniform bool u_vignette;
@@ -477,49 +498,63 @@
         return fract(sin(dot(co.xy, vec2(12.9898, 78.233))) * 43758.5453);
       }
 
-      vec3 thermalIronbow(float factor) {
-        float f = clamp(factor, 0.0, 1.0);
+      // FLIR Ironbow Color Mapping based on real body heat vs ambient light
+      vec3 flirIronbow(float heat, float ambientLight) {
+        // Ambient Light (lamps/reflections without biological mask) is mapped to cold purple/indigo
+        if (heat <= 0.05) {
+          float amb = clamp(ambientLight * 0.5, 0.0, 0.4);
+          return mix(vec3(0.02, 0.02, 0.08), vec3(0.15, 0.05, 0.45), amb);
+        }
+
+        // Biological heat scale
+        float f = clamp(heat * u_thermalGain, 0.0, 1.0);
         vec3 color;
-        if (f < 0.25) {
-          color = mix(vec3(0.0, 0.0, 0.5), vec3(0.5, 0.0, 0.5), f * 4.0);
+        if (f < 0.2) {
+          color = mix(vec3(0.1, 0.05, 0.4), vec3(0.5, 0.0, 0.6), f * 5.0);
         } else if (f < 0.5) {
-          color = mix(vec3(0.5, 0.0, 0.5), vec3(1.0, 0.2, 0.0), (f - 0.25) * 4.0);
-        } else if (f < 0.75) {
-          color = mix(vec3(1.0, 0.2, 0.0), vec3(1.0, 0.9, 0.0), (f - 0.5) * 4.0);
+          color = mix(vec3(0.5, 0.0, 0.6), vec3(0.9, 0.15, 0.0), (f - 0.2) * 3.33);
+        } else if (f < 0.8) {
+          color = mix(vec3(0.9, 0.15, 0.0), vec3(1.0, 0.85, 0.0), (f - 0.5) * 3.33);
         } else {
-          color = mix(vec3(1.0, 0.9, 0.0), vec3(1.0, 1.0, 1.0), (f - 0.75) * 4.0);
+          color = mix(vec3(1.0, 0.85, 0.0), vec3(1.0, 1.0, 1.0), (f - 0.8) * 5.0);
         }
         return color;
       }
 
       void main() {
         vec4 texColor = texture2D(u_image, v_texCoord);
+        vec4 maskColor = texture2D(u_thermalMask, v_texCoord);
+        
         vec3 col = texColor.rgb;
+        float lum = dot(col, vec3(0.299, 0.587, 0.114)); // Optical Ambient Light
+        float bioHeat = maskColor.r;                   // Synthesized Biological Heat
 
-        // Calculate Luminance
-        float lum = dot(col, vec3(0.299, 0.587, 0.114));
-
-        // IR Center Beam Spotlight Simulation
-        vec2 centerDist = v_texCoord - vec2(0.5);
-        float dist = length(centerDist);
-        float beam = smoothstep(0.7, 0.0, dist) * u_illuminator * 0.4;
-        lum += beam;
-
-        // Apply Gain & Contrast
+        // Apply Optical Contrast/Gain
         lum = ((lum - 0.5) * u_contrast + 0.5) * u_gain;
         lum = clamp(lum, 0.0, 1.0);
 
         vec3 finalColor;
 
-        if (u_mode == 1) { // IR Night Vision Green
-          finalColor = vec3(lum * 0.1, lum * 1.3, lum * 0.25);
-        } else if (u_mode == 2) { // FLIR Thermal Ironbow
-          finalColor = thermalIronbow(lum);
-        } else if (u_mode == 3) { // White Hot Thermal
-          float wh = pow(lum, 1.2);
-          finalColor = vec3(wh);
+        if (u_mode == 1) { // FLIR Thermal Ironbow
+          finalColor = flirIronbow(bioHeat, lum);
+        } else if (u_mode == 2) { // White Hot Military Thermal
+          // Non-biological ambient light is subdued/dark gray; Human body radiates bright white
+          float amb = lum * 0.2;
+          float hot = pow(bioHeat * u_thermalGain, 1.1);
+          float intensity = clamp(amb + hot, 0.0, 1.0);
+          finalColor = vec3(intensity);
+        } else if (u_mode == 3) { // Night Vision IR Green
+          // Spot beam illuminator
+          vec2 centerDist = v_texCoord - vec2(0.5);
+          float dist = length(centerDist);
+          float beam = smoothstep(0.75, 0.0, dist) * u_illuminator * 0.35;
+          
+          float irGain = lum + beam + (bioHeat * u_thermalGain * 0.4);
+          irGain = clamp(irGain, 0.0, 1.0);
+          finalColor = vec3(irGain * 0.1, irGain * 1.3, irGain * 0.25);
         } else if (u_mode == 4) { // CyberHUD Cyan/Purple
-          finalColor = vec3(lum * 0.1, lum * 1.1, lum * 1.4);
+          float hudLum = lum * 0.4 + bioHeat * 0.8;
+          finalColor = vec3(hudLum * 0.1, hudLum * 1.1, hudLum * 1.4);
         } else { // Normal RGB
           finalColor = col;
         }
@@ -531,13 +566,15 @@
         }
 
         // Apply Scanlines
-        if (u_scanlines && (u_mode == 1 || u_mode == 4)) {
+        if (u_scanlines && (u_mode == 1 || u_mode == 3 || u_mode == 4)) {
           float scanline = sin(v_texCoord.y * u_resolution.y * 1.5) * 0.08;
           finalColor -= vec3(scanline);
         }
 
-        // Apply Vignette Optical Blur/Shadow
+        // Apply Vignette Optical Lens Distortion
         if (u_vignette) {
+          vec2 centerDist = v_texCoord - vec2(0.5);
+          float dist = length(centerDist);
           float vig = smoothstep(0.8, 0.2, dist);
           finalColor *= vig;
         }
@@ -595,11 +632,13 @@
       // Cache Uniform Locations
       uniforms = {
         image: gl.getUniformLocation(glProgram, "u_image"),
+        thermalMask: gl.getUniformLocation(glProgram, "u_thermalMask"),
         resolution: gl.getUniformLocation(glProgram, "u_resolution"),
         mode: gl.getUniformLocation(glProgram, "u_mode"),
         noise: gl.getUniformLocation(glProgram, "u_noise"),
         gain: gl.getUniformLocation(glProgram, "u_gain"),
         contrast: gl.getUniformLocation(glProgram, "u_contrast"),
+        thermalGain: gl.getUniformLocation(glProgram, "u_thermalGain"),
         illuminator: gl.getUniformLocation(glProgram, "u_illuminator"),
         scanlines: gl.getUniformLocation(glProgram, "u_scanlines"),
         vignette: gl.getUniformLocation(glProgram, "u_vignette"),
@@ -607,9 +646,16 @@
         time: gl.getUniformLocation(glProgram, "u_time")
       };
 
-      // Create WebGL Texture
+      // Create WebGL Textures
       videoTexture = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, videoTexture);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+      thermalMaskTexture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, thermalMaskTexture);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -637,30 +683,140 @@
       gl.viewport(0, 0, webglCanvas.width, webglCanvas.height);
       gl.useProgram(glProgram);
 
-      // Upload Texture
+      // Texture Unit 0: Optical Video Stream
+      gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, videoTexture);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sourceElement);
+      gl.uniform1i(uniforms.image, 0);
 
-      // Mode Map
-      const modeMap = { normal: 0, ir: 1, thermal: 2, whitehot: 3, cyberhud: 4 };
+      // Texture Unit 1: Dynamic AI Thermal Body Mask
+      gl.activeTexture(gl.TEXTURE1);
+      gl.bindTexture(gl.TEXTURE_2D, thermalMaskTexture);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, thermalMaskCanvas);
+      gl.uniform1i(uniforms.thermalMask, 1);
+
+      // Vision Mode Map
+      const modeMap = { normal: 0, thermal: 1, whitehot: 2, ir: 3, cyberhud: 4 };
 
       // Set Uniforms
-      gl.uniform1i(uniforms.image, 0);
       gl.uniform2f(uniforms.resolution, webglCanvas.width, webglCanvas.height);
       gl.uniform1i(uniforms.mode, modeMap[config.visionMode] || 0);
       gl.uniform1f(uniforms.noise, config.noiseIntensity);
       gl.uniform1f(uniforms.gain, config.gainBrightness);
       gl.uniform1f(uniforms.contrast, config.contrastBoost);
+      gl.uniform1f(uniforms.thermalGain, config.thermalGain);
       gl.uniform1f(uniforms.illuminator, config.irIlluminator);
       gl.uniform1i(uniforms.scanlines, config.showScanlines ? 1 : 0);
       gl.uniform1i(uniforms.vignette, config.showVignette ? 1 : 0);
-      gl.uniform1i(uniforms.flip, config.flipHorizontal ? 1 : 0);
+      gl.uniform1i(uniforms.flip, false); // Mirroring is pre-handled in mask & layout
       gl.uniform1f(uniforms.time, performance.now() * 0.001);
 
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
 
-    // --- MediaPipe Holistic Model Setup ---
+    // --- Dynamic AI Body Thermal Mask Canvas Generator ---
+    function generateThermalMask(results, w, h) {
+      if (thermalMaskCanvas.width !== w || thermalMaskCanvas.height !== h) {
+        thermalMaskCanvas.width = w;
+        thermalMaskCanvas.height = h;
+      }
+
+      thermalMaskCtx.fillStyle = '#000000';
+      thermalMaskCtx.fillRect(0, 0, w, h);
+
+      const isFlipped = config.flipHorizontal;
+
+      // 1. Draw Body Pose Torso & Extremities Heat Mask
+      if (results.poseLandmarks) {
+        const pose = results.poseLandmarks;
+
+        // Torso Heat Polygon (Core Hotspot)
+        const p11 = pose[11], p12 = pose[12], p23 = pose[23], p24 = pose[24];
+        if (p11 && p12 && p23 && p24) {
+          const torsoPts = [p11, p12, p24, p23].map(pt => ({
+            x: isFlipped ? (1 - pt.x) * w : pt.x * w,
+            y: pt.y * h
+          }));
+
+          thermalMaskCtx.beginPath();
+          thermalMaskCtx.moveTo(torsoPts[0].x, torsoPts[0].y);
+          torsoPts.forEach(pt => thermalMaskCtx.lineTo(pt.x, pt.y));
+          thermalMaskCtx.closePath();
+
+          const grad = thermalMaskCtx.createRadialGradient(
+            (torsoPts[0].x + torsoPts[1].x)/2, (torsoPts[0].y + torsoPts[2].y)/2, 10,
+            (torsoPts[0].x + torsoPts[1].x)/2, (torsoPts[0].y + torsoPts[2].y)/2, w * 0.25
+          );
+          grad.addColorStop(0, 'rgba(255, 255, 255, 1.0)'); // Core hot spot
+          grad.addColorStop(0.7, 'rgba(210, 210, 210, 0.8)');
+          grad.addColorStop(1, 'rgba(120, 120, 120, 0.0)');
+          thermalMaskCtx.fillStyle = grad;
+          thermalMaskCtx.fill();
+        }
+
+        // Draw Limbs Heat Pipes
+        const limbConnections = [[11,13],[13,15],[12,14],[14,16],[23,25],[25,27],[24,26],[26,28]];
+        thermalMaskCtx.lineWidth = Math.max(w * 0.04, 15);
+        thermalMaskCtx.lineCap = 'round';
+        thermalMaskCtx.strokeStyle = 'rgba(180, 180, 180, 0.6)';
+
+        limbConnections.forEach(([i, j]) => {
+          if (pose[i] && pose[j]) {
+            const x1 = isFlipped ? (1 - pose[i].x) * w : pose[i].x * w;
+            const y1 = pose[i].y * h;
+            const x2 = isFlipped ? (1 - pose[j].x) * w : pose[j].x * w;
+            const y2 = pose[j].y * h;
+
+            thermalMaskCtx.beginPath();
+            thermalMaskCtx.moveTo(x1, y1);
+            thermalMaskCtx.lineTo(x2, y2);
+            thermalMaskCtx.stroke();
+          }
+        });
+      }
+
+      // 2. Draw Face Mesh High-Vascular Heat
+      if (results.faceLandmarks) {
+        const face = results.faceLandmarks;
+        const nose = face[1]; // Nose tip landmark
+        if (nose) {
+          const fx = isFlipped ? (1 - nose.x) * w : nose.x * w;
+          const fy = nose.y * h;
+          const faceRadius = Math.max(w * 0.12, 40);
+
+          const grad = thermalMaskCtx.createRadialGradient(fx, fy, 5, fx, fy, faceRadius);
+          grad.addColorStop(0, 'rgba(255, 255, 255, 1.0)'); // Vascular facial center
+          grad.addColorStop(0.6, 'rgba(230, 230, 230, 0.85)');
+          grad.addColorStop(1, 'rgba(100, 100, 100, 0.0)');
+
+          thermalMaskCtx.beginPath();
+          thermalMaskCtx.arc(fx, fy, faceRadius, 0, Math.PI * 2);
+          thermalMaskCtx.fillStyle = grad;
+          thermalMaskCtx.fill();
+        }
+      }
+
+      // 3. Draw Hands Palmar Vascular Thermal Blobs
+      [results.leftHandLandmarks, results.rightHandLandmarks].forEach(hand => {
+        if (hand && hand[9]) { // Middle finger MCP joint / palm center
+          const hx = isFlipped ? (1 - hand[9].x) * w : hand[9].x * w;
+          const hy = hand[9].y * h;
+          const palmRadius = Math.max(w * 0.07, 25);
+
+          const grad = thermalMaskCtx.createRadialGradient(hx, hy, 2, hx, hy, palmRadius);
+          grad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+          grad.addColorStop(0.5, 'rgba(200, 200, 200, 0.7)');
+          grad.addColorStop(1, 'rgba(80, 80, 80, 0.0)');
+
+          thermalMaskCtx.beginPath();
+          thermalMaskCtx.arc(hx, hy, palmRadius, 0, Math.PI * 2);
+          thermalMaskCtx.fillStyle = grad;
+          thermalMaskCtx.fill();
+        }
+      });
+    }
+
+    // --- MediaPipe Holistic Setup ---
     function initMediaPipe() {
       try {
         if (typeof window.Holistic === 'undefined') {
@@ -759,7 +915,7 @@
         isWebcamActive = true;
         demoMode = false;
         toggleCameraBtnText.innerText = "Oprește Camera";
-        updateStatus("Senzor Optic Activ. Detecție AI & WebGL Rulare!", "success");
+        updateStatus("Senzor Optic Activ. Detecție Biologică Termică & WebGL Rulare!", "success");
 
         runFrameLoop();
       } catch (err) {
@@ -827,7 +983,10 @@
       // Clear Overlay Context
       overlayCtx.clearRect(0, 0, w, h);
 
-      // 1. Process WebGL Shaders on Base Image
+      // 1. Generate Biothermal Heat Mask
+      generateThermalMask(results, w, h);
+
+      // 2. Process WebGL Shaders on Base Image + Thermal Mask Texture
       if (results.image) {
         renderWebGLFrame(results.image);
       }
@@ -835,7 +994,21 @@
       let maxSpeed = 0;
       const theme = getThemeColors();
 
-      // 2. FACE MESH PROCESSING
+      // Check Biological Heat Presence
+      const hasBioTargets = !!(results.faceLandmarks || results.leftHandLandmarks || results.rightHandLandmarks || results.poseLandmarks);
+      if (hasBioTargets) {
+        hudHeatType.innerText = "CĂLDURĂ BIOLOGICĂ DETECTATĂ";
+        hudHeatType.className = "text-rose-400 font-bold";
+        hudAmbientDisc.innerText = "Ignorată (Rece/Fluorescent)";
+        statBodyHeatRatio.innerText = "88% Biological";
+      } else {
+        hudHeatType.innerText = "FĂRĂ TINTĂ BIOLOGICĂ";
+        hudHeatType.className = "text-slate-400 font-bold";
+        hudAmbientDisc.innerText = "Doar Lumină Ambiantă";
+        statBodyHeatRatio.innerText = "0% Biological";
+      }
+
+      // 3. FACE MESH PROCESSING
       if (results.faceLandmarks) {
         statFaceLandmarks.innerText = `${results.faceLandmarks.length} Pts`;
         if (config.showFace) {
@@ -860,7 +1033,7 @@
         statFaceLandmarks.innerText = "0 Pts";
       }
 
-      // 3. HANDS TRACKING & GESTURE ANALYSIS
+      // 4. HANDS TRACKING & GESTURE ANALYSIS
       let activeHands = 0;
       let handGestures = [];
 
@@ -913,7 +1086,7 @@
       statHandsCount.innerText = `${activeHands} Detectate`;
       hudHandGesture.innerText = handGestures.length > 0 ? handGestures.join(' | ') : 'Niciunul';
 
-      // 4. POSE SKELETON & MOTION ANALYSIS
+      // 5. POSE SKELETON & MOTION ANALYSIS
       if (results.poseLandmarks) {
         statPoseLandmarks.innerText = `${results.poseLandmarks.length} Pts`;
         if (config.showPose) {
@@ -927,18 +1100,17 @@
         statPoseLandmarks.innerText = "0 Pts";
       }
 
-      statHandVelocity.innerText = `${Math.round(maxSpeed)} px/s`;
       hudMotionVector.innerText = maxSpeed > 40 ? `În Mișcare (${Math.round(maxSpeed)} px/s)` : 'Static (0 px/s)';
     }
 
     // --- Dynamic Overlay Palette ---
     function getThemeColors() {
-      if (config.visionMode === 'ir') {
-        return { face: '#a7f3d0', handLeft: '#34d399', handRight: '#6ee7b7', pose: '#10b981' };
-      } else if (config.visionMode === 'thermal') {
+      if (config.visionMode === 'thermal') {
         return { face: '#fef08a', handLeft: '#f43f5e', handRight: '#38bdf8', pose: '#e11d48' };
       } else if (config.visionMode === 'whitehot') {
         return { face: '#ffffff', handLeft: '#cbd5e1', handRight: '#e2e8f0', pose: '#94a3b8' };
+      } else if (config.visionMode === 'ir') {
+        return { face: '#a7f3d0', handLeft: '#34d399', handRight: '#6ee7b7', pose: '#10b981' };
       } else if (config.visionMode === 'cyberhud') {
         return { face: '#38bdf8', handLeft: '#f43f5e', handRight: '#06b6d4', pose: '#c084fc' };
       }
@@ -986,7 +1158,6 @@
       const smileScore = Math.min(Math.max((mouthW - 0.14) * 4.5, 0), 1);
       const mouthOpenScore = Math.min(Math.max((mouthH - 0.02) * 18, 0), 1);
 
-      // Eye Aspect Ratio estimation
       const eyeLDist = Math.hypot(landmarks[159].x - landmarks[145].x, landmarks[159].y - landmarks[145].y);
       const eyeRDist = Math.hypot(landmarks[386].x - landmarks[374].x, landmarks[386].y - landmarks[374].y);
 
@@ -1144,19 +1315,29 @@
         webglCanvas.height = 480;
         overlayCanvas.width = 640;
         overlayCanvas.height = 480;
+        thermalMaskCanvas.width = 640;
+        thermalMaskCanvas.height = 480;
       }
 
-      // Draw Synthetic Target Canvas background
       overlayCtx.clearRect(0, 0, w, h);
       
-      const glCtx = webglCanvas.getContext('2d');
-      if (glCtx) {
-        glCtx.fillStyle = '#090d16';
-        glCtx.fillRect(0, 0, w, h);
-      }
+      // Simulate Biothermal target in mask
+      thermalMaskCtx.fillStyle = '#000000';
+      thermalMaskCtx.fillRect(0, 0, w, h);
 
       const x = 0.5 + Math.sin(demoAngle) * 0.25;
       const y = 0.5 + Math.cos(demoAngle * 0.8) * 0.2;
+
+      const grad = thermalMaskCtx.createRadialGradient(x * w, y * h, 5, x * w, y * h, 70);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0.0)');
+      thermalMaskCtx.beginPath();
+      thermalMaskCtx.arc(x * w, y * h, 70, 0, Math.PI * 2);
+      thermalMaskCtx.fillStyle = grad;
+      thermalMaskCtx.fill();
+
+      // Render WebGL
+      renderWebGLFrame(thermalMaskCanvas);
 
       const pt = { x, y };
       pushHistory(history.rightHand, pt);
@@ -1173,12 +1354,15 @@
       overlayCtx.fill();
 
       // Diagnostics Updates
+      hudHeatType.innerText = "CĂLDURĂ BIOLOGICĂ SIMULATĂ";
+      hudHeatType.className = "text-rose-400 font-bold";
+      hudAmbientDisc.innerText = "Lumină Fără Căldură Ignorată";
       hudActionState.innerText = "Simulare Tactică Demo";
-      hudHandGesture.innerText = "Țintă IR Demo";
+      hudHandGesture.innerText = "Țintă Biologică Demo";
       hudFaceExpression.innerText = "Simulare Activă";
       hudMotionVector.innerText = `Vx: ${Math.round(pred.vx * w)} px/s`;
-      statHandVelocity.innerText = `${Math.round(pred.speed * w)} px/s`;
       statFPS.innerText = "60 FPS";
+      statBodyHeatRatio.innerText = "92% Biological";
 
       requestAnimationFrame(renderDemoLoop);
     }
@@ -1208,6 +1392,11 @@
     });
 
     // Slider Controls
+    thermalGainInput.addEventListener('input', (e) => {
+      config.thermalGain = parseFloat(e.target.value);
+      document.getElementById('thermalGainVal').innerText = `${config.thermalGain}x`;
+    });
+
     noiseInput.addEventListener('input', (e) => {
       config.noiseIntensity = parseFloat(e.target.value) / 100;
       document.getElementById('noiseVal').innerText = `${e.target.value}%`;
@@ -1250,7 +1439,6 @@
 
     // Exporters
     document.getElementById('snapshotBtn').addEventListener('click', () => {
-      // Merge WebGL and Overlay Canvases into single export image
       const expCanvas = document.createElement('canvas');
       expCanvas.width = webglCanvas.width;
       expCanvas.height = webglCanvas.height;
@@ -1260,7 +1448,7 @@
       expCtx.drawImage(overlayCanvas, 0, 0);
 
       const link = document.createElement('a');
-      link.download = `omnivision-tactical-snapshot-${Date.now()}.png`;
+      link.download = `omnivision-biothermal-snapshot-${Date.now()}.png`;
       link.href = expCanvas.toDataURL('image/png');
       link.click();
     });
@@ -1272,6 +1460,8 @@
         fps,
         history,
         state: {
+          heatDetection: hudHeatType.innerText,
+          ambientDiscr: hudAmbientDisc.innerText,
           action: hudActionState.innerText,
           gesture: hudHandGesture.innerText,
           expression: hudFaceExpression.innerText
@@ -1280,7 +1470,7 @@
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
       const a = document.createElement('a');
       a.href = dataStr;
-      a.download = `omnivision-telemetry-${Date.now()}.json`;
+      a.download = `omnivision-biothermal-telemetry-${Date.now()}.json`;
       a.click();
     });
 
