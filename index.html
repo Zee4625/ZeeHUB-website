@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Urmărire Trăsături Faciale în Timp Real</title>
+    <title>Urmărire Trăsături Faciale AI - MediaPipe</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -12,8 +12,8 @@
             theme: {
                 extend: {
                     colors: {
-                        darkBg: '#0f172a',
-                        cardBg: '#1e293b',
+                        darkBg: '#0b0f19',
+                        cardBg: '#151c2c',
                     }
                 }
             }
@@ -21,40 +21,45 @@
     </script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- MediaPipe Tasks Vision Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/vision_bundle.js" crossorigin="anonymous"></script>
+
+    <!-- MediaPipe FaceMesh & Camera Utils (Versiuni clasice CDN super-stabile, fara erori de CORS/WASM) -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+
     <style>
-        /* CSS custom pentru oglindirea camerei și suprapunerea canvas-ului */
+        /* Oglindire video și canvas pentru experiență nativă de oglindă */
         .mirror {
             transform: scaleX(-1);
         }
         /* Gradient animat pentru titlu */
         .gradient-text {
-            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 50%, #ec4899 100%);
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #000000 100%);
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
     </style>
 </head>
-<body class="bg-darkBg text-slate-100 min-h-full font-sans flex flex-col justify-between">
+<body class="bg-darkBg text-slate-100 min-h-full font-sans flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
 
     <!-- Header / Antet -->
-    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 px-4 py-4 sm:px-8">
+    <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-4 py-4 sm:px-8">
         <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-3">
-                <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">
-                    <i data-lucide="scan-face" class="w-7 h-7"></i>
+                <div class="p-2.5 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">
+                    <i data-lucide="scan-face" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold gradient-text">FaceTracker AI</h1>
-                    <p class="text-xs text-slate-400">Detecție și urmărire facială 3D în timp real</p>
+                    <h1 class="text-xl font-bold gradient-text tracking-wide">FaceTracker AI</h1>
+                    <p class="text-xs text-slate-400">Detecție și urmărire facială 3D cu MediaPipe</p>
                 </div>
             </div>
 
             <!-- Indicator Stare Cameră -->
             <div class="flex items-center gap-3">
-                <span id="statusBadge" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700">
-                    <span class="w-2 h-2 rounded-full bg-slate-500 animate-pulse"></span>
+                <span id="statusBadge" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700 transition-all">
+                    <span class="w-2 h-2 rounded-full bg-slate-500"></span>
                     Oprită
                 </span>
             </div>
@@ -64,126 +69,121 @@
     <!-- Conținut Principal -->
     <main class="max-w-7xl mx-auto px-4 py-6 sm:px-8 flex-1 w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
         
-        <!-- Zona Oglindă Video/Canvas (3 coloane pe desktop) -->
+        <!-- Zona Video/Canvas (3 coloane pe desktop) -->
         <div class="lg:col-span-3 flex flex-col gap-4">
             <!-- Container Oglindă Video -->
-            <div class="relative w-full aspect-video bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl flex items-center justify-center group">
+            <div class="relative w-full aspect-video bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl flex items-center justify-center">
                 <!-- Video Element -->
-                <video id="webcam" autoplay playsinline class="w-full h-full object-cover mirror hidden"></video>
+                <video id="webcam" playsinline class="w-full h-full object-cover mirror hidden"></video>
                 
-                <!-- Canvas suprapus pentru desenare -->
+                <!-- Canvas suprapus pentru desenat conexiunile faciale -->
                 <canvas id="outputCanvas" class="absolute inset-0 w-full h-full object-cover mirror pointer-events-none"></canvas>
 
                 <!-- Overlay de pornire / încărcare / mesaj de eroare -->
-                <div id="placeholderOverlay" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-slate-900/90 gap-4">
-                    <div id="overlayIconContainer" class="p-4 bg-slate-800/80 rounded-full border border-slate-700 text-slate-400">
-                        <i id="overlayIcon" data-lucide="camera-off" class="w-12 h-12"></i>
+                <div id="placeholderOverlay" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-slate-950/90 gap-5 transition-opacity">
+                    <div id="overlayIconContainer" class="p-4 bg-slate-900 rounded-full border border-slate-800 text-slate-400 shadow-inner">
+                        <i id="overlayIcon" data-lucide="camera" class="w-12 h-12 text-indigo-400"></i>
                     </div>
                     <div class="max-w-md">
-                        <h2 id="overlayTitle" class="text-lg font-semibold text-slate-200 mb-1">Camera este oprită</h2>
-                        <p id="overlayDesc" class="text-sm text-slate-400">Apasă pe butonul "Pornește Camera" pentru a începe analiza facială în timp real.</p>
+                        <h2 id="overlayTitle" class="text-xl font-bold text-slate-100 mb-2">Gata de Scanare Facială</h2>
+                        <p id="overlayDesc" class="text-sm text-slate-400 leading-relaxed">Apasă pe butonul de mai jos pentru a solicita permisiunea camerei și a porni urmărirea în timp real.</p>
                     </div>
-                    <button id="quickStartBtn" class="mt-2 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg shadow-indigo-600/30">
-                        <i data-lucide="video" class="w-4 h-4"></i>
-                        Pornește Camera
+                    <button id="quickStartBtn" class="mt-2 inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-sm bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg shadow-indigo-600/30 active:scale-95 cursor-pointer">
+                        <i data-lucide="video" class="w-5 h-5"></i>
+                        <span>Pornește Camera & Tracking-ul</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Statistici rapide de sub ecran -->
+            <!-- Panou Statistici Live -->
             <div class="grid grid-cols-3 gap-3">
-                <div class="bg-cardBg p-3.5 rounded-xl border border-slate-800 flex flex-col items-center justify-center text-center">
-                    <span class="text-xs text-slate-400 font-medium">Cadre pe secundă (FPS)</span>
-                    <span id="fpsCounter" class="text-xl font-bold text-indigo-400 mt-0.5">0</span>
+                <div class="bg-cardBg p-4 rounded-xl border border-slate-800 flex flex-col items-center justify-center text-center">
+                    <span class="text-xs text-slate-400 font-medium">Cadre / secundă (FPS)</span>
+                    <span id="fpsCounter" class="text-2xl font-bold text-indigo-400 mt-1">0</span>
                 </div>
-                <div class="bg-cardBg p-3.5 rounded-xl border border-slate-800 flex flex-col items-center justify-center text-center">
+                <div class="bg-cardBg p-4 rounded-xl border border-slate-800 flex flex-col items-center justify-center text-center">
                     <span class="text-xs text-slate-400 font-medium">Fețe Detectate</span>
-                    <span id="faceCount" class="text-xl font-bold text-emerald-400 mt-0.5">0</span>
+                    <span id="faceCount" class="text-2xl font-bold text-emerald-400 mt-1">0</span>
                 </div>
-                <div class="bg-cardBg p-3.5 rounded-xl border border-slate-800 flex flex-col items-center justify-center text-center">
-                    <span class="text-xs text-slate-400 font-medium">Rezoluție</span>
-                    <span id="resolutionInfo" class="text-sm font-semibold text-slate-300 mt-1">-- x --</span>
+                <div class="bg-cardBg p-4 rounded-xl border border-slate-800 flex flex-col items-center justify-center text-center">
+                    <span class="text-xs text-slate-400 font-medium">Rezoluție Video</span>
+                    <span id="resolutionInfo" class="text-sm font-semibold text-slate-300 mt-2">-- x --</span>
                 </div>
             </div>
         </div>
 
         <!-- Panou Controale și Setări (1 coloană) -->
         <div class="space-y-5">
-            <!-- Panou Control Cameră -->
+            <!-- Control Principal -->
             <div class="bg-cardBg p-5 rounded-2xl border border-slate-800 shadow-lg">
-                <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
-                    <i data-lucide="sliders" class="w-4 h-4"></i> Control Principal
+                <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+                    <i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i> Control Cameră
                 </h2>
                 
-                <button id="toggleCamBtn" class="w-full py-3 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg shadow-indigo-600/20 active:scale-95">
+                <button id="toggleCamBtn" class="w-full py-3.5 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg shadow-indigo-600/20 active:scale-95 cursor-pointer">
                     <i data-lucide="video" class="w-5 h-5"></i>
-                    <span>Pornește Camera</span>
+                    <span>Pornește Camera & Tracking-ul</span>
                 </button>
             </div>
 
             <!-- Opțiuni Afișare -->
             <div class="bg-cardBg p-5 rounded-2xl border border-slate-800 shadow-lg space-y-4">
-                <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-2">
-                    <i data-lucide="eye" class="w-4 h-4"></i> Personalizare Grafică
+                <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-2">
+                    <i data-lucide="palette" class="w-4 h-4 text-indigo-400"></i> Personalizare Grafică
                 </h2>
 
-                <!-- Toggle Mesh -->
-                <label class="flex items-center justify-between cursor-pointer p-2.5 rounded-lg hover:bg-slate-800/50 transition-colors">
+                <!-- Toggle Mesh (Linii) -->
+                <label class="flex items-center justify-between cursor-pointer p-2.5 rounded-xl hover:bg-slate-800/50 transition-colors">
                     <span class="text-sm font-medium text-slate-300 flex items-center gap-2">
-                        <i data-lucide="grid" class="w-4 h-4 text-indigo-400"></i> Plasă Facială (Mesh)
+                        <i data-lucide="grid" class="w-4 h-4 text-indigo-400"></i> Plasă Facială (Linii)
                     </span>
                     <input type="checkbox" id="toggleMesh" checked class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-900">
                 </label>
 
-                <!-- Toggle Landmarks -->
+                <!-- Toggle Landmarks (Puncte) -->
                 <label class="flex items-center justify-between cursor-pointer p-2.5 rounded-lg hover:bg-slate-800/50 transition-colors">
                     <span class="text-sm font-medium text-slate-300 flex items-center gap-2">
-                        <i data-lucide="dot" class="w-4 h-4 text-indigo-400"></i> Puncte Cheie (Landmarks)
+                        <i data-lucide="dot" class="w-4 h-4 text-indigo-400"></i> Puncte Cheie
                     </span>
                     <input type="checkbox" id="toggleLandmarks" checked class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-900">
                 </label>
 
                 <!-- Culoare Linie -->
-                <div class="pt-2 border-t border-slate-800">
-                    <label class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Culoare Urmărire</label>
+                <div class="pt-3 border-t border-slate-800">
+                    <label class="block text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">Culoare Neon Tracking</label>
                     <div class="grid grid-cols-4 gap-2">
-                        <button data-color="#00ffcc" class="color-btn h-9 rounded-lg border-2 border-slate-600 bg-[#00ffcc] hover:scale-105 transition-transform" title="Cyan Neon"></button>
-                        <button data-color="#00ff66" class="color-btn h-9 rounded-lg border-2 border-transparent bg-[#00ff66] hover:scale-105 transition-transform" title="Verde Neon"></button>
-                        <button data-color="#ff007f" class="color-btn h-9 rounded-lg border-2 border-transparent bg-[#ff007f] hover:scale-105 transition-transform" title="Magenta Neon"></button>
-                        <button data-color="#ffea00" class="color-btn h-9 rounded-lg border-2 border-transparent bg-[#ffea00] hover:scale-105 transition-transform" title="Galben Neon"></button>
+                        <button data-color="#00ffcc" class="color-btn h-10 rounded-xl border-2 border-slate-100 bg-[#00ffcc] hover:scale-105 transition-all shadow-md" title="Verde/Cyan Neon"></button>
+                        <button data-color="#0099ff" class="color-btn h-10 rounded-xl border-2 border-transparent bg-[#0099ff] hover:scale-105 transition-all shadow-md" title="Albastru Neon"></button>
+                        <button data-color="#ff007f" class="color-btn h-10 rounded-xl border-2 border-transparent bg-[#ff007f] hover:scale-105 transition-all shadow-md" title="Roz Neon"></button>
+                        <button data-color="#ffea00" class="color-btn h-10 rounded-xl border-2 border-transparent bg-[#ffea00] hover:scale-105 transition-all shadow-md" title="Galben Neon"></button>
                     </div>
                 </div>
             </div>
 
-            <!-- Instrucțiuni de utilizare -->
-            <div class="bg-cardBg/60 p-5 rounded-2xl border border-slate-800/80 text-xs text-slate-400 space-y-2">
-                <h3 class="font-semibold text-slate-300 flex items-center gap-1.5 text-sm">
-                    <i data-lucide="info" class="w-4 h-4 text-indigo-400"></i> Ghid Rapid
+            <!-- Ghid și Depanare Permisiuni -->
+            <div class="bg-cardBg/80 p-5 rounded-2xl border border-slate-800 text-xs text-slate-400 space-y-2.5">
+                <h3 class="font-semibold text-slate-200 flex items-center gap-1.5 text-sm">
+                    <i data-lucide="help-circle" class="w-4 h-4 text-indigo-400"></i> Probleme cu camera?
                 </h3>
-                <ul class="list-disc list-inside space-y-1.5 leading-relaxed">
-                    <li>Asigură-te că ai permis accesul la camera web când apare solicitarea browser-ului.</li>
-                    <li>Păstrează o iluminare adecvată a feței pentru o precizie optimă.</li>
-                    <li>Procesarea se realizează 100% local în browser, fără a trimite date pe vreun server.</li>
-                </ul>
+                <ol class="list-decimal list-inside space-y-1.5 leading-relaxed text-slate-400">
+                    <li>Dacă apare o fereastră pop-up din browser, apasă pe <strong class="text-slate-200">Permite (Allow)</strong>.</li>
+                    <li>Verifică dacă pictograma de lacăt sau cameră din stânga adresei web are blocat accesul.</li>
+                    <li>Asigură-te că altă aplicație (Zoom, Teams, Skype etc.) nu folosește deja camera.</li>
+                    <li>Procesarea are loc 100% local în browserul tău.</li>
+                </ol>
             </div>
         </div>
     </main>
 
     <!-- Subsol (Footer) -->
     <footer class="border-t border-slate-800 bg-slate-900/50 py-4 text-center text-xs text-slate-500">
-        <p>Aplicație HTML5 / MediaPipe Tasks Vision — Detecție Trăsături Faciale în timp real</p>
+        <p>Aplicație HTML5 / MediaPipe FaceMesh — Detecție Trăsături Faciale în timp real</p>
     </footer>
 
     <!-- Script Principal JavaScript -->
-    <script type="module">
-        import {
-            FaceLandmarker,
-            FilesetResolver,
-            DrawingUtils
-        } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/vision_bundle.js";
-
+    <script>
         // Elemente DOM
-        const video = document.getElementById("webcam");
+        const videoElement = document.getElementById("webcam");
         const canvasElement = document.getElementById("outputCanvas");
         const canvasCtx = canvasElement.getContext("2d");
         
@@ -204,235 +204,193 @@
         const toggleLandmarks = document.getElementById("toggleLandmarks");
         const colorBtns = document.querySelectorAll(".color-btn");
 
-        // Stare aplicație
-        let faceLandmarker = null;
-        let runningMode = "VIDEO";
-        let webcamRunning = false;
-        let lastVideoTime = -1;
-        let animFrameId = null;
-        
-        // Calculare FPS
-        let frameCount = 0;
-        let lastFpsUpdate = performance.now();
-        let fps = 0;
-
-        // Setări Vizuale Desenare
+        // Stări aplicație
+        let cameraUtils = null;
+        let faceMesh = null;
+        let isCameraRunning = false;
         let strokeColor = "#00ffcc";
         let showMesh = true;
         let showLandmarks = true;
 
+        // Calcul FPS
+        let frameCount = 0;
+        let lastFpsUpdate = performance.now();
+
         // Inițializare Lucide Icons
         lucide.createIcons();
 
-        // 1. Inițializare Model MediaPipe FaceLandmarker
-        async function initializeFaceLandmarker() {
-            updateStatus("Se încarcă modelul AI...", "loading");
-            updateOverlay("loader", "Se încarcă modelul AI...", "Vă rugăm așteptați câteva secunde pentru inițializarea rețelei neurale MediaPipe.");
+        // 1. Configurare Model MediaPipe FaceMesh
+        function initFaceMesh() {
+            faceMesh = new FaceMesh({
+                locateFile: (file) => {
+                    return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
+                }
+            });
+
+            faceMesh.setOptions({
+                maxNumFaces: 2,
+                refineLandmarks: true,
+                minDetectionConfidence: 0.5,
+                minTrackingConfidence: 0.5
+            });
+
+            faceMesh.onResults(onFaceMeshResults);
+        }
+
+        // 2. Procesare și Desenare Rezultate
+        function onFaceMeshResults(results) {
+            // Calculare FPS
+            const now = performance.now();
+            frameCount++;
+            if (now - lastFpsUpdate >= 1000) {
+                fpsCounter.textContent = Math.round((frameCount * 1000) / (now - lastFpsUpdate));
+                frameCount = 0;
+                lastFpsUpdate = now;
+            }
+
+            // Setează dimensiunea canvas-ului potrivită cu dimensiunea imaginii primite
+            if (canvasElement.width !== videoElement.videoWidth || canvasElement.height !== videoElement.videoHeight) {
+                canvasElement.width = videoElement.videoWidth || 1280;
+                canvasElement.height = videoElement.videoHeight || 720;
+                resolutionInfo.textContent = `${canvasElement.width} x ${canvasElement.height}`;
+            }
+
+            // Curăță ecranul
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+            if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+                faceCount.textContent = results.multiFaceLandmarks.length;
+
+                for (const landmarks of results.multiFaceLandmarks) {
+                    // Desenează Plasa Facială (Mesh)
+                    if (showMesh) {
+                        drawConnectors(canvasCtx, landmarks, FACEMESH_TESSELATION, {
+                            color: strokeColor + "33", // Transparență pentru rețea
+                            lineWidth: 1
+                        });
+                        drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYE, { color: strokeColor, lineWidth: 1.5 });
+                        drawConnectors(canvasCtx, landmarks, FACEMESH_LEFT_EYE, { color: strokeColor, lineWidth: 1.5 });
+                        drawConnectors(canvasCtx, landmarks, FACEMESH_LIPS, { color: strokeColor, lineWidth: 1.5 });
+                        drawConnectors(canvasCtx, landmarks, FACEMESH_FACE_OVAL, { color: strokeColor, lineWidth: 1.5 });
+                    }
+
+                    // Desenează Punctele Cheie (Landmarks)
+                    if (showLandmarks) {
+                        drawLandmarks(canvasCtx, landmarks, {
+                            color: "#ffffff",
+                            lineWidth: 0.5,
+                            radius: 0.8
+                        });
+                    }
+                }
+            } else {
+                faceCount.textContent = "0";
+            }
+            canvasCtx.restore();
+        }
+
+        // 3. Pornire explicită Cameră cu Solicitare Permisiune
+        async function startCamera() {
+            updateStatus("Se solicită permisiunea...", "loading");
+            updateOverlay("loader", "Se deschide camera...", "Apasă pe 'Permite' (Allow) dacă browser-ul solicită permisiunea de acces la webcam.");
+
+            if (!faceMesh) {
+                initFaceMesh();
+            }
 
             try {
-                const filesetResolver = await FilesetResolver.forVisionTasks(
-                    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
-                );
-                
-                faceLandmarker = await FaceLandmarker.createFromOptions(filesetResolver, {
-                    baseOptions: {
-                        modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`,
-                        delegate: "GPU"
-                    },
-                    outputFaceBlendshapes: false,
-                    runningMode: runningMode,
-                    numFaces: 2
+                // Solicitare directă de la browser
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: "user"
+                    }
                 });
 
-                updateStatus("Oprită", "stopped");
-                updateOverlay("camera-off", "Camera este oprită", "Apasă pe butonul de mai jos pentru a începe urmărirea facială.");
-                toggleCamBtn.disabled = false;
-            } catch (error) {
-                console.error("Eroare la încărcarea modelului FaceLandmarker:", error);
-                updateStatus("Eroare Model", "error");
-                updateOverlay("alert-triangle", "Eroare la încărcarea AI", "Nu s-a putut descărca modelul de detecție facială. Verificați conexiunea la internet.");
+                videoElement.srcObject = stream;
+                
+                // Utilizare CameraUtils din MediaPipe pentru un loop video optimizat
+                cameraUtils = new Camera(videoElement, {
+                    onFrame: async () => {
+                        await faceMesh.send({ image: videoElement });
+                    },
+                    width: 1280,
+                    height: 720
+                });
+
+                await cameraUtils.start();
+
+                isCameraRunning = true;
+                videoElement.classList.remove("hidden");
+                overlay.classList.add("hidden");
+
+                updateStatus("Activă", "active");
+                setButtonState(true);
+
+            } catch (err) {
+                console.error("Eroare accesare cameră:", err);
+                isCameraRunning = false;
+                
+                let title = "Acces la cameră blocat";
+                let msg = "Nu s-a putut accesa camera web. Asigură-te că ai permis accesul din browser.";
+
+                if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+                    title = "Permisiune Refuzată";
+                    msg = "Ai blocat accesul la cameră. Apasă pe pictograma cu lacăt/cameră din bara de adrese sus pentru a schimba permisiunea.";
+                } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+                    title = "Cameră Negăsită";
+                    msg = "Nu a fost detectată nicio cameră web conectată la calculator sau telefon.";
+                } else if (err.name === "NotReadableError" || err.name === "TrackStartError") {
+                    title = "Cameră Ocupată";
+                    msg = "Camera este deja utilizată de o altă aplicație (Zoom, Skype, alt tab de browser etc.). Închide aplicația respectivă și încearcă din nou.";
+                }
+
+                updateStatus("Eroare Cameră", "error");
+                updateOverlay("alert-triangle", title, msg);
+                setButtonState(false);
             }
         }
 
-        // Pornire la încărcarea paginii
-        initializeFaceLandmarker();
-
-        // 2. Gestionare Pornire / Oprire Cameră
-        async function toggleCamera() {
-            if (!faceLandmarker) {
-                alert("Modelul AI încă se încarcă. Vă rugăm să așteptați.");
-                return;
+        // 4. Oprire Cameră
+        function stopCamera() {
+            if (cameraUtils) {
+                cameraUtils.stop();
+                cameraUtils = null;
             }
 
-            if (webcamRunning) {
+            if (videoElement.srcObject) {
+                const tracks = videoElement.srcObject.getTracks();
+                tracks.forEach(track => track.stop());
+                videoElement.srcObject = null;
+            }
+
+            isCameraRunning = false;
+            videoElement.classList.add("hidden");
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            overlay.classList.remove("hidden");
+
+            // Resetează statistici
+            fpsCounter.textContent = "0";
+            faceCount.textContent = "0";
+            resolutionInfo.textContent = "-- x --";
+
+            updateStatus("Oprită", "stopped");
+            updateOverlay("camera", "Camera este Oprită", "Apasă pe butonul de mai jos pentru a începe urmărirea facială.");
+            setButtonState(false);
+        }
+
+        // Toggle Pornire / Oprire
+        async function toggleCamera() {
+            if (isCameraRunning) {
                 stopCamera();
             } else {
                 await startCamera();
             }
         }
 
-        async function startCamera() {
-            updateStatus("Se conectează camera...", "loading");
-            
-            const constraints = {
-                video: {
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 },
-                    facingMode: "user"
-                }
-            };
-
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                video.srcObject = stream;
-                video.classList.remove("hidden");
-                
-                video.addEventListener("loadeddata", () => {
-                    webcamRunning = true;
-                    overlay.classList.add("hidden");
-                    updateStatus("Activă", "active");
-                    
-                    // Actualizare interfață buton
-                    toggleCamBtn.innerHTML = `<i data-lucide="video-off" class="w-5 h-5"></i><span>Oprește Camera</span>`;
-                    toggleCamBtn.classList.replace("bg-indigo-600", "bg-rose-600");
-                    toggleCamBtn.classList.replace("hover:bg-indigo-500", "hover:bg-rose-500");
-                    lucide.createIcons();
-
-                    // Ajustare dimensiune canvas în funcție de video
-                    canvasElement.width = video.videoWidth;
-                    canvasElement.height = video.videoHeight;
-                    resolutionInfo.textContent = `${video.videoWidth} x ${video.videoHeight}`;
-
-                    // Pornire buclă de detecție
-                    predictWebcam();
-                });
-            } catch (err) {
-                console.error("Eroare la accesarea camerei web:", err);
-                webcamRunning = false;
-                
-                let title = "Acces la cameră refuzat";
-                let msg = "Vă rugăm să permiteți accesul la camera web din setările browser-ului pentru a utiliza această aplicație.";
-                
-                if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
-                    title = "Cameră negăsită";
-                    msg = "Nu s-a detectat nicio cameră web conectată la acest dispozitiv.";
-                }
-
-                updateStatus("Eroare Cameră", "error");
-                updateOverlay("camera-off", title, msg);
-            }
-        }
-
-        function stopCamera() {
-            webcamRunning = false;
-            
-            if (animFrameId) {
-                cancelAnimationFrame(animFrameId);
-            }
-
-            if (video.srcObject) {
-                const tracks = video.srcObject.getTracks();
-                tracks.forEach(track => track.stop());
-                video.srcObject = null;
-            }
-
-            video.classList.add("hidden");
-            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-            overlay.classList.remove("hidden");
-            
-            // Reinițializare statistici
-            fpsCounter.textContent = "0";
-            faceCount.textContent = "0";
-            resolutionInfo.textContent = "-- x --";
-
-            // Resetare buton
-            toggleCamBtn.innerHTML = `<i data-lucide="video" class="w-5 h-5"></i><span>Pornește Camera</span>`;
-            toggleCamBtn.classList.replace("bg-rose-600", "bg-indigo-600");
-            toggleCamBtn.classList.replace("hover:bg-rose-500", "hover:bg-indigo-500");
-            lucide.createIcons();
-
-            updateStatus("Oprită", "stopped");
-            updateOverlay("camera-off", "Camera este oprită", "Apasă pe butonul de mai jos pentru a începe urmărirea facială.");
-        }
-
-        // 3. Buclă principală de Urmărire / Randare (Predict Webcam)
-        async function predictWebcam() {
-            if (!webcamRunning) return;
-
-            const drawingUtils = new DrawingUtils(canvasCtx);
-            let startTimeMs = performance.now();
-
-            // Calculează FPS
-            frameCount++;
-            if (startTimeMs - lastFpsUpdate >= 1000) {
-                fps = Math.round((frameCount * 1000) / (startTimeMs - lastFpsUpdate));
-                fpsCounter.textContent = fps;
-                frameCount = 0;
-                lastFpsUpdate = startTimeMs;
-            }
-
-            // Efectuează detecția doar dacă cadrul video s-a schimbat
-            if (lastVideoTime !== video.currentTime) {
-                lastVideoTime = video.currentTime;
-                
-                const results = faceLandmarker.detectForVideo(video, startTimeMs);
-
-                // Curăță canvas-ul anterior
-                canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-
-                if (results.faceLandmarks && results.faceLandmarks.length > 0) {
-                    faceCount.textContent = results.faceLandmarks.length;
-
-                    for (const landmarks of results.faceLandmarks) {
-                        // Desenare Plasă (Mesh / Conexiuni)
-                        if (showMesh) {
-                            drawingUtils.drawConnectors(
-                                landmarks,
-                                FaceLandmarker.FACE_LANDMARKS_TESSELATION,
-                                { color: strokeColor + "40", lineWidth: 1 } // Adăugăm transparență
-                            );
-                            
-                            // Contur ochi, sprâncene, buze
-                            drawingUtils.drawConnectors(
-                                landmarks,
-                                FaceLandmarker.FACE_LANDMARKS_RIGHT_EYE,
-                                { color: strokeColor, lineWidth: 1.5 }
-                            );
-                            drawingUtils.drawConnectors(
-                                landmarks,
-                                FaceLandmarker.FACE_LANDMARKS_LEFT_EYE,
-                                { color: strokeColor, lineWidth: 1.5 }
-                            );
-                            drawingUtils.drawConnectors(
-                                landmarks,
-                                FaceLandmarker.FACE_LANDMARKS_LIPS,
-                                { color: strokeColor, lineWidth: 1.5 }
-                            );
-                            drawingUtils.drawConnectors(
-                                landmarks,
-                                FaceLandmarker.FACE_LANDMARKS_FACE_OVAL,
-                                { color: strokeColor, lineWidth: 1.5 }
-                            );
-                        }
-
-                        // Desenare Puncte Cheie (Landmarks)
-                        if (showLandmarks) {
-                            drawingUtils.drawLandmarks(landmarks, {
-                                color: "#ffffff",
-                                radius: 0.8
-                            });
-                        }
-                    }
-                } else {
-                    faceCount.textContent = "0";
-                }
-            }
-
-            // Solicitare cadru nou
-            animFrameId = requestAnimationFrame(predictWebcam);
-        }
-
-        // 4. Utilitare UI (Status & Overlay)
+        // 5. Utilitare UI
         function updateStatus(text, type) {
             const colors = {
                 stopped: "bg-slate-800 text-slate-400 border-slate-700",
@@ -459,7 +417,20 @@
             lucide.createIcons();
         }
 
-        // 5. Event Listeners (Evenimente Utilizator)
+        function setButtonState(running) {
+            if (running) {
+                toggleCamBtn.innerHTML = `<i data-lucide="video-off" class="w-5 h-5"></i><span>Oprește Camera</span>`;
+                toggleCamBtn.classList.replace("bg-indigo-600", "bg-rose-600");
+                toggleCamBtn.classList.replace("hover:bg-indigo-500", "hover:bg-rose-500");
+            } else {
+                toggleCamBtn.innerHTML = `<i data-lucide="video" class="w-5 h-5"></i><span>Pornește Camera & Tracking-ul</span>`;
+                toggleCamBtn.classList.replace("bg-rose-600", "bg-indigo-600");
+                toggleCamBtn.classList.replace("hover:bg-rose-500", "hover:bg-indigo-500");
+            }
+            lucide.createIcons();
+        }
+
+        // Event Listeners pentru Butoane și Controale
         toggleCamBtn.addEventListener("click", toggleCamera);
         quickStartBtn.addEventListener("click", toggleCamera);
 
@@ -471,11 +442,11 @@
             showLandmarks = e.target.checked;
         });
 
-        // Schimbare Culoare Urmărire
+        // Schimbare culori
         colorBtns.forEach(btn => {
             btn.addEventListener("click", () => {
-                colorBtns.forEach(b => b.classList.replace("border-slate-600", "border-transparent"));
-                btn.classList.replace("border-transparent", "border-slate-600");
+                colorBtns.forEach(b => b.classList.replace("border-slate-100", "border-transparent"));
+                btn.classList.replace("border-transparent", "border-slate-100");
                 strokeColor = btn.getAttribute("data-color");
             });
         });
