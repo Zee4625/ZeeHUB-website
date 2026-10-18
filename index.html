@@ -3,11 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Real-Time Camera Blob Tracker</title>
+  <title>AI Face, Hand & Pose Tracking with Motion Intuition</title>
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- MediaPipe Tasks Vision CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm/vision_bundle.js" crossorigin="anonymous"></script>
+
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -16,6 +21,7 @@
           colors: {
             brand: {
               50: '#f0f9ff',
+              400: '#38bdf8',
               500: '#06b6d4',
               600: '#0891b2',
               900: '#0e7490',
@@ -26,9 +32,8 @@
     }
   </script>
   <style>
-    /* Custom Glassmorphism Styles */
     .glass-panel {
-      background: rgba(15, 23, 42, 0.75);
+      background: rgba(15, 23, 42, 0.85);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -52,34 +57,39 @@
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen overflow-x-hidden flex flex-col antialiased">
 
   <!-- Main Header -->
-  <header class="w-full glass-panel z-30 px-6 py-4 flex flex-wrap items-center justify-between border-b border-slate-800 shrink-0">
+  <header class="w-full glass-panel z-30 px-6 py-3 flex flex-wrap items-center justify-between border-b border-slate-800 shrink-0">
     <div class="flex items-center space-x-3">
       <div class="p-2 bg-cyan-500/20 text-cyan-400 rounded-xl border border-cyan-500/30">
-        <i data-lucide="crosshair" class="w-6 h-6 animate-pulse"></i>
+        <i data-lucide="brain-circuit" class="w-6 h-6 animate-pulse"></i>
       </div>
       <div>
-        <h1 class="text-xl font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">
-          BlobVision <span class="text-xs font-normal px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 ml-2">v1.0</span>
+        <h1 class="text-xl font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-400">
+          OmniVision AI <span class="text-xs font-normal px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 ml-2">v2.0 Pro</span>
         </h1>
-        <p class="text-xs text-slate-400">Computer Vision & Object Tracking Pipeline</p>
+        <p class="text-xs text-slate-400">Full Body, Multi-Hand, Face Mesh & Motion Trajectory Prediction</p>
       </div>
     </div>
 
-    <!-- Status Indicators & Quick Actions -->
-    <div class="flex items-center space-x-4 mt-2 sm:mt-0">
+    <!-- Actions & Status Header Bar -->
+    <div class="flex items-center space-x-3 mt-2 sm:mt-0 flex-wrap gap-y-2">
       <div id="cameraStatusBadge" class="flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
         <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-        <span id="cameraStatusText">Initializing Demo Mode</span>
+        <span id="cameraStatusText">Loading Vision AI Models...</span>
       </div>
 
-      <button id="toggleCameraBtn" class="flex items-center space-x-2 px-3 py-1.5 text-xs font-semibold rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white transition-colors shadow-lg shadow-cyan-950/50">
+      <button id="toggleCameraBtn" class="flex items-center space-x-2 px-3 py-1.5 text-xs font-semibold rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white transition-colors shadow-lg shadow-cyan-950/50 disabled:opacity-50">
         <i data-lucide="camera" class="w-4 h-4"></i>
         <span id="toggleCameraBtnText">Request Camera</span>
       </button>
 
-      <button id="snapshotBtn" class="flex items-center space-x-2 px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors">
+      <button id="snapshotBtn" class="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors">
         <i data-lucide="download" class="w-4 h-4"></i>
         <span>Snapshot</span>
+      </button>
+
+      <button id="exportJsonBtn" class="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 border border-indigo-700/50 transition-colors">
+        <i data-lucide="file-json" class="w-4 h-4"></i>
+        <span>Export Telemetry (JSON)</span>
       </button>
     </div>
   </header>
@@ -87,827 +97,715 @@
   <!-- Main Content Workspace -->
   <main class="flex-1 flex flex-col lg:flex-row p-4 gap-4 overflow-hidden max-w-[1920px] w-full mx-auto">
 
-    <!-- Center/Left: Vision Canvas Viewport -->
-    <section class="flex-1 flex flex-col items-center justify-center relative min-h-[400px] lg:min-h-0 bg-slate-900/60 rounded-2xl border border-slate-800/80 overflow-hidden shadow-2xl">
+    <!-- Left/Center: Canvas Viewport & Action HUD Overlay -->
+    <section class="flex-1 flex flex-col items-center justify-center relative min-h-[450px] lg:min-h-0 bg-slate-900/60 rounded-2xl border border-slate-800/80 overflow-hidden shadow-2xl">
       
-      <!-- Hidden Source Video Element -->
+      <!-- Video Element -->
       <video id="webcamVideo" class="hidden" playsinline muted></video>
 
-      <!-- Interactive Tracking Canvas -->
-      <div id="canvasContainer" class="relative w-full h-full flex items-center justify-center bg-black/40 cursor-crosshair select-none group">
+      <!-- Interactive Canvas -->
+      <div id="canvasContainer" class="relative w-full h-full flex items-center justify-center bg-black/40 select-none">
         <canvas id="outputCanvas" class="max-w-full max-h-full object-contain rounded-lg shadow-lg"></canvas>
 
-        <!-- Tap-To-Sample Instructions Overlay -->
-        <div id="canvasOverlayHint" class="absolute top-4 left-4 pointer-events-none glass-panel px-3 py-1.5 rounded-lg text-xs text-slate-300 flex items-center space-x-2 opacity-80 group-hover:opacity-100 transition-opacity">
-          <i data-lucide="pipette" class="w-4 h-4 text-cyan-400"></i>
-          <span>Click/Tap video to sample color</span>
+        <!-- AI Detected Intuition Overlay Box -->
+        <div class="absolute top-4 left-4 glass-panel p-3 rounded-xl max-w-xs space-y-2 border border-cyan-500/30 text-xs shadow-2xl">
+          <div class="flex items-center justify-between border-b border-slate-700/60 pb-1.5">
+            <span class="font-bold text-cyan-400 flex items-center gap-1.5">
+              <i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i> Motion Intuition Engine
+            </span>
+            <span id="aiConfidenceBadge" class="text-[10px] px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 font-mono">100% Match</span>
+          </div>
+          
+          <div class="space-y-1 font-mono">
+            <p><span class="text-slate-400">Action Intuition:</span> <span id="hudActionState" class="text-emerald-400 font-bold">Initializing...</span></p>
+            <p><span class="text-slate-400">Hand Gestures:</span> <span id="hudHandGesture" class="text-amber-400 font-bold">None</span></p>
+            <p><span class="text-slate-400">Facial Expression:</span> <span id="hudFaceExpression" class="text-purple-400 font-bold">Neutral</span></p>
+            <p><span class="text-slate-400">Predicted Motion Vector:</span> <span id="hudMotionVector" class="text-sky-400 font-bold">Static</span></p>
+          </div>
         </div>
-
-        <!-- Color Picker Crosshair Highlight (Appears on click) -->
-        <div id="sampleRipple" class="absolute w-8 h-8 rounded-full border-2 border-white/80 -translate-x-1/2 -translate-y-1/2 pointer-events-none hidden transition-transform scale-150 opacity-0 duration-300"></div>
       </div>
 
-      <!-- Live Diagnostics Bar (Bottom Canvas) -->
-      <div class="w-full glass-panel px-4 py-3 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
-        <div class="p-2 rounded-lg bg-slate-800/40">
-          <span class="block text-slate-400 text-[10px] uppercase tracking-wider font-semibold">Framerate</span>
-          <span id="statFPS" class="font-mono text-base font-bold text-cyan-400">0 FPS</span>
+      <!-- Live Diagnostics Stats Bar -->
+      <div class="w-full glass-panel px-4 py-2.5 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-6 gap-2 text-center text-xs">
+        <div class="p-1.5 rounded-lg bg-slate-800/40">
+          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Framerate</span>
+          <span id="statFPS" class="font-mono text-sm font-bold text-cyan-400">0 FPS</span>
         </div>
-        <div class="p-2 rounded-lg bg-slate-800/40">
-          <span class="block text-slate-400 text-[10px] uppercase tracking-wider font-semibold">Active Blobs</span>
-          <span id="statBlobCount" class="font-mono text-base font-bold text-emerald-400">0</span>
+        <div class="p-1.5 rounded-lg bg-slate-800/40">
+          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Face Mesh</span>
+          <span id="statFaceLandmarks" class="font-mono text-sm font-bold text-emerald-400">468 Pts</span>
         </div>
-        <div class="p-2 rounded-lg bg-slate-800/40">
-          <span class="block text-slate-400 text-[10px] uppercase tracking-wider font-semibold">Primary Pos (X, Y)</span>
-          <span id="statPrimaryPos" class="font-mono text-base font-bold text-purple-400">0, 0</span>
+        <div class="p-1.5 rounded-lg bg-slate-800/40">
+          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Hands Active</span>
+          <span id="statHandsCount" class="font-mono text-sm font-bold text-amber-400">0 Detected</span>
         </div>
-        <div class="p-2 rounded-lg bg-slate-800/40">
-          <span class="block text-slate-400 text-[10px] uppercase tracking-wider font-semibold">Primary Area</span>
-          <span id="statPrimaryArea" class="font-mono text-base font-bold text-amber-400">0 px²</span>
+        <div class="p-1.5 rounded-lg bg-slate-800/40">
+          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Pose Tracker</span>
+          <span id="statPoseLandmarks" class="font-mono text-sm font-bold text-purple-400">33 Pts</span>
         </div>
-        <div class="p-2 rounded-lg bg-slate-800/40 col-span-2 sm:col-span-1">
-          <span class="block text-slate-400 text-[10px] uppercase tracking-wider font-semibold">Velocity</span>
-          <span id="statPrimaryVelocity" class="font-mono text-base font-bold text-rose-400">0 px/s</span>
+        <div class="p-1.5 rounded-lg bg-slate-800/40">
+          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Velocity (Hand)</span>
+          <span id="statHandVelocity" class="font-mono text-sm font-bold text-rose-400">0 px/s</span>
+        </div>
+        <div class="p-1.5 rounded-lg bg-slate-800/40">
+          <span class="block text-slate-400 text-[10px] uppercase font-semibold">Gaze Direction</span>
+          <span id="statGazeDir" class="font-mono text-sm font-bold text-sky-400">Center</span>
         </div>
       </div>
     </section>
 
-    <!-- Right Sidebar: Controls & Calibration Panel -->
-    <aside class="w-full lg:w-96 glass-panel rounded-2xl p-5 border border-slate-800 flex flex-col gap-6 overflow-y-auto custom-scrollbar max-h-[calc(100vh-7rem)]">
+    <!-- Right Sidebar Controls & AI Analysis -->
+    <aside class="w-full lg:w-96 glass-panel rounded-2xl p-4 border border-slate-800 flex flex-col gap-5 overflow-y-auto custom-scrollbar max-h-[calc(100vh-6rem)]">
       
-      <!-- Color Picker & Target Swatch -->
+      <!-- Visual Layer Toggles -->
       <div class="space-y-3">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i data-lucide="palette" class="w-4 h-4 text-cyan-400"></i> Target Color
-          </h2>
-          <span class="text-xs text-slate-400 font-mono" id="targetColorHex">#FF0055</span>
-        </div>
-
-        <div class="flex items-center gap-4">
-          <!-- Visual Swatch -->
-          <div id="targetColorSwatch" class="w-14 h-14 rounded-xl border-2 border-slate-700 shadow-inner shrink-0 relative overflow-hidden transition-all" style="background-color: #FF0055;">
-            <input type="color" id="nativeColorPicker" value="#FF0055" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer">
-          </div>
-          <div class="flex-1 text-xs space-y-1">
-            <p id="targetColorHSV" class="text-slate-300 font-mono font-medium">HSV: 340°, 100%, 100%</p>
-            <p id="targetColorRGB" class="text-slate-400 font-mono">RGB: 255, 0, 85</p>
-            <p class="text-[10px] text-cyan-400/80">Click swatch or click video frame to select color</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Detection Tolerance Controls -->
-      <div class="space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i data-lucide="sliders" class="w-4 h-4 text-cyan-400"></i> HSV Tolerances
-          </h2>
-          <button id="resetTolerancesBtn" class="text-[11px] text-slate-400 hover:text-cyan-400 transition-colors">Reset</button>
-        </div>
-
-        <!-- Hue Tolerance Slider -->
-        <div class="space-y-1">
-          <div class="flex justify-between text-xs">
-            <label for="hueTol" class="text-slate-300">Hue Tolerance (±°)</label>
-            <span id="hueTolVal" class="font-mono text-cyan-400 font-bold">25°</span>
-          </div>
-          <input type="range" id="hueTol" min="3" max="90" value="25" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
-        </div>
-
-        <!-- Saturation Range Sliders -->
-        <div class="space-y-1">
-          <div class="flex justify-between text-xs">
-            <label for="satMin" class="text-slate-300">Min Saturation (%)</label>
-            <span id="satMinVal" class="font-mono text-cyan-400 font-bold">25%</span>
-          </div>
-          <input type="range" id="satMin" min="0" max="100" value="25" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
-        </div>
-
-        <!-- Value/Brightness Range Sliders -->
-        <div class="space-y-1">
-          <div class="flex justify-between text-xs">
-            <label for="valMin" class="text-slate-300">Min Value/Brightness (%)</label>
-            <span id="valMinVal" class="font-mono text-cyan-400 font-bold">20%</span>
-          </div>
-          <input type="range" id="valMin" min="0" max="100" value="20" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
-        </div>
-      </div>
-
-      <!-- Size Filters & Performance -->
-      <div class="space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i data-lucide="filter" class="w-4 h-4 text-cyan-400"></i> Blob Filters & Speed
-          </h2>
-        </div>
-
-        <!-- Min Blob Area -->
-        <div class="space-y-1">
-          <div class="flex justify-between text-xs">
-            <label for="minArea" class="text-slate-300">Min Blob Area (px²)</label>
-            <span id="minAreaVal" class="font-mono text-cyan-400 font-bold">150</span>
-          </div>
-          <input type="range" id="minArea" min="20" max="5000" value="150" step="10" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
-        </div>
-
-        <!-- Max Blob Area -->
-        <div class="space-y-1">
-          <div class="flex justify-between text-xs">
-            <label for="maxArea" class="text-slate-300">Max Blob Area (px²)</label>
-            <span id="maxAreaVal" class="font-mono text-cyan-400 font-bold">50000</span>
-          </div>
-          <input type="range" id="maxArea" min="1000" max="200000" value="50000" step="1000" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
-        </div>
-
-        <!-- Grid Subsampling Step -->
-        <div class="space-y-1">
-          <div class="flex justify-between text-xs">
-            <label for="gridStep" class="text-slate-300">Grid Subsampling Step</label>
-            <span id="gridStepVal" class="font-mono text-cyan-400 font-bold">3 px</span>
-          </div>
-          <input type="range" id="gridStep" min="1" max="8" value="3" step="1" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
-          <p class="text-[10px] text-slate-500">Higher values boost performance; lower values increase precision.</p>
-        </div>
-
-        <!-- Trail History Length -->
-        <div class="space-y-1">
-          <div class="flex justify-between text-xs">
-            <label for="trailLength" class="text-slate-300">Trail History Length</label>
-            <span id="trailLengthVal" class="font-mono text-cyan-400 font-bold">20</span>
-          </div>
-          <input type="range" id="trailLength" min="0" max="60" value="20" step="5" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
-        </div>
-      </div>
-
-      <!-- Overlay Visualization Toggles -->
-      <div class="space-y-3">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i data-lucide="layers" class="w-4 h-4 text-cyan-400"></i> Visual Layers
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+            <i data-lucide="layers" class="w-4 h-4 text-cyan-400"></i> Active Vision Overlays
           </h2>
         </div>
 
         <div class="grid grid-cols-2 gap-2 text-xs">
           <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
-            <input type="checkbox" id="chkBoxes" checked class="rounded accent-cyan-500">
-            <span class="text-slate-300">Bounding Box</span>
+            <input type="checkbox" id="chkFace" checked class="rounded accent-cyan-500">
+            <span class="text-slate-300">Face Mesh (468)</span>
           </label>
           <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
-            <input type="checkbox" id="chkCentroids" checked class="rounded accent-cyan-500">
-            <span class="text-slate-300">Centroid Dot</span>
+            <input type="checkbox" id="chkHands" checked class="rounded accent-cyan-500">
+            <span class="text-slate-300">Hands (21 Pts)</span>
           </label>
           <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
-            <input type="checkbox" id="chkTrails" checked class="rounded accent-cyan-500">
-            <span class="text-slate-300">Motion Trail</span>
+            <input type="checkbox" id="chkPose" checked class="rounded accent-cyan-500">
+            <span class="text-slate-300">Pose Skeleton</span>
+          </label>
+          <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
+            <input type="checkbox" id="chkTrajectory" checked class="rounded accent-cyan-500">
+            <span class="text-slate-300">Motion Trails</span>
           </label>
           <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
             <input type="checkbox" id="chkVectors" checked class="rounded accent-cyan-500">
-            <span class="text-slate-300">Velocity Vector</span>
-          </label>
-          <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
-            <input type="checkbox" id="chkMask" class="rounded accent-cyan-500">
-            <span class="text-slate-300">Threshold Mask</span>
+            <span class="text-slate-300">Vectors & Predict</span>
           </label>
           <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
             <input type="checkbox" id="chkFlip" checked class="rounded accent-cyan-500">
-            <span class="text-slate-300">Mirror Camera</span>
+            <span class="text-slate-300">Mirror Video</span>
           </label>
+        </div>
+      </div>
+
+      <!-- Sensitivity & Prediction Settings -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+            <i data-lucide="sliders" class="w-4 h-4 text-cyan-400"></i> Motion Prediction Controls
+          </h2>
+        </div>
+
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs">
+            <label for="predictionScale" class="text-slate-300">Prediction Horizon</label>
+            <span id="predictionScaleVal" class="font-mono text-cyan-400 font-bold">0.8 sec</span>
+          </div>
+          <input type="range" id="predictionScale" min="0.1" max="2.0" step="0.1" value="0.8" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+        </div>
+
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs">
+            <label for="trailLength" class="text-slate-300">Motion Trail History</label>
+            <span id="trailLengthVal" class="font-mono text-cyan-400 font-bold">25 frames</span>
+          </div>
+          <input type="range" id="trailLength" min="5" max="60" value="25" step="5" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+        </div>
+      </div>
+
+      <!-- Live Gesture Intuition Telemetry Cards -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+            <i data-lucide="scan" class="w-4 h-4 text-cyan-400"></i> AI Detection Telemetry
+          </h2>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <!-- Hand Detailed Box -->
+          <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+            <span class="text-slate-400 text-[10px] uppercase font-bold block mb-1">Left & Right Hands</span>
+            <div class="flex justify-between items-center font-mono">
+              <span id="leftHandStatus" class="text-slate-400">Left: None</span>
+              <span id="rightHandStatus" class="text-slate-400">Right: None</span>
+            </div>
+          </div>
+
+          <!-- Face Detail Box -->
+          <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+            <span class="text-slate-400 text-[10px] uppercase font-bold block mb-1">Facial Blendshapes & Metrics</span>
+            <div class="grid grid-cols-2 gap-1 font-mono text-[11px]">
+              <div>Smile: <span id="valSmile" class="text-cyan-400">0%</span></div>
+              <div>Eye Blink: <span id="valBlink" class="text-cyan-400">0%</span></div>
+              <div>Mouth Open: <span id="valMouth" class="text-cyan-400">0%</span></div>
+              <div>Eyebrow Raised: <span id="valBrows" class="text-cyan-400">0%</span></div>
+            </div>
+          </div>
+
+          <!-- Body Action Classifier -->
+          <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+            <span class="text-slate-400 text-[10px] uppercase font-bold block mb-1">Pose & Full Body Intuition</span>
+            <div class="font-mono text-cyan-300 font-semibold" id="bodyActionDetails">
+              Standing / Neutral
+            </div>
+          </div>
         </div>
       </div>
 
     </aside>
   </main>
 
-  <!-- JavaScript Computer Vision & Application Logic -->
   <script>
-    // --- Application State Variables ---
+    // --- Application Configuration & State ---
     const config = {
-      targetHSV: { h: 340, s: 1.0, v: 1.0 }, // Target Hue (0-360), Sat (0-1), Val (0-1)
-      hueTolerance: 25,                       // Degrees (±)
-      minSat: 0.25,                           // Min Saturation
-      minVal: 0.20,                           // Min Value
-      minArea: 150,                           // Square pixels
-      maxArea: 50000,                         // Square pixels
-      gridStep: 3,                            // Subsampling pixel step (performance tuner)
-      trailLength: 20,                        // Trail point history limit
-      showBoxes: true,
-      showCentroids: true,
-      showTrails: true,
+      showFace: true,
+      showHands: true,
+      showPose: true,
+      showTrajectory: true,
       showVectors: true,
-      showMask: false,
       flipHorizontal: true,
-      maxTrackingDistance: 100,               // Max px distance to maintain blob ID across frames
+      predictionHorizon: 0.8, // seconds in future
+      trailLength: 25
     };
 
-    // Tracking state
-    let trackedBlobs = [];
-    let nextTrackId = 1;
     let isWebcamActive = false;
     let videoStream = null;
+    let visionTasksLoaded = false;
 
-    // Performance metrics
+    // Vision Models References
+    let faceLandmarker = null;
+    let handLandmarker = null;
+    let poseLandmarker = null;
+
+    // Motion & Trajectory History
+    const history = {
+      leftHand: [],
+      rightHand: [],
+      head: [],
+      poseCenter: []
+    };
+
+    // Diagnostics
     let lastFrameTime = performance.now();
     let frameCount = 0;
     let fps = 0;
 
-    // Demo Mode synthetic ball state
-    let demoBall = {
-      x: 320,
-      y: 240,
-      vx: 4.5,
-      vy: 3.2,
-      radius: 28,
-      color: '#FF0055' // Matching default target color
-    };
-
-    // Color Palette for Tracked Blob IDs
-    const ID_COLORS = [
-      '#00f3ff', '#00ff66', '#ff0055', '#ffb700', 
-      '#b500ff', '#ff00aa', '#00aeff', '#aeff00'
-    ];
+    // Synthetic Demo Mode Object (for testing without camera)
+    let demoMode = false;
+    let demoAngle = 0;
 
     // --- DOM Elements ---
     const video = document.getElementById('webcamVideo');
     const canvas = document.getElementById('outputCanvas');
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    const canvasContainer = document.getElementById('canvasContainer');
-
-    // UI Feedback & Controls
-    const cameraStatusBadge = document.getElementById('cameraStatusBadge');
-    const cameraStatusText = document.getElementById('cameraStatusText');
+    const ctx = canvas.getContext('2d');
     const toggleCameraBtn = document.getElementById('toggleCameraBtn');
     const toggleCameraBtnText = document.getElementById('toggleCameraBtnText');
-    const snapshotBtn = document.getElementById('snapshotBtn');
+    const cameraStatusBadge = document.getElementById('cameraStatusBadge');
+    const cameraStatusText = document.getElementById('cameraStatusText');
 
-    // Control Inputs
-    const targetColorSwatch = document.getElementById('targetColorSwatch');
-    const nativeColorPicker = document.getElementById('nativeColorPicker');
-    const targetColorHex = document.getElementById('targetColorHex');
-    const targetColorHSV = document.getElementById('targetColorHSV');
-    const targetColorRGB = document.getElementById('targetColorRGB');
-
-    const hueTolInput = document.getElementById('hueTol');
-    const satMinInput = document.getElementById('satMin');
-    const valMinInput = document.getElementById('valMin');
-    const minAreaInput = document.getElementById('minArea');
-    const maxAreaInput = document.getElementById('maxArea');
-    const gridStepInput = document.getElementById('gridStep');
+    // UI Controls
+    const chkFace = document.getElementById('chkFace');
+    const chkHands = document.getElementById('chkHands');
+    const chkPose = document.getElementById('chkPose');
+    const chkTrajectory = document.getElementById('chkTrajectory');
+    const chkVectors = document.getElementById('chkVectors');
+    const chkFlip = document.getElementById('chkFlip');
+    const predictionScale = document.getElementById('predictionScale');
     const trailLengthInput = document.getElementById('trailLength');
 
-    // Checkboxes
-    const chkBoxes = document.getElementById('chkBoxes');
-    const chkCentroids = document.getElementById('chkCentroids');
-    const chkTrails = document.getElementById('chkTrails');
-    const chkVectors = document.getElementById('chkVectors');
-    const chkMask = document.getElementById('chkMask');
-    const chkFlip = document.getElementById('chkFlip');
-
-    // Statistics UI
+    // Stats UI
     const statFPS = document.getElementById('statFPS');
-    const statBlobCount = document.getElementById('statBlobCount');
-    const statPrimaryPos = document.getElementById('statPrimaryPos');
-    const statPrimaryArea = document.getElementById('statPrimaryArea');
-    const statPrimaryVelocity = document.getElementById('statPrimaryVelocity');
+    const statFaceLandmarks = document.getElementById('statFaceLandmarks');
+    const statHandsCount = document.getElementById('statHandsCount');
+    const statPoseLandmarks = document.getElementById('statPoseLandmarks');
+    const statHandVelocity = document.getElementById('statHandVelocity');
+    const statGazeDir = document.getElementById('statGazeDir');
 
-    // --- Color Space Conversion Helpers ---
+    // HUD Telemetry
+    const hudActionState = document.getElementById('hudActionState');
+    const hudHandGesture = document.getElementById('hudHandGesture');
+    const hudFaceExpression = document.getElementById('hudFaceExpression');
+    const hudMotionVector = document.getElementById('hudMotionVector');
+    const leftHandStatus = document.getElementById('leftHandStatus');
+    const rightHandStatus = document.getElementById('rightHandStatus');
+    const valSmile = document.getElementById('valSmile');
+    const valBlink = document.getElementById('valBlink');
+    const valMouth = document.getElementById('valMouth');
+    const valBrows = document.getElementById('valBrows');
+    const bodyActionDetails = document.getElementById('bodyActionDetails');
 
-    /**
-     * Converts RGB color tuple to HSV.
-     * @param {number} r 0-255
-     * @param {number} g 0-255
-     * @param {number} b 0-255
-     * @returns {{h: number, s: number, v: number}} h:0-360, s:0-1, v:0-1
-     */
-    function rgbToHsv(r, g, b) {
-      r /= 255; g /= 255; b /= 255;
-      const max = Math.max(r, g, b), min = Math.min(r, g, b);
-      const d = max - min;
-      let h = 0;
-      const s = max === 0 ? 0 : d / max;
-      const v = max;
-
-      if (max !== min) {
-        switch (max) {
-          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-          case g: h = (b - r) / d + 2; break;
-          case b: h = (r - g) / d + 4; break;
-        }
-        h /= 6;
-      }
-      return { h: h * 360, s, v };
-    }
-
-    /**
-     * Converts HSV to RGB string for rendering.
-     */
-    function hsvToRgbStr(h, s, v) {
-      let r, g, b;
-      const i = Math.floor(h / 60) % 6;
-      const f = h / 60 - Math.floor(h / 60);
-      const p = v * (1 - s);
-      const q = v * (1 - f * s);
-      const t = v * (1 - (1 - f) * s);
-
-      switch (i) {
-        case 0: r = v; g = t; b = p; break;
-        case 1: r = q; g = v; b = p; break;
-        case 2: r = p; g = v; b = t; break;
-        case 3: r = p; g = q; b = v; break;
-        case 4: r = t; g = p; b = v; break;
-        case 5: r = v; g = p; b = q; break;
-      }
-      return `rgb(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)})`;
-    }
-
-    function hexToRgb(hex) {
-      const bigint = parseInt(hex.replace('#', ''), 16);
-      return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
-    }
-
-    function rgbToHex(r, g, b) {
-      return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1).toUpperCase();
-    }
-
-    // --- Color Sampling & Target Calibration ---
-
-    function setTargetColorRGB(r, g, b) {
-      config.targetHSV = rgbToHsv(r, g, b);
-      const hex = rgbToHex(r, g, b);
-
-      targetColorSwatch.style.backgroundColor = hex;
-      nativeColorPicker.value = hex;
-      targetColorHex.innerText = hex;
-      targetColorRGB.innerText = `RGB: ${r}, ${g}, ${b}`;
-      targetColorHSV.innerText = `HSV: ${Math.round(config.targetHSV.h)}°, ${Math.round(config.targetHSV.s * 100)}%, ${Math.round(config.targetHSV.v * 100)}%`;
-      demoBall.color = hex;
-    }
-
-    // Interactive canvas click to sample color from camera feed
-    canvasContainer.addEventListener('pointerdown', (e) => {
-      const rect = canvas.getBoundingClientRect();
-      const scaleX = canvas.width / rect.width;
-      const scaleY = canvas.height / rect.height;
-
-      const canvasX = Math.floor((e.clientX - rect.left) * scaleX);
-      const canvasY = Math.floor((e.clientY - rect.top) * scaleY);
-
-      if (canvasX >= 0 && canvasX < canvas.width && canvasY >= 0 && canvasY < canvas.height) {
-        // Draw single background frame to sample raw pixel color without overlay clutter
-        if (isWebcamActive) {
-          ctx.save();
-          if (config.flipHorizontal) {
-            ctx.translate(canvas.width, 0);
-            ctx.scale(-1, 1);
-          }
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          ctx.restore();
-        } else {
-          drawDemoBackground();
-        }
-
-        const pixelData = ctx.getImageData(canvasX, canvasY, 1, 1).data;
-        setTargetColorRGB(pixelData[0], pixelData[1], pixelData[2]);
-
-        // Show visual touch ripple feedback
-        const ripple = document.getElementById('sampleRipple');
-        ripple.style.left = `${e.clientX - canvasContainer.getBoundingClientRect().left}px`;
-        ripple.style.top = `${e.clientY - canvasContainer.getBoundingClientRect().top}px`;
-        ripple.classList.remove('hidden', 'scale-150', 'opacity-0');
-        ripple.classList.add('scale-100', 'opacity-100');
+    // --- Load MediaPipe Vision Models via WASM ---
+    async function initMediaPipeVision() {
+      try {
+        const { VisionFilesetResolver, FaceLandmarker, HandLandmarker, PoseLandmarker } = window.mediapipeTasksVision || {};
         
-        setTimeout(() => {
-          ripple.classList.add('scale-150', 'opacity-0');
-          setTimeout(() => ripple.classList.add('hidden'), 300);
-        }, 200);
-      }
-    });
-
-    // Native color picker input event
-    nativeColorPicker.addEventListener('input', (e) => {
-      const rgb = hexToRgb(e.target.value);
-      setTargetColorRGB(rgb.r, rgb.g, rgb.b);
-    });
-
-    // --- Core Color Thresholding & Connected Component Detection ---
-
-    /**
-     * Inspects frame imageData and extracts connected candidate blobs.
-     * Fast Disjoint-Set / Grid-Search Connected Component Analysis.
-     */
-    function detectBlobs(imageData) {
-      const width = imageData.width;
-      const height = imageData.height;
-      const data = imageData.data;
-      const step = config.gridStep;
-
-      const gridW = Math.floor(width / step);
-      const gridH = Math.floor(height / step);
-      const visited = new Uint8Array(gridW * gridH);
-      const candidateBlobs = [];
-
-      const targetH = config.targetHSV.h;
-      const hueTol = config.hueTolerance;
-      const minS = config.minSat;
-      const minV = config.minVal;
-
-      for (let gy = 0; gy < gridH; gy++) {
-        for (let gx = 0; gx < gridW; gx++) {
-          const gIdx = gy * gridW + gx;
-          if (visited[gIdx]) continue;
-
-          const px = gx * step;
-          const py = gy * step;
-          const pIdx = (py * width + px) * 4;
-
-          const r = data[pIdx];
-          const g = data[pIdx + 1];
-          const b = data[pIdx + 2];
-
-          // Check color match in HSV space
-          const hsv = rgbToHsv(r, g, b);
-          let hDiff = Math.abs(hsv.h - targetH);
-          if (hDiff > 180) hDiff = 360 - hDiff;
-
-          const isMatch = hDiff <= hueTol && hsv.s >= minS && hsv.v >= minV;
-
-          if (config.showMask) {
-            // Draw thresholded binary overlay mask if enabled
-            const maskVal = isMatch ? 255 : 0;
-            data[pIdx] = maskVal;
-            data[pIdx + 1] = maskVal;
-            data[pIdx + 2] = maskVal;
-          }
-
-          if (!isMatch) {
-            visited[gIdx] = 1;
-            continue;
-          }
-
-          // Flood-Fill / BFS Connected Component Gathering
-          let minX = px, maxX = px, minY = py, maxY = py;
-          let sumX = 0, sumY = 0, pixelCount = 0;
-
-          const queue = [gx, gy];
-          visited[gIdx] = 1;
-
-          let qHead = 0;
-          while (qHead < queue.length) {
-            const curGx = queue[qHead++];
-            const curGy = queue[qHead++];
-
-            const curPx = curGx * step;
-            const curPy = curGy * step;
-
-            pixelCount++;
-            sumX += curPx;
-            sumY += curPy;
-
-            if (curPx < minX) minX = curPx;
-            if (curPx > maxX) maxX = curPx;
-            if (curPy < minY) minY = curPy;
-            if (curPy > maxY) maxY = curPy;
-
-            // Check 4-connected neighbors
-            const neighbors = [
-              [curGx + 1, curGy], [curGx - 1, curGy],
-              [curGx, curGy + 1], [curGx, curGy - 1]
-            ];
-
-            for (let n = 0; n < neighbors.length; n++) {
-              const nx = neighbors[n][0];
-              const ny = neighbors[n][1];
-
-              if (nx >= 0 && nx < gridW && ny >= 0 && ny < gridH) {
-                const nGIdx = ny * gridW + nx;
-                if (!visited[nGIdx]) {
-                  visited[nGIdx] = 1;
-                  const nPx = nx * step;
-                  const nPy = ny * step;
-                  const nPIdx = (nPy * width + nPx) * 4;
-
-                  const nr = data[nPIdx];
-                  const ng = data[nPIdx + 1];
-                  const nb = data[nPIdx + 2];
-
-                  const nHsv = rgbToHsv(nr, ng, nb);
-                  let nHDiff = Math.abs(nHsv.h - targetH);
-                  if (nHDiff > 180) nHDiff = 360 - nHDiff;
-
-                  if (nHDiff <= hueTol && nHsv.s >= minS && nHsv.v >= minV) {
-                    queue.push(nx, ny);
-                  }
-                }
-              }
-            }
-          }
-
-          // Compute estimated blob area (scaling by grid subsample factor)
-          const estimatedArea = pixelCount * (step * step);
-
-          if (estimatedArea >= config.minArea && estimatedArea <= config.maxArea) {
-            candidateBlobs.push({
-              centroidX: sumX / pixelCount,
-              centroidY: sumY / pixelCount,
-              minX, minY, maxX, maxY,
-              width: maxX - minX + step,
-              height: maxY - minY + step,
-              area: estimatedArea
-            });
-          }
-        }
-      }
-
-      return candidateBlobs;
-    }
-
-    // --- Multi-Blob Temporal Tracking Pipeline ---
-
-    /**
-     * Updates tracked blob list across frames using nearest distance centroid matching.
-     */
-    function updateTrackedBlobs(candidateBlobs, deltaTime) {
-      const updatedTracks = [];
-
-      // Distance matching matrix
-      for (const candidate of candidateBlobs) {
-        let bestMatch = null;
-        let minDistance = config.maxTrackingDistance;
-
-        for (const existingTrack of trackedBlobs) {
-          if (existingTrack.matched) continue;
-
-          const dx = candidate.centroidX - existingTrack.x;
-          const dy = candidate.centroidY - existingTrack.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < minDistance) {
-            minDistance = dist;
-            bestMatch = existingTrack;
-          }
+        if (!VisionFilesetResolver) {
+          throw new Error("MediaPipe Tasks Vision library failed to load from CDN.");
         }
 
-        if (bestMatch) {
-          // Update existing track
-          bestMatch.matched = true;
-          
-          // Calculate instant velocity (px/sec)
-          const vx = (candidate.centroidX - bestMatch.x) / deltaTime;
-          const vy = (candidate.centroidY - bestMatch.y) / deltaTime;
+        cameraStatusText.innerText = 'Loading WASM Vision Core...';
+        const filesetResolver = await VisionFilesetResolver.forVisionTasks(
+          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
+        );
 
-          // Low-pass exponential smoothing for stable vector representation
-          bestMatch.vx = bestMatch.vx * 0.6 + vx * 0.4;
-          bestMatch.vy = bestMatch.vy * 0.6 + vy * 0.4;
+        cameraStatusText.innerText = 'Loading Face Mesh Model...';
+        faceLandmarker = await FaceLandmarker.createFromOptions(filesetResolver, {
+          baseOptions: {
+            modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+            delegate: "GPU"
+          },
+          runningMode: "VIDEO",
+          numFaces: 1,
+          outputFaceBlendshapes: true
+        });
 
-          bestMatch.x = candidate.centroidX;
-          bestMatch.y = candidate.centroidY;
-          bestMatch.minX = candidate.minX;
-          bestMatch.minY = candidate.minY;
-          bestMatch.width = candidate.width;
-          bestMatch.height = candidate.height;
-          bestMatch.area = candidate.area;
+        cameraStatusText.innerText = 'Loading Hand Tracker Model...';
+        handLandmarker = await HandLandmarker.createFromOptions(filesetResolver, {
+          baseOptions: {
+            modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+            delegate: "GPU"
+          },
+          runningMode: "VIDEO",
+          numHands: 2
+        });
 
-          // Push new history point to trail
-          bestMatch.trail.push({ x: bestMatch.x, y: bestMatch.y });
-          if (bestMatch.trail.length > config.trailLength) {
-            bestMatch.trail.shift();
-          }
+        cameraStatusText.innerText = 'Loading Pose Skeleton Model...';
+        poseLandmarker = await PoseLandmarker.createFromOptions(filesetResolver, {
+          baseOptions: {
+            modelAssetPath: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task",
+            delegate: "GPU"
+          },
+          runningMode: "VIDEO",
+          numPoses: 1
+        });
 
-          updatedTracks.push(bestMatch);
-        } else {
-          // Create new track
-          const newTrack = {
-            id: nextTrackId++,
-            color: ID_COLORS[(nextTrackId - 1) % ID_COLORS.length],
-            x: candidate.centroidX,
-            y: candidate.centroidY,
-            vx: 0,
-            vy: 0,
-            minX: candidate.minX,
-            minY: candidate.minY,
-            width: candidate.width,
-            height: candidate.height,
-            area: candidate.area,
-            trail: [{ x: candidate.centroidX, y: candidate.centroidY }],
-            matched: true
-          };
-          updatedTracks.push(newTrack);
-        }
-      }
-
-      // Reset matched flag for next iteration
-      updatedTracks.forEach(t => t.matched = false);
-      trackedBlobs = updatedTracks;
-    }
-
-    // --- Synthetic Demo Mode Generator ---
-
-    function updateDemoBall() {
-      demoBall.x += demoBall.vx;
-      demoBall.y += demoBall.vy;
-
-      if (demoBall.x - demoBall.radius < 0 || demoBall.x + demoBall.radius > canvas.width) {
-        demoBall.vx *= -1;
-      }
-      if (demoBall.y - demoBall.radius < 0 || demoBall.y + demoBall.radius > canvas.height) {
-        demoBall.vy *= -1;
+        visionTasksLoaded = true;
+        cameraStatusBadge.className = "flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+        cameraStatusText.innerText = "Vision AI Models Ready";
+        
+        // Auto attempt camera
+        startCamera();
+      } catch (err) {
+        console.warn("AI Models loading fallback to synthetic demo mode:", err);
+        visionTasksLoaded = false;
+        demoMode = true;
+        cameraStatusBadge.className = "flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
+        cameraStatusText.innerText = "Demo Mode (Model CDN fallback)";
       }
     }
 
-    function drawDemoBackground() {
-      // Dark gradient artificial background
-      const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      grad.addColorStop(0, '#0f172a');
-      grad.addColorStop(1, '#020617');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // --- Gesture Intuition & Logic Classifiers ---
 
-      // Grid visual background line pattern
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-      ctx.lineWidth = 1;
-      for (let x = 0; x < canvas.width; x += 40) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
-      }
-      for (let y = 0; y < canvas.height; y += 40) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+    /** Classify Hand Gestures from 21 Landmarks */
+    function classifyHandGesture(landmarks) {
+      if (!landmarks || landmarks.length < 21) return 'Unknown';
+
+      // Landmark indices: Wrist=0, Thumb Tip=4, Index Tip=8, Middle Tip=12, Ring Tip=16, Pinky Tip=20
+      const wrist = landmarks[0];
+      const thumbTip = landmarks[4];
+      const indexTip = landmarks[8];
+      const middleTip = landmarks[12];
+      const ringTip = landmarks[16];
+      const pinkyTip = landmarks[20];
+
+      // Distances helper
+      const dist = (p1, p2) => Math.hypot(p1.x - p2.x, p1.y - p2.y);
+
+      const pinchDist = dist(thumbTip, indexTip);
+      const isIndexOpen = indexTip.y < landmarks[6].y;
+      const isMiddleOpen = middleTip.y < landmarks[10].y;
+      const isRingOpen = ringTip.y < landmarks[14].y;
+      const isPinkyOpen = pinkyTip.y < landmarks[18].y;
+
+      if (pinchDist < 0.05) return 'Pinch / Precision Grip';
+      if (isIndexOpen && isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'Peace / Victory ✌️';
+      if (isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'Pointing 👆';
+      if (isIndexOpen && isMiddleOpen && isRingOpen && isPinkyOpen) return 'Open Palm 🖐️';
+      if (!isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'Fist ✊';
+
+      return 'Active Hand';
+    }
+
+    /** Classify Face Expression & Eye/Mouth Metrics */
+    function classifyFaceExpression(landmarks, blendshapes) {
+      if (!landmarks || landmarks.length < 468) return { expr: 'Neutral', smile: 0, blink: 0, mouth: 0, brows: 0 };
+
+      let smileScore = 0, blinkScore = 0, mouthOpenScore = 0, browScore = 0;
+
+      // Extract blendshape scores if present
+      if (blendshapes && blendshapes.length > 0) {
+        const categories = blendshapes[0].categories;
+        categories.forEach(c => {
+          if (c.categoryName.includes('mouthSmile')) smileScore = Math.max(smileScore, c.score);
+          if (c.categoryName.includes('eyeBlink')) blinkScore = Math.max(blinkScore, c.score);
+          if (c.categoryName.includes('jawOpen')) mouthOpenScore = Math.max(mouthOpenScore, c.score);
+          if (c.categoryName.includes('browOuterUp')) browScore = Math.max(browScore, c.score);
+        });
+      } else {
+        // Fallback distance geometric approximation
+        const mouthTop = landmarks[13];
+        const mouthBottom = landmarks[14];
+        const mouthLeft = landmarks[61];
+        const mouthRight = landmarks[291];
+
+        const mouthHeight = Math.hypot(mouthTop.x - mouthBottom.x, mouthTop.y - mouthBottom.y);
+        const mouthWidth = Math.hypot(mouthLeft.x - mouthRight.x, mouthLeft.y - mouthRight.y);
+
+        smileScore = Math.min(Math.max((mouthWidth - 0.15) * 4, 0), 1);
+        mouthOpenScore = Math.min(Math.max((mouthHeight - 0.02) * 20, 0), 1);
       }
 
-      // Render moving ball target
+      let expr = 'Neutral';
+      if (smileScore > 0.45) expr = 'Smiling 😀';
+      else if (mouthOpenScore > 0.5) expr = 'Surprised / Mouth Open 😮';
+      else if (blinkScore > 0.6) expr = 'Blinking 😉';
+      else if (browScore > 0.4) expr = 'Focused / Raised Brows 🤨';
+
+      return {
+        expr,
+        smile: Math.round(smileScore * 100),
+        blink: Math.round(blinkScore * 100),
+        mouth: Math.round(mouthOpenScore * 100),
+        brows: Math.round(browScore * 100)
+      };
+    }
+
+    /** Classify Full Body Action Intuition */
+    function classifyBodyAction(poseLandmarks, handVelocities) {
+      if (!poseLandmarks || poseLandmarks.length < 33) return 'Standing / Resting';
+
+      const leftWrist = poseLandmarks[15];
+      const rightWrist = poseLandmarks[16];
+      const nose = poseLandmarks[0];
+      const leftAnkle = poseLandmarks[27];
+      const rightAnkle = poseLandmarks[28];
+
+      const isLeftHandRaised = leftWrist.y < nose.y;
+      const isRightHandRaised = rightWrist.y < nose.y;
+
+      if (isLeftHandRaised && isRightHandRaised) return 'Arms Raised / Cheering 🙌';
+      if (isLeftHandRaised || isRightHandRaised) return 'Waving Hand 👋';
+
+      if (handVelocities > 350) return 'Fast Motion / Gesturing ⚡';
+      if (Math.abs(leftAnkle.y - rightAnkle.y) > 0.1) return 'Walking / Step Motion 🚶';
+
+      return 'Standing / Neutral Posture';
+    }
+
+    // --- Trajectory & Velocity Prediction Engine ---
+
+    function pushHistoryPoint(list, pt) {
+      list.push({ ...pt, timestamp: performance.now() });
+      if (list.length > config.trailLength) {
+        list.shift();
+      }
+    }
+
+    function calculateVelocityAndPrediction(historyList) {
+      if (!historyList || historyList.length < 2) {
+        return { vx: 0, vy: 0, speed: 0, predictedX: 0, predictedY: 0 };
+      }
+
+      const p1 = historyList[historyList.length - 1];
+      const p2 = historyList[historyList.length - 2];
+      const dt = Math.max((p1.timestamp - p2.timestamp) / 1000, 0.001);
+
+      const vx = (p1.x - p2.x) / dt;
+      const vy = (p1.y - p2.y) / dt;
+      const speed = Math.hypot(vx, vy);
+
+      // Predicted future coordinate
+      const horizon = config.predictionHorizon;
+      const predictedX = p1.x + vx * horizon;
+      const predictedY = p1.y + vy * horizon;
+
+      return { vx, vy, speed, predictedX, predictedY };
+    }
+
+    // --- Rendering Functions ---
+
+    function drawSkeletonConnections(landmarks, connections, color, width = 2) {
       ctx.save();
-      ctx.beginPath();
-      ctx.arc(demoBall.x, demoBall.y, demoBall.radius, 0, Math.PI * 2);
-      ctx.fillStyle = demoBall.color;
-      ctx.shadowColor = demoBall.color;
-      ctx.shadowBlur = 15;
-      ctx.fill();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      connections.forEach(([i, j]) => {
+        if (landmarks[i] && landmarks[j]) {
+          ctx.beginPath();
+          ctx.moveTo(landmarks[i].x * canvas.width, landmarks[i].y * canvas.height);
+          ctx.lineTo(landmarks[j].x * canvas.width, landmarks[j].y * canvas.height);
+          ctx.stroke();
+        }
+      });
       ctx.restore();
     }
 
-    // --- Render Overlays & Visual Feedback ---
+    function drawTrajectoryTrail(historyList, color) {
+      if (!config.showTrajectory || historyList.length < 2) return;
 
-    function drawOverlays() {
-      trackedBlobs.forEach(blob => {
-        // 1. Draw Trail History
-        if (config.showTrails && blob.trail.length > 1) {
-          ctx.save();
-          ctx.beginPath();
-          ctx.moveTo(blob.trail[0].x, blob.trail[0].y);
-          for (let i = 1; i < blob.trail.length; i++) {
-            ctx.lineTo(blob.trail[i].x, blob.trail[i].y);
-          }
-          ctx.strokeStyle = blob.color;
-          ctx.lineWidth = 2.5;
-          ctx.lineCap = 'round';
-          ctx.globalAlpha = 0.6;
-          ctx.stroke();
-          ctx.restore();
-        }
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(historyList[0].x * canvas.width, historyList[0].y * canvas.height);
 
-        // 2. Draw Bounding Box
-        if (config.showBoxes) {
-          ctx.save();
-          ctx.strokeStyle = blob.color;
-          ctx.lineWidth = 2;
-          ctx.strokeRect(blob.minX, blob.minY, blob.width, blob.height);
+      for (let i = 1; i < historyList.length; i++) {
+        const pt = historyList[i];
+        ctx.lineTo(pt.x * canvas.width, pt.y * canvas.height);
+      }
 
-          // Header ID Tag
-          ctx.fillStyle = blob.color;
-          ctx.font = 'bold 11px monospace';
-          const tagText = `ID: #${blob.id}`;
-          const textWidth = ctx.measureText(tagText).width;
-
-          ctx.fillRect(blob.minX, blob.minY - 18, textWidth + 8, 18);
-          ctx.fillStyle = '#000000';
-          ctx.fillText(tagText, blob.minX + 4, blob.minY - 5);
-          ctx.restore();
-        }
-
-        // 3. Draw Velocity Vector Arrow
-        if (config.showVectors && (Math.abs(blob.vx) > 5 || Math.abs(blob.vy) > 5)) {
-          ctx.save();
-          const arrowScale = 0.25; // Visual length scaling factor
-          const targetX = blob.x + blob.vx * arrowScale;
-          const targetY = blob.y + blob.vy * arrowScale;
-
-          ctx.beginPath();
-          ctx.moveTo(blob.x, blob.y);
-          ctx.lineTo(targetX, targetY);
-          ctx.strokeStyle = '#38bdf8';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-
-          // Arrowhead tip
-          const angle = Math.atan2(blob.vy, blob.vx);
-          ctx.beginPath();
-          ctx.moveTo(targetX, targetY);
-          ctx.lineTo(targetX - 8 * Math.cos(angle - Math.PI / 6), targetY - 8 * Math.sin(angle - Math.PI / 6));
-          ctx.lineTo(targetX - 8 * Math.cos(angle + Math.PI / 6), targetY - 8 * Math.sin(angle + Math.PI / 6));
-          ctx.fillStyle = '#38bdf8';
-          ctx.fill();
-          ctx.restore();
-        }
-
-        // 4. Draw Centroid Target Point
-        if (config.showCentroids) {
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(blob.x, blob.y, 5, 0, Math.PI * 2);
-          ctx.fillStyle = '#ffffff';
-          ctx.fill();
-          ctx.strokeStyle = blob.color;
-          ctx.lineWidth = 2;
-          ctx.stroke();
-
-          // Crosshair lines
-          ctx.beginPath();
-          ctx.moveTo(blob.x - 8, blob.y); ctx.lineTo(blob.x + 8, blob.y);
-          ctx.moveTo(blob.x, blob.y - 8); ctx.lineTo(blob.x, blob.y + 8);
-          ctx.strokeStyle = blob.color;
-          ctx.lineWidth = 1;
-          ctx.stroke();
-          ctx.restore();
-        }
-      });
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.globalAlpha = 0.7;
+      ctx.stroke();
+      ctx.restore();
     }
 
-    // --- Main Loop ---
+    function drawPredictionVector(currentPt, prediction, color) {
+      if (!config.showVectors || prediction.speed < 20) return;
 
-    function processFrame(now) {
+      const currX = currentPt.x * canvas.width;
+      const currY = currentPt.y * canvas.height;
+      const predX = prediction.predictedX * canvas.width;
+      const predY = prediction.predictedY * canvas.height;
+
+      ctx.save();
+      // Dash line to predicted trajectory
+      ctx.beginPath();
+      ctx.setLineDash([5, 5]);
+      ctx.moveTo(currX, currY);
+      ctx.lineTo(predX, predY);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Future predicted location halo
+      ctx.beginPath();
+      ctx.setLineDash([]);
+      ctx.arc(predX, predY, 10, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.4;
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // --- Main Synthetic Demo Loop (If Video Stream or CDN Models Offline) ---
+    function renderDemoMode() {
+      demoAngle += 0.03;
+      const centerX = 0.5 + Math.sin(demoAngle) * 0.2;
+      const centerY = 0.5 + Math.cos(demoAngle * 0.8) * 0.15;
+
+      pushHistoryPoint(history.rightHand, { x: centerX, y: centerY });
+      const pred = calculateVelocityAndPrediction(history.rightHand);
+
+      // Render dark synthetic grid background
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw synthetic hand trail
+      drawTrajectoryTrail(history.rightHand, '#38bdf8');
+      drawPredictionVector({ x: centerX, y: centerY }, pred, '#f43f5e');
+
+      // Hand representation
+      ctx.beginPath();
+      ctx.arc(centerX * canvas.width, centerY * canvas.height, 12, 0, Math.PI * 2);
+      ctx.fillStyle = '#38bdf8';
+      ctx.fill();
+
+      // Diagnostics update
+      hudActionState.innerText = "Demo Motion Active";
+      hudHandGesture.innerText = "Synthetic Orbiting Point";
+      hudFaceExpression.innerText = "Demo Synthetic Mode";
+      hudMotionVector.innerText = `Vx: ${Math.round(pred.vx)} px/s`;
+      statHandVelocity.innerText = `${Math.round(pred.speed * canvas.width)} px/s`;
+      statHandsCount.innerText = "1 Demo Hand";
+    }
+
+    // --- Main Vision Inference Frame Loop ---
+    async function processFrame(now) {
       const deltaTime = Math.max((now - lastFrameTime) / 1000, 0.001);
       lastFrameTime = now;
 
-      // Calculate FPS
       frameCount++;
       if (frameCount % 10 === 0) {
         fps = Math.round(1 / deltaTime);
         statFPS.innerText = `${fps} FPS`;
       }
 
-      // Resize canvas internal buffer to video stream dimensions
+      // Sync canvas dimensions
       if (isWebcamActive && video.videoWidth) {
         if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
           canvas.width = video.videoWidth;
           canvas.height = video.videoHeight;
         }
-      } else if (!isWebcamActive && (canvas.width !== 640 || canvas.height !== 480)) {
+      } else if (canvas.width !== 640 || canvas.height !== 480) {
         canvas.width = 640;
         canvas.height = 480;
       }
 
-      // Draw background frame
+      // Draw camera background
+      ctx.save();
       if (isWebcamActive) {
-        ctx.save();
         if (config.flipHorizontal) {
           ctx.translate(canvas.width, 0);
           ctx.scale(-1, 1);
         }
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        ctx.restore();
-      } else {
-        updateDemoBall();
-        drawDemoBackground();
       }
+      ctx.restore();
 
-      // Extract pixel frame data for Computer Vision processing
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      if (visionTasksLoaded && isWebcamActive && video.readyState >= 2) {
+        const timestamp = performance.now();
 
-      // Run Blob Detection
-      const candidateBlobs = detectBlobs(imageData);
+        // 1. Run Face Mesh Detection
+        let faceResults = null;
+        if (config.showFace && faceLandmarker) {
+          faceResults = faceLandmarker.detectForVideo(video, timestamp);
+        }
 
-      // Re-put binary mask on screen if enabled
-      if (config.showMask) {
-        ctx.putImageData(imageData, 0, 0);
-      }
+        // 2. Run Hand Tracking Detection
+        let handResults = null;
+        if (config.showHands && handLandmarker) {
+          handResults = handLandmarker.detectForVideo(video, timestamp);
+        }
 
-      // Track candidate blobs across frames
-      updateTrackedBlobs(candidateBlobs, deltaTime);
+        // 3. Run Pose Skeleton Detection
+        let poseResults = null;
+        if (config.showPose && poseLandmarker) {
+          poseResults = poseLandmarker.detectForVideo(video, timestamp);
+        }
 
-      // Draw active visual overlays
-      drawOverlays();
+        let maxSpeedDetected = 0;
 
-      // Update Diagnostics HUD
-      statBlobCount.innerText = trackedBlobs.length;
-      if (trackedBlobs.length > 0) {
-        const primary = trackedBlobs[0]; // Largest / primary blob
-        const totalVel = Math.round(Math.sqrt(primary.vx * primary.vx + primary.vy * primary.vy));
+        // Render & Classify Face Mesh
+        if (faceResults && faceResults.faceLandmarks.length > 0) {
+          const landmarks = faceResults.faceLandmarks[0];
+          statFaceLandmarks.innerText = `${landmarks.length} Pts`;
 
-        statPrimaryPos.innerText = `${Math.round(primary.x)}, ${Math.round(primary.y)}`;
-        statPrimaryArea.innerText = `${Math.round(primary.area)} px²`;
-        statPrimaryVelocity.innerText = `${totalVel} px/s`;
-      } else {
-        statPrimaryPos.innerText = `0, 0`;
-        statPrimaryArea.innerText = `0 px²`;
-        statPrimaryVelocity.innerText = `0 px/s`;
+          if (config.showFace) {
+            ctx.save();
+            ctx.fillStyle = 'rgba(56, 189, 248, 0.6)';
+            landmarks.forEach((pt, idx) => {
+              if (idx % 4 === 0) { // Subsample face mesh dots for performance & sleek aesthetics
+                const x = config.flipHorizontal ? (1 - pt.x) * canvas.width : pt.x * canvas.width;
+                const y = pt.y * canvas.height;
+                ctx.beginPath();
+                ctx.arc(x, y, 1.2, 0, Math.PI * 2);
+                ctx.fill();
+              }
+            });
+            ctx.restore();
+          }
+
+          const faceMetrics = classifyFaceExpression(landmarks, faceResults.faceBlendshapes);
+          hudFaceExpression.innerText = faceMetrics.expr;
+          valSmile.innerText = `${faceMetrics.smile}%`;
+          valBlink.innerText = `${faceMetrics.blink}%`;
+          valMouth.innerText = `${faceMetrics.mouth}%`;
+          valBrows.innerText = `${faceMetrics.brows}%`;
+        } else {
+          statFaceLandmarks.innerText = "None";
+        }
+
+        // Render & Classify Hands
+        if (handResults && handResults.landmarks.length > 0) {
+          statHandsCount.innerText = `${handResults.landmarks.length} Active`;
+          let activeGestures = [];
+
+          handResults.landmarks.forEach((landmarks, hIdx) => {
+            const handedness = handResults.handedness[hIdx]?.[0]?.displayName || 'Hand';
+            const gestureName = classifyHandGesture(landmarks);
+            activeGestures.push(`${handedness}: ${gestureName}`);
+
+            const wrist = landmarks[0];
+            const wristPt = {
+              x: config.flipHorizontal ? (1 - wrist.x) : wrist.x,
+              y: wrist.y
+            };
+
+            const handHistory = hIdx === 0 ? history.rightHand : history.leftHand;
+            pushHistoryPoint(handHistory, wristPt);
+
+            const pred = calculateVelocityAndPrediction(handHistory);
+            maxSpeedDetected = Math.max(maxSpeedDetected, pred.speed * canvas.width);
+
+            // Draw Trails & Vector Prediction
+            drawTrajectoryTrail(handHistory, hIdx === 0 ? '#38bdf8' : '#f43f5e');
+            drawPredictionVector(wristPt, pred, hIdx === 0 ? '#38bdf8' : '#f43f5e');
+
+            // Draw Hand Joints
+            if (config.showHands) {
+              ctx.save();
+              landmarks.forEach(pt => {
+                const x = config.flipHorizontal ? (1 - pt.x) * canvas.width : pt.x * canvas.width;
+                const y = pt.y * canvas.height;
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = hIdx === 0 ? '#38bdf8' : '#f43f5e';
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.stroke();
+              });
+              ctx.restore();
+            }
+          });
+
+          hudHandGesture.innerText = activeGestures.join(' | ');
+          if (handResults.landmarks.length > 0) {
+            rightHandStatus.innerText = activeGestures[0] || 'None';
+            leftHandStatus.innerText = activeGestures[1] || 'None';
+          }
+        } else {
+          statHandsCount.innerText = "0 Detected";
+          hudHandGesture.innerText = "None";
+          leftHandStatus.innerText = "Left: None";
+          rightHandStatus.innerText = "Right: None";
+        }
+
+        // Render Pose Skeleton
+        if (poseResults && poseResults.landmarks.length > 0) {
+          const pose = poseResults.landmarks[0];
+          statPoseLandmarks.innerText = `${pose.length} Pts`;
+
+          if (config.showPose) {
+            ctx.save();
+            pose.forEach(pt => {
+              const x = config.flipHorizontal ? (1 - pt.x) * canvas.width : pt.x * canvas.width;
+              const y = pt.y * canvas.height;
+              ctx.beginPath();
+              ctx.arc(x, y, 4, 0, Math.PI * 2);
+              ctx.fillStyle = '#a855f7';
+              ctx.fill();
+            });
+            ctx.restore();
+          }
+
+          const actionState = classifyBodyAction(pose, maxSpeedDetected);
+          hudActionState.innerText = actionState;
+          bodyActionDetails.innerText = actionState;
+        } else {
+          statPoseLandmarks.innerText = "None";
+        }
+
+        statHandVelocity.innerText = `${Math.round(maxSpeedDetected)} px/s`;
+        hudMotionVector.innerText = maxSpeedDetected > 50 ? `Moving (${Math.round(maxSpeedDetected)} px/s)` : 'Static / Resting';
+
+      } else if (demoMode || !isWebcamActive) {
+        renderDemoMode();
       }
 
       requestAnimationFrame(processFrame);
     }
 
-    // --- Camera Media Handler ---
-
+    // --- Camera Media Control ---
     async function startCamera() {
       try {
-        cameraStatusText.innerText = 'Connecting...';
+        cameraStatusText.innerText = 'Connecting Camera...';
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' },
           audio: false
@@ -918,12 +816,14 @@
         await video.play();
 
         isWebcamActive = true;
+        demoMode = false;
         cameraStatusBadge.className = "flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-        cameraStatusText.innerText = "Camera Live";
+        cameraStatusText.innerText = "Live AI Tracking";
         toggleCameraBtnText.innerText = "Stop Camera";
       } catch (err) {
-        console.warn("Webcam access denied or unavailable:", err);
+        console.warn("Webcam access rejected/unavailable:", err);
         isWebcamActive = false;
+        demoMode = true;
         cameraStatusBadge.className = "flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
         cameraStatusText.innerText = "Demo Mode (No Cam)";
         toggleCameraBtnText.innerText = "Request Camera";
@@ -936,6 +836,7 @@
         videoStream = null;
       }
       isWebcamActive = false;
+      demoMode = true;
       cameraStatusBadge.className = "flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
       cameraStatusText.innerText = "Demo Mode";
       toggleCameraBtnText.innerText = "Request Camera";
@@ -949,79 +850,58 @@
       }
     });
 
-    // Take photo snapshot
-    snapshotBtn.addEventListener('click', () => {
+    // --- Export & Snapshot Handlers ---
+    document.getElementById('snapshotBtn').addEventListener('click', () => {
       const link = document.createElement('a');
-      link.download = `blob-tracker-snapshot-${Date.now()}.png`;
+      link.download = `omnivision-snapshot-${Date.now()}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
     });
 
-    // --- UI Control Event Listeners ---
+    document.getElementById('exportJsonBtn').addEventListener('click', () => {
+      const telemetryExport = {
+        timestamp: new Date().toISOString(),
+        fps,
+        history,
+        hudState: {
+          action: hudActionState.innerText,
+          gesture: hudHandGesture.innerText,
+          expression: hudFaceExpression.innerText,
+          motionVector: hudMotionVector.innerText
+        }
+      };
 
-    hueTolInput.addEventListener('input', (e) => {
-      config.hueTolerance = parseInt(e.target.value);
-      document.getElementById('hueTolVal').innerText = `${config.hueTolerance}°`;
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(telemetryExport, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `ai-telemetry-${Date.now()}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
     });
 
-    satMinInput.addEventListener('input', (e) => {
-      config.minSat = parseInt(e.target.value) / 100;
-      document.getElementById('satMinVal').innerText = `${e.target.value}%`;
-    });
+    // Control Listeners
+    chkFace.addEventListener('change', (e) => config.showFace = e.target.checked);
+    chkHands.addEventListener('change', (e) => config.showHands = e.target.checked);
+    chkPose.addEventListener('change', (e) => config.showPose = e.target.checked);
+    chkTrajectory.addEventListener('change', (e) => config.showTrajectory = e.target.checked);
+    chkVectors.addEventListener('change', (e) => config.showVectors = e.target.checked);
+    chkFlip.addEventListener('change', (e) => config.flipHorizontal = e.target.checked);
 
-    valMinInput.addEventListener('input', (e) => {
-      config.minVal = parseInt(e.target.value) / 100;
-      document.getElementById('valMinVal').innerText = `${e.target.value}%`;
-    });
-
-    minAreaInput.addEventListener('input', (e) => {
-      config.minArea = parseInt(e.target.value);
-      document.getElementById('minAreaVal').innerText = config.minArea;
-    });
-
-    maxAreaInput.addEventListener('input', (e) => {
-      config.maxArea = parseInt(e.target.value);
-      document.getElementById('maxAreaVal').innerText = config.maxArea;
-    });
-
-    gridStepInput.addEventListener('input', (e) => {
-      config.gridStep = parseInt(e.target.value);
-      document.getElementById('gridStepVal').innerText = `${config.gridStep} px`;
+    predictionScale.addEventListener('input', (e) => {
+      config.predictionHorizon = parseFloat(e.target.value);
+      document.getElementById('predictionScaleVal').innerText = `${config.predictionHorizon} sec`;
     });
 
     trailLengthInput.addEventListener('input', (e) => {
       config.trailLength = parseInt(e.target.value);
-      document.getElementById('trailLengthVal').innerText = config.trailLength;
+      document.getElementById('trailLengthVal').innerText = `${config.trailLength} frames`;
     });
 
-    document.getElementById('resetTolerancesBtn').addEventListener('click', () => {
-      hueTolInput.value = 25; config.hueTolerance = 25;
-      document.getElementById('hueTolVal').innerText = '25°';
-
-      satMinInput.value = 25; config.minSat = 0.25;
-      document.getElementById('satMinVal').innerText = '25%';
-
-      valMinInput.value = 20; config.minVal = 0.20;
-      document.getElementById('valMinVal').innerText = '20%';
-    });
-
-    // Layer Checkboxes
-    chkBoxes.addEventListener('change', (e) => config.showBoxes = e.target.checked);
-    chkCentroids.addEventListener('change', (e) => config.showCentroids = e.target.checked);
-    chkTrails.addEventListener('change', (e) => config.showTrails = e.target.checked);
-    chkVectors.addEventListener('change', (e) => config.showVectors = e.target.checked);
-    chkMask.addEventListener('change', (e) => config.showMask = e.target.checked);
-    chkFlip.addEventListener('change', (e) => config.flipHorizontal = e.target.checked);
-
-    // Initialize application on window load
+    // On App Launch
     window.addEventListener('load', () => {
       lucide.createIcons();
-      setTargetColorRGB(255, 0, 85); // Default vibrant magenta
-      
-      // Auto attempt camera start; defaults to synthetic demo mode if denied/unavailable
-      startCamera();
-      
-      // Kick off frame processing loop
+      initMediaPipeVision();
       requestAnimationFrame(processFrame);
     });
   </script>
