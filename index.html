@@ -1,142 +1,1029 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Z.Engine // FACE//RECON</title>
-<style>
-:root{--bg:#03080a;--pn:#07130f;--ln:#0f3b2a;--tx:#b8ffd9;--mut:#5fae8a;--g:#3dff9a;--a:#ffb020;--r:#ff4d5e;--h:#38bdf8;color-scheme:dark}
-*{box-sizing:border-box}
-[hidden]{display:none!important}
-body{margin:0 auto;max-width:1240px;padding:16px;background:var(--bg);color:var(--tx);font:14px/1.5 ui-monospace,"JetBrains Mono","Fira Code",Menlo,Consolas,monospace}
-body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9;background:repeating-linear-gradient(rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
-header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;margin-bottom:16px;border:1px solid var(--ln);background:var(--pn)}
-.brand{font-size:1.25rem;font-weight:700;letter-spacing:.06em;color:var(--g);text-shadow:0 0 8px rgba(61,255,154,.55)}
-.brand small{margin-left:10px;font-size:.75rem;font-weight:400;letter-spacing:0;color:var(--mut);text-shadow:none}
-.cur{display:inline-block;width:.6ch;height:1em;margin-left:4px;vertical-align:-2px;background:var(--g);animation:bl 1s steps(2) infinite}
-@keyframes bl{50%{opacity:0}}
-@media(prefers-reduced-motion:reduce){.cur{animation:none}}
-main{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);gap:16px;align-items:start}
-@media(max-width:900px){main{grid-template-columns:1fr}}
-.wrap{position:relative;aspect-ratio:4/3;background:#000;border:1px solid var(--g);box-shadow:0 0 18px rgba(61,255,154,.18);overflow:hidden}
-.wrap video,.wrap canvas{position:absolute;inset:0;width:100%;height:100%}
-video{transform:scaleX(-1);filter:grayscale(1) contrast(1.2) brightness(.8)}
-.wrap::after{content:"";position:absolute;inset:0;pointer-events:none;background:rgba(0,255,130,.1);mix-blend-mode:screen}
-#msg{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;background:rgba(2,8,6,.9)}
-#msg>div{max-width:46ch}
-#msg p{margin:0 0 16px}
-#guide{position:absolute;left:50%;bottom:14px;z-index:2;transform:translateX(-50%);max-width:94%;padding:6px 16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:rgba(2,8,6,.92);border:1px solid var(--a);color:var(--a);font-weight:700}
-.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
-button{font:inherit;font-weight:700;padding:8px 14px;border:1px solid var(--g);background:transparent;color:var(--g);cursor:pointer}
-button:hover:not(:disabled){background:rgba(61,255,154,.14)}
-button.pri{background:var(--g);color:#02150d}
-button.pri:hover:not(:disabled){background:#7dffc0}
-button.sm{padding:3px 10px;font-weight:500;font-size:.85rem}
-button:disabled{opacity:.4;cursor:not-allowed}
-button:focus-visible,input:focus-visible{outline:2px solid var(--a);outline-offset:2px}
-input{flex:1 1 160px;min-width:0;padding:8px 10px;font:inherit;background:#020a07;border:1px solid var(--ln);color:var(--tx)}
-.tag{padding:2px 10px;border:1px solid var(--ln);color:var(--mut);font-size:.8rem}
-.tag:empty{display:none}
-#fps{margin-left:auto;color:var(--mut)}
-.box{margin-top:14px;padding:12px 14px;background:var(--pn);border:1px solid var(--ln)}
-aside .box:first-child{margin-top:0}
-.box h2{margin:0 0 8px;font-size:.85rem;font-weight:700;color:var(--g)}
-.muted{color:var(--mut);font-size:.82rem}
-dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:0}
-dt{color:var(--mut)}
-dd{margin:0;text-align:right;overflow-wrap:anywhere}
-.g{color:var(--g)}.a{color:var(--a)}.h{color:var(--h)}
-.bar{display:grid;grid-template-columns:84px 1fr 48px;gap:8px;align-items:center;margin-top:5px;font-size:.85rem}
-.bar i{display:block;height:6px;background:#0c2a1f;position:relative}
-.bar i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:var(--g)}
-.bar.mv i::after{background:var(--a)}
-.bar b{text-align:right;font-weight:500}
-#log{height:150px;overflow:auto;font-size:.8rem;color:var(--mut)}
-#log .ok{color:var(--g)}#log .warn{color:var(--a)}#log .err{color:var(--r)}
-.prof{display:flex;gap:10px;align-items:center;margin-top:8px;padding:6px;border:1px solid var(--ln)}
-.prof img{width:48px;height:48px;object-fit:cover;filter:grayscale(1) contrast(1.1)}
-.prof>div{flex:1;min-width:0}
-.prof small{color:var(--mut)}
-.empty{padding:16px;border:1px dashed var(--ln);color:var(--mut)}
-.fbadge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:1px solid var(--ln);color:var(--mut);font-size:.75rem;font-weight:700}
-.fbadge.up{border-color:var(--h);color:var(--h);box-shadow:0 0 6px rgba(56,189,248,.5)}
-footer{margin-top:20px;color:var(--mut);font-size:.8rem}
-#gate{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(3,8,10,.96)}
-#gate .panel{width:min(460px,100%);padding:22px;border:1px solid var(--g);background:var(--pn);box-shadow:0 0 28px rgba(61,255,154,.16)}
-#gate h1{margin:0 0 8px;font-size:1.1rem;color:var(--g);letter-spacing:.08em}
-#pin{letter-spacing:.4em;text-align:center;font-size:1.2rem}
-.tabs{display:flex;gap:8px;flex-wrap:wrap}
-.tabs button.on{background:var(--g);color:#02150d}
-#admin{margin-top:16px}
-#adminlock{padding:24px;text-align:center}
-#app[hidden],#admin[hidden],#lab[hidden]{display:none!important}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Camera Blob Tracker</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              500: '#06b6d4',
+              600: '#0891b2',
+              900: '#0e7490',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Glassmorphism Styles */
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+  </style>
 </head>
-<body>
-<div id="gate">
-  <div class="panel">
-    <h1>Z.ENGINE // LOGIN<span class="cur"></span></h1>
-    <p class="muted">Site locked. Log in with a saved fingerprint or face, or open Administration with the admin code.</p>
-    <div class="row" style="margin-top:14px">
-      <input id="pin" type="password" inputmode="numeric" maxlength="8" placeholder="ADMIN CODE" aria-label="Admin code" autocomplete="off">
-      <button class="pri" id="unlock">ENTER ADMIN</button>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen overflow-x-hidden flex flex-col antialiased">
+
+  <!-- Main Header -->
+  <header class="w-full glass-panel z-30 px-6 py-4 flex flex-wrap items-center justify-between border-b border-slate-800 shrink-0">
+    <div class="flex items-center space-x-3">
+      <div class="p-2 bg-cyan-500/20 text-cyan-400 rounded-xl border border-cyan-500/30">
+        <i data-lucide="crosshair" class="w-6 h-6 animate-pulse"></i>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">
+          BlobVision <span class="text-xs font-normal px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 ml-2">v1.0</span>
+        </h1>
+        <p class="text-xs text-slate-400">Computer Vision & Object Tracking Pipeline</p>
+      </div>
     </div>
-    <div class="row">
-      <button id="loginFp">LOGIN WITH FINGERPRINT</button>
-      <button id="loginFace">LOGIN WITH FACE</button>
+
+    <!-- Status Indicators & Quick Actions -->
+    <div class="flex items-center space-x-4 mt-2 sm:mt-0">
+      <div id="cameraStatusBadge" class="flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+        <span id="cameraStatusText">Initializing Demo Mode</span>
+      </div>
+
+      <button id="toggleCameraBtn" class="flex items-center space-x-2 px-3 py-1.5 text-xs font-semibold rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white transition-colors shadow-lg shadow-cyan-950/50">
+        <i data-lucide="camera" class="w-4 h-4"></i>
+        <span id="toggleCameraBtnText">Request Camera</span>
+      </button>
+
+      <button id="snapshotBtn" class="flex items-center space-x-2 px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors">
+        <i data-lucide="download" class="w-4 h-4"></i>
+        <span>Snapshot</span>
+      </button>
     </div>
-    <p class="muted" id="gateMsg" style="margin:12px 0 0" role="status"></p>
-  </div>
-</div>
-<div id="app" hidden>
-<header>
-  <div class="brand">FACE//RECON<span class="cur"></span><small>Z.Engine educational biometric lab</small></div>
-  <div class="row" style="margin:0">
-    <div class="tabs">
-      <button class="sm on" id="tabLab">LAB</button>
-      <button class="sm" id="tabAdmin">ADMINISTRATION</button>
-    </div>
-    <span class="tag" id="who"></span>
-    <span class="tag" id="perm"></span>
-    <span class="tag" id="clock"></span>
-    <button class="sm" id="logout">LOG OUT</button>
-  </div>
-</header>
-<div id="lab">
-<main>
-  <section>
-    <div class="wrap" id="wrap">
-      <video id="v" autoplay muted playsinline></video>
-      <canvas id="c"></canvas>
-      <div id="msg"><div><p id="msgt"></p><button class="pri" id="allow">[ GRANT CAMERA ACCESS ]</button></div></div>
-      <div id="guide" hidden></div>
-    </div>
-    <div class="row">
-      <button class="pri" id="start">START SCAN</button>
-      <button id="stop" disabled>STOP</button>
-      <button id="calib" disabled title="Use the current head position as straight ahead">CALIBRATE HEAD</button>
-      <span class="tag" id="handstag"></span>
-      <span id="fps"></span>
-    </div>
-    <div class="box"><h2>&gt; console</h2><div id="log" role="log"></div></div>
-  </section>
-  <aside>
-    <div id="cards"><div class="empty">&gt; no scan running. Start the scan to see live target data.</div></div>
-    <div class="box">
-      <h2>&gt; hand input</h2>
-      <div id="hands"><p class="muted" style="margin:0">No hand in frame.</p></div>
-      <p class="muted" style="margin:10px 0 0">Separate dedicated hand-landmark model — does not trigger on the face, caps, hats or masks.</p>
-    </div>
-    <div class="box">
-      <h2>&gt; local intel: what any website can see about you</h2>
-      <dl id="dev"></dl>
-      <div class="row"><button class="sm" id="trace">RUN NETWORK TRACE</button><button class="sm" id="gps">GET GPS FIX</button></div>
-      <p class="muted" style="margin:10px 0 0">Only your own device is inspected. The network trace is a single request you trigger, sent to ipwho.is, to look up your own public IP. IP location is approximate (usually city level) and changes with a VPN. The GPS fix needs your explicit permission.</p>
-    </div>
-    <div class="box">
-      <h2>&gt; subject registry</h2>
-      <p class="muted" style="margin:0 0 10px">Enter a name and run the registration. The page takes 5 automatic captures from slightly different angles and saves a profile (face signature, thumbnail, estimated age and gender) in this browser only. Register only people who have agreed to it.</p>
-      <div class="row" style="margin-top:0"><input id="name" placeholder="Name (e.g. Alex)" maxlength="40" aria-label="Name"><button class="pri" id="save" disabled>REGISTER FACE</button></div>
-      <div id="known"></div>
-      <div class="row"><button class="sm" id="clear">WIPE REGISTRY</button></div>
-      <div id="hint" class="muted" style="margin-top:8px" role="status"></div>
+  </header>
+
+  <!-- Main Content Workspace -->
+  <main class="flex-1 flex flex-col lg:flex-row p-4 gap-4 overflow-hidden max-w-[1920px] w-full mx-auto">
+
+    <!-- Center/Left: Vision Canvas Viewport -->
+    <section class="flex-1 flex flex-col items-center justify-center relative min-h-[400px] lg:min-h-0 bg-slate-900/60 rounded-2xl border border-slate-800/80 overflow-hidden shadow-2xl">
+      
+      <!-- Hidden Source Video Element -->
+      <video id="webcamVideo" class="hidden" playsinline muted></video>
+
+      <!-- Interactive Tracking Canvas -->
+      <div id="canvasContainer" class="relative w-full h-full flex items-center justify-center bg-black/40 cursor-crosshair select-none group">
+        <canvas id="outputCanvas" class="max-w-full max-h-full object-contain rounded-lg shadow-lg"></canvas>
+
+        <!-- Tap-To-Sample Instructions Overlay -->
+        <div id="canvasOverlayHint" class="absolute top-4 left-4 pointer-events-none glass-panel px-3 py-1.5 rounded-lg text-xs text-slate-300 flex items-center space-x-2 opacity-80 group-hover:opacity-100 transition-opacity">
+          <i data-lucide="pipette" class="w-4 h-4 text-cyan-400"></i>
+          <span>Click/Tap video to sample color</span>
+        </div>
+
+        <!-- Color Picker Crosshair Highlight (Appears on click) -->
+        <div id="sampleRipple" class="absolute w-8 h-8 rounded-full border-2 border-white/80 -translate-x-1/2 -translate-y-1/2 pointer-events-none hidden transition-transform scale-150 opacity-0 duration-300"></div>
+      </div>
+
+      <!-- Live Diagnostics Bar (Bottom Canvas) -->
+      <div class="w-full glass-panel px-4 py-3 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
+        <div class="p-2 rounded-lg bg-slate-800/40">
+          <span class="block text-slate-400 text-[10px] uppercase tracking-wider font-semibold">Framerate</span>
+          <span id="statFPS" class="font-mono text-base font-bold text-cyan-400">0 FPS</span>
+        </div>
+        <div class="p-2 rounded-lg bg-slate-800/40">
+          <span class="block text-slate-400 text-[10px] uppercase tracking-wider font-semibold">Active Blobs</span>
+          <span id="statBlobCount" class="font-mono text-base font-bold text-emerald-400">0</span>
+        </div>
+        <div class="p-2 rounded-lg bg-slate-800/40">
+          <span class="block text-slate-400 text-[10px] uppercase tracking-wider font-semibold">Primary Pos (X, Y)</span>
+          <span id="statPrimaryPos" class="font-mono text-base font-bold text-purple-400">0, 0</span>
+        </div>
+        <div class="p-2 rounded-lg bg-slate-800/40">
+          <span class="block text-slate-400 text-[10px] uppercase tracking-wider font-semibold">Primary Area</span>
+          <span id="statPrimaryArea" class="font-mono text-base font-bold text-amber-400">0 px²</span>
+        </div>
+        <div class="p-2 rounded-lg bg-slate-800/40 col-span-2 sm:col-span-1">
+          <span class="block text-slate-400 text-[10px] uppercase tracking-wider font-semibold">Velocity</span>
+          <span id="statPrimaryVelocity" class="font-mono text-base font-bold text-rose-400">0 px/s</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Sidebar: Controls & Calibration Panel -->
+    <aside class="w-full lg:w-96 glass-panel rounded-2xl p-5 border border-slate-800 flex flex-col gap-6 overflow-y-auto custom-scrollbar max-h-[calc(100vh-7rem)]">
+      
+      <!-- Color Picker & Target Swatch -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+            <i data-lucide="palette" class="w-4 h-4 text-cyan-400"></i> Target Color
+          </h2>
+          <span class="text-xs text-slate-400 font-mono" id="targetColorHex">#FF0055</span>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <!-- Visual Swatch -->
+          <div id="targetColorSwatch" class="w-14 h-14 rounded-xl border-2 border-slate-700 shadow-inner shrink-0 relative overflow-hidden transition-all" style="background-color: #FF0055;">
+            <input type="color" id="nativeColorPicker" value="#FF0055" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer">
+          </div>
+          <div class="flex-1 text-xs space-y-1">
+            <p id="targetColorHSV" class="text-slate-300 font-mono font-medium">HSV: 340°, 100%, 100%</p>
+            <p id="targetColorRGB" class="text-slate-400 font-mono">RGB: 255, 0, 85</p>
+            <p class="text-[10px] text-cyan-400/80">Click swatch or click video frame to select color</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detection Tolerance Controls -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+            <i data-lucide="sliders" class="w-4 h-4 text-cyan-400"></i> HSV Tolerances
+          </h2>
+          <button id="resetTolerancesBtn" class="text-[11px] text-slate-400 hover:text-cyan-400 transition-colors">Reset</button>
+        </div>
+
+        <!-- Hue Tolerance Slider -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs">
+            <label for="hueTol" class="text-slate-300">Hue Tolerance (±°)</label>
+            <span id="hueTolVal" class="font-mono text-cyan-400 font-bold">25°</span>
+          </div>
+          <input type="range" id="hueTol" min="3" max="90" value="25" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+        </div>
+
+        <!-- Saturation Range Sliders -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs">
+            <label for="satMin" class="text-slate-300">Min Saturation (%)</label>
+            <span id="satMinVal" class="font-mono text-cyan-400 font-bold">25%</span>
+          </div>
+          <input type="range" id="satMin" min="0" max="100" value="25" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+        </div>
+
+        <!-- Value/Brightness Range Sliders -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs">
+            <label for="valMin" class="text-slate-300">Min Value/Brightness (%)</label>
+            <span id="valMinVal" class="font-mono text-cyan-400 font-bold">20%</span>
+          </div>
+          <input type="range" id="valMin" min="0" max="100" value="20" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+        </div>
+      </div>
+
+      <!-- Size Filters & Performance -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+            <i data-lucide="filter" class="w-4 h-4 text-cyan-400"></i> Blob Filters & Speed
+          </h2>
+        </div>
+
+        <!-- Min Blob Area -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs">
+            <label for="minArea" class="text-slate-300">Min Blob Area (px²)</label>
+            <span id="minAreaVal" class="font-mono text-cyan-400 font-bold">150</span>
+          </div>
+          <input type="range" id="minArea" min="20" max="5000" value="150" step="10" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+        </div>
+
+        <!-- Max Blob Area -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs">
+            <label for="maxArea" class="text-slate-300">Max Blob Area (px²)</label>
+            <span id="maxAreaVal" class="font-mono text-cyan-400 font-bold">50000</span>
+          </div>
+          <input type="range" id="maxArea" min="1000" max="200000" value="50000" step="1000" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+        </div>
+
+        <!-- Grid Subsampling Step -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs">
+            <label for="gridStep" class="text-slate-300">Grid Subsampling Step</label>
+            <span id="gridStepVal" class="font-mono text-cyan-400 font-bold">3 px</span>
+          </div>
+          <input type="range" id="gridStep" min="1" max="8" value="3" step="1" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+          <p class="text-[10px] text-slate-500">Higher values boost performance; lower values increase precision.</p>
+        </div>
+
+        <!-- Trail History Length -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs">
+            <label for="trailLength" class="text-slate-300">Trail History Length</label>
+            <span id="trailLengthVal" class="font-mono text-cyan-400 font-bold">20</span>
+          </div>
+          <input type="range" id="trailLength" min="0" max="60" value="20" step="5" class="w-full accent-cyan-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer">
+        </div>
+      </div>
+
+      <!-- Overlay Visualization Toggles -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+            <i data-lucide="layers" class="w-4 h-4 text-cyan-400"></i> Visual Layers
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
+            <input type="checkbox" id="chkBoxes" checked class="rounded accent-cyan-500">
+            <span class="text-slate-300">Bounding Box</span>
+          </label>
+          <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
+            <input type="checkbox" id="chkCentroids" checked class="rounded accent-cyan-500">
+            <span class="text-slate-300">Centroid Dot</span>
+          </label>
+          <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
+            <input type="checkbox" id="chkTrails" checked class="rounded accent-cyan-500">
+            <span class="text-slate-300">Motion Trail</span>
+          </label>
+          <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
+            <input type="checkbox" id="chkVectors" checked class="rounded accent-cyan-500">
+            <span class="text-slate-300">Velocity Vector</span>
+          </label>
+          <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
+            <input type="checkbox" id="chkMask" class="rounded accent-cyan-500">
+            <span class="text-slate-300">Threshold Mask</span>
+          </label>
+          <label class="flex items-center space-x-2 p-2 rounded-lg bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700">
+            <input type="checkbox" id="chkFlip" checked class="rounded accent-cyan-500">
+            <span class="text-slate-300">Mirror Camera</span>
+          </label>
+        </div>
+      </div>
+
+    </aside>
+  </main>
+
+  <!-- JavaScript Computer Vision & Application Logic -->
+  <script>
+    // --- Application State Variables ---
+    const config = {
+      targetHSV: { h: 340, s: 1.0, v: 1.0 }, // Target Hue (0-360), Sat (0-1), Val (0-1)
+      hueTolerance: 25,                       // Degrees (±)
+      minSat: 0.25,                           // Min Saturation
+      minVal: 0.20,                           // Min Value
+      minArea: 150,                           // Square pixels
+      maxArea: 50000,                         // Square pixels
+      gridStep: 3,                            // Subsampling pixel step (performance tuner)
+      trailLength: 20,                        // Trail point history limit
+      showBoxes: true,
+      showCentroids: true,
+      showTrails: true,
+      showVectors: true,
+      showMask: false,
+      flipHorizontal: true,
+      maxTrackingDistance: 100,               // Max px distance to maintain blob ID across frames
+    };
+
+    // Tracking state
+    let trackedBlobs = [];
+    let nextTrackId = 1;
+    let isWebcamActive = false;
+    let videoStream = null;
+
+    // Performance metrics
+    let lastFrameTime = performance.now();
+    let frameCount = 0;
+    let fps = 0;
+
+    // Demo Mode synthetic ball state
+    let demoBall = {
+      x: 320,
+      y: 240,
+      vx: 4.5,
+      vy: 3.2,
+      radius: 28,
+      color: '#FF0055' // Matching default target color
+    };
+
+    // Color Palette for Tracked Blob IDs
+    const ID_COLORS = [
+      '#00f3ff', '#00ff66', '#ff0055', '#ffb700', 
+      '#b500ff', '#ff00aa', '#00aeff', '#aeff00'
+    ];
+
+    // --- DOM Elements ---
+    const video = document.getElementById('webcamVideo');
+    const canvas = document.getElementById('outputCanvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    const canvasContainer = document.getElementById('canvasContainer');
+
+    // UI Feedback & Controls
+    const cameraStatusBadge = document.getElementById('cameraStatusBadge');
+    const cameraStatusText = document.getElementById('cameraStatusText');
+    const toggleCameraBtn = document.getElementById('toggleCameraBtn');
+    const toggleCameraBtnText = document.getElementById('toggleCameraBtnText');
+    const snapshotBtn = document.getElementById('snapshotBtn');
+
+    // Control Inputs
+    const targetColorSwatch = document.getElementById('targetColorSwatch');
+    const nativeColorPicker = document.getElementById('nativeColorPicker');
+    const targetColorHex = document.getElementById('targetColorHex');
+    const targetColorHSV = document.getElementById('targetColorHSV');
+    const targetColorRGB = document.getElementById('targetColorRGB');
+
+    const hueTolInput = document.getElementById('hueTol');
+    const satMinInput = document.getElementById('satMin');
+    const valMinInput = document.getElementById('valMin');
+    const minAreaInput = document.getElementById('minArea');
+    const maxAreaInput = document.getElementById('maxArea');
+    const gridStepInput = document.getElementById('gridStep');
+    const trailLengthInput = document.getElementById('trailLength');
+
+    // Checkboxes
+    const chkBoxes = document.getElementById('chkBoxes');
+    const chkCentroids = document.getElementById('chkCentroids');
+    const chkTrails = document.getElementById('chkTrails');
+    const chkVectors = document.getElementById('chkVectors');
+    const chkMask = document.getElementById('chkMask');
+    const chkFlip = document.getElementById('chkFlip');
+
+    // Statistics UI
+    const statFPS = document.getElementById('statFPS');
+    const statBlobCount = document.getElementById('statBlobCount');
+    const statPrimaryPos = document.getElementById('statPrimaryPos');
+    const statPrimaryArea = document.getElementById('statPrimaryArea');
+    const statPrimaryVelocity = document.getElementById('statPrimaryVelocity');
+
+    // --- Color Space Conversion Helpers ---
+
+    /**
+     * Converts RGB color tuple to HSV.
+     * @param {number} r 0-255
+     * @param {number} g 0-255
+     * @param {number} b 0-255
+     * @returns {{h: number, s: number, v: number}} h:0-360, s:0-1, v:0-1
+     */
+    function rgbToHsv(r, g, b) {
+      r /= 255; g /= 255; b /= 255;
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      const d = max - min;
+      let h = 0;
+      const s = max === 0 ? 0 : d / max;
+      const v = max;
+
+      if (max !== min) {
+        switch (max) {
+          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+      }
+      return { h: h * 360, s, v };
+    }
+
+    /**
+     * Converts HSV to RGB string for rendering.
+     */
+    function hsvToRgbStr(h, s, v) {
+      let r, g, b;
+      const i = Math.floor(h / 60) % 6;
+      const f = h / 60 - Math.floor(h / 60);
+      const p = v * (1 - s);
+      const q = v * (1 - f * s);
+      const t = v * (1 - (1 - f) * s);
+
+      switch (i) {
+        case 0: r = v; g = t; b = p; break;
+        case 1: r = q; g = v; b = p; break;
+        case 2: r = p; g = v; b = t; break;
+        case 3: r = p; g = q; b = v; break;
+        case 4: r = t; g = p; b = v; break;
+        case 5: r = v; g = p; b = q; break;
+      }
+      return `rgb(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)})`;
+    }
+
+    function hexToRgb(hex) {
+      const bigint = parseInt(hex.replace('#', ''), 16);
+      return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+    }
+
+    function rgbToHex(r, g, b) {
+      return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1).toUpperCase();
+    }
+
+    // --- Color Sampling & Target Calibration ---
+
+    function setTargetColorRGB(r, g, b) {
+      config.targetHSV = rgbToHsv(r, g, b);
+      const hex = rgbToHex(r, g, b);
+
+      targetColorSwatch.style.backgroundColor = hex;
+      nativeColorPicker.value = hex;
+      targetColorHex.innerText = hex;
+      targetColorRGB.innerText = `RGB: ${r}, ${g}, ${b}`;
+      targetColorHSV.innerText = `HSV: ${Math.round(config.targetHSV.h)}°, ${Math.round(config.targetHSV.s * 100)}%, ${Math.round(config.targetHSV.v * 100)}%`;
+      demoBall.color = hex;
+    }
+
+    // Interactive canvas click to sample color from camera feed
+    canvasContainer.addEventListener('pointerdown', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+
+      const canvasX = Math.floor((e.clientX - rect.left) * scaleX);
+      const canvasY = Math.floor((e.clientY - rect.top) * scaleY);
+
+      if (canvasX >= 0 && canvasX < canvas.width && canvasY >= 0 && canvasY < canvas.height) {
+        // Draw single background frame to sample raw pixel color without overlay clutter
+        if (isWebcamActive) {
+          ctx.save();
+          if (config.flipHorizontal) {
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+          }
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          ctx.restore();
+        } else {
+          drawDemoBackground();
+        }
+
+        const pixelData = ctx.getImageData(canvasX, canvasY, 1, 1).data;
+        setTargetColorRGB(pixelData[0], pixelData[1], pixelData[2]);
+
+        // Show visual touch ripple feedback
+        const ripple = document.getElementById('sampleRipple');
+        ripple.style.left = `${e.clientX - canvasContainer.getBoundingClientRect().left}px`;
+        ripple.style.top = `${e.clientY - canvasContainer.getBoundingClientRect().top}px`;
+        ripple.classList.remove('hidden', 'scale-150', 'opacity-0');
+        ripple.classList.add('scale-100', 'opacity-100');
+        
+        setTimeout(() => {
+          ripple.classList.add('scale-150', 'opacity-0');
+          setTimeout(() => ripple.classList.add('hidden'), 300);
+        }, 200);
+      }
+    });
+
+    // Native color picker input event
+    nativeColorPicker.addEventListener('input', (e) => {
+      const rgb = hexToRgb(e.target.value);
+      setTargetColorRGB(rgb.r, rgb.g, rgb.b);
+    });
+
+    // --- Core Color Thresholding & Connected Component Detection ---
+
+    /**
+     * Inspects frame imageData and extracts connected candidate blobs.
+     * Fast Disjoint-Set / Grid-Search Connected Component Analysis.
+     */
+    function detectBlobs(imageData) {
+      const width = imageData.width;
+      const height = imageData.height;
+      const data = imageData.data;
+      const step = config.gridStep;
+
+      const gridW = Math.floor(width / step);
+      const gridH = Math.floor(height / step);
+      const visited = new Uint8Array(gridW * gridH);
+      const candidateBlobs = [];
+
+      const targetH = config.targetHSV.h;
+      const hueTol = config.hueTolerance;
+      const minS = config.minSat;
+      const minV = config.minVal;
+
+      for (let gy = 0; gy < gridH; gy++) {
+        for (let gx = 0; gx < gridW; gx++) {
+          const gIdx = gy * gridW + gx;
+          if (visited[gIdx]) continue;
+
+          const px = gx * step;
+          const py = gy * step;
+          const pIdx = (py * width + px) * 4;
+
+          const r = data[pIdx];
+          const g = data[pIdx + 1];
+          const b = data[pIdx + 2];
+
+          // Check color match in HSV space
+          const hsv = rgbToHsv(r, g, b);
+          let hDiff = Math.abs(hsv.h - targetH);
+          if (hDiff > 180) hDiff = 360 - hDiff;
+
+          const isMatch = hDiff <= hueTol && hsv.s >= minS && hsv.v >= minV;
+
+          if (config.showMask) {
+            // Draw thresholded binary overlay mask if enabled
+            const maskVal = isMatch ? 255 : 0;
+            data[pIdx] = maskVal;
+            data[pIdx + 1] = maskVal;
+            data[pIdx + 2] = maskVal;
+          }
+
+          if (!isMatch) {
+            visited[gIdx] = 1;
+            continue;
+          }
+
+          // Flood-Fill / BFS Connected Component Gathering
+          let minX = px, maxX = px, minY = py, maxY = py;
+          let sumX = 0, sumY = 0, pixelCount = 0;
+
+          const queue = [gx, gy];
+          visited[gIdx] = 1;
+
+          let qHead = 0;
+          while (qHead < queue.length) {
+            const curGx = queue[qHead++];
+            const curGy = queue[qHead++];
+
+            const curPx = curGx * step;
+            const curPy = curGy * step;
+
+            pixelCount++;
+            sumX += curPx;
+            sumY += curPy;
+
+            if (curPx < minX) minX = curPx;
+            if (curPx > maxX) maxX = curPx;
+            if (curPy < minY) minY = curPy;
+            if (curPy > maxY) maxY = curPy;
+
+            // Check 4-connected neighbors
+            const neighbors = [
+              [curGx + 1, curGy], [curGx - 1, curGy],
+              [curGx, curGy + 1], [curGx, curGy - 1]
+            ];
+
+            for (let n = 0; n < neighbors.length; n++) {
+              const nx = neighbors[n][0];
+              const ny = neighbors[n][1];
+
+              if (nx >= 0 && nx < gridW && ny >= 0 && ny < gridH) {
+                const nGIdx = ny * gridW + nx;
+                if (!visited[nGIdx]) {
+                  visited[nGIdx] = 1;
+                  const nPx = nx * step;
+                  const nPy = ny * step;
+                  const nPIdx = (nPy * width + nPx) * 4;
+
+                  const nr = data[nPIdx];
+                  const ng = data[nPIdx + 1];
+                  const nb = data[nPIdx + 2];
+
+                  const nHsv = rgbToHsv(nr, ng, nb);
+                  let nHDiff = Math.abs(nHsv.h - targetH);
+                  if (nHDiff > 180) nHDiff = 360 - nHDiff;
+
+                  if (nHDiff <= hueTol && nHsv.s >= minS && nHsv.v >= minV) {
+                    queue.push(nx, ny);
+                  }
+                }
+              }
+            }
+          }
+
+          // Compute estimated blob area (scaling by grid subsample factor)
+          const estimatedArea = pixelCount * (step * step);
+
+          if (estimatedArea >= config.minArea && estimatedArea <= config.maxArea) {
+            candidateBlobs.push({
+              centroidX: sumX / pixelCount,
+              centroidY: sumY / pixelCount,
+              minX, minY, maxX, maxY,
+              width: maxX - minX + step,
+              height: maxY - minY + step,
+              area: estimatedArea
+            });
+          }
+        }
+      }
+
+      return candidateBlobs;
+    }
+
+    // --- Multi-Blob Temporal Tracking Pipeline ---
+
+    /**
+     * Updates tracked blob list across frames using nearest distance centroid matching.
+     */
+    function updateTrackedBlobs(candidateBlobs, deltaTime) {
+      const updatedTracks = [];
+
+      // Distance matching matrix
+      for (const candidate of candidateBlobs) {
+        let bestMatch = null;
+        let minDistance = config.maxTrackingDistance;
+
+        for (const existingTrack of trackedBlobs) {
+          if (existingTrack.matched) continue;
+
+          const dx = candidate.centroidX - existingTrack.x;
+          const dy = candidate.centroidY - existingTrack.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < minDistance) {
+            minDistance = dist;
+            bestMatch = existingTrack;
+          }
+        }
+
+        if (bestMatch) {
+          // Update existing track
+          bestMatch.matched = true;
+          
+          // Calculate instant velocity (px/sec)
+          const vx = (candidate.centroidX - bestMatch.x) / deltaTime;
+          const vy = (candidate.centroidY - bestMatch.y) / deltaTime;
+
+          // Low-pass exponential smoothing for stable vector representation
+          bestMatch.vx = bestMatch.vx * 0.6 + vx * 0.4;
+          bestMatch.vy = bestMatch.vy * 0.6 + vy * 0.4;
+
+          bestMatch.x = candidate.centroidX;
+          bestMatch.y = candidate.centroidY;
+          bestMatch.minX = candidate.minX;
+          bestMatch.minY = candidate.minY;
+          bestMatch.width = candidate.width;
+          bestMatch.height = candidate.height;
+          bestMatch.area = candidate.area;
+
+          // Push new history point to trail
+          bestMatch.trail.push({ x: bestMatch.x, y: bestMatch.y });
+          if (bestMatch.trail.length > config.trailLength) {
+            bestMatch.trail.shift();
+          }
+
+          updatedTracks.push(bestMatch);
+        } else {
+          // Create new track
+          const newTrack = {
+            id: nextTrackId++,
+            color: ID_COLORS[(nextTrackId - 1) % ID_COLORS.length],
+            x: candidate.centroidX,
+            y: candidate.centroidY,
+            vx: 0,
+            vy: 0,
+            minX: candidate.minX,
+            minY: candidate.minY,
+            width: candidate.width,
+            height: candidate.height,
+            area: candidate.area,
+            trail: [{ x: candidate.centroidX, y: candidate.centroidY }],
+            matched: true
+          };
+          updatedTracks.push(newTrack);
+        }
+      }
+
+      // Reset matched flag for next iteration
+      updatedTracks.forEach(t => t.matched = false);
+      trackedBlobs = updatedTracks;
+    }
+
+    // --- Synthetic Demo Mode Generator ---
+
+    function updateDemoBall() {
+      demoBall.x += demoBall.vx;
+      demoBall.y += demoBall.vy;
+
+      if (demoBall.x - demoBall.radius < 0 || demoBall.x + demoBall.radius > canvas.width) {
+        demoBall.vx *= -1;
+      }
+      if (demoBall.y - demoBall.radius < 0 || demoBall.y + demoBall.radius > canvas.height) {
+        demoBall.vy *= -1;
+      }
+    }
+
+    function drawDemoBackground() {
+      // Dark gradient artificial background
+      const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      grad.addColorStop(0, '#0f172a');
+      grad.addColorStop(1, '#020617');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Grid visual background line pattern
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 40) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += 40) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+      }
+
+      // Render moving ball target
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(demoBall.x, demoBall.y, demoBall.radius, 0, Math.PI * 2);
+      ctx.fillStyle = demoBall.color;
+      ctx.shadowColor = demoBall.color;
+      ctx.shadowBlur = 15;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // --- Render Overlays & Visual Feedback ---
+
+    function drawOverlays() {
+      trackedBlobs.forEach(blob => {
+        // 1. Draw Trail History
+        if (config.showTrails && blob.trail.length > 1) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(blob.trail[0].x, blob.trail[0].y);
+          for (let i = 1; i < blob.trail.length; i++) {
+            ctx.lineTo(blob.trail[i].x, blob.trail[i].y);
+          }
+          ctx.strokeStyle = blob.color;
+          ctx.lineWidth = 2.5;
+          ctx.lineCap = 'round';
+          ctx.globalAlpha = 0.6;
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // 2. Draw Bounding Box
+        if (config.showBoxes) {
+          ctx.save();
+          ctx.strokeStyle = blob.color;
+          ctx.lineWidth = 2;
+          ctx.strokeRect(blob.minX, blob.minY, blob.width, blob.height);
+
+          // Header ID Tag
+          ctx.fillStyle = blob.color;
+          ctx.font = 'bold 11px monospace';
+          const tagText = `ID: #${blob.id}`;
+          const textWidth = ctx.measureText(tagText).width;
+
+          ctx.fillRect(blob.minX, blob.minY - 18, textWidth + 8, 18);
+          ctx.fillStyle = '#000000';
+          ctx.fillText(tagText, blob.minX + 4, blob.minY - 5);
+          ctx.restore();
+        }
+
+        // 3. Draw Velocity Vector Arrow
+        if (config.showVectors && (Math.abs(blob.vx) > 5 || Math.abs(blob.vy) > 5)) {
+          ctx.save();
+          const arrowScale = 0.25; // Visual length scaling factor
+          const targetX = blob.x + blob.vx * arrowScale;
+          const targetY = blob.y + blob.vy * arrowScale;
+
+          ctx.beginPath();
+          ctx.moveTo(blob.x, blob.y);
+          ctx.lineTo(targetX, targetY);
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Arrowhead tip
+          const angle = Math.atan2(blob.vy, blob.vx);
+          ctx.beginPath();
+          ctx.moveTo(targetX, targetY);
+          ctx.lineTo(targetX - 8 * Math.cos(angle - Math.PI / 6), targetY - 8 * Math.sin(angle - Math.PI / 6));
+          ctx.lineTo(targetX - 8 * Math.cos(angle + Math.PI / 6), targetY - 8 * Math.sin(angle + Math.PI / 6));
+          ctx.fillStyle = '#38bdf8';
+          ctx.fill();
+          ctx.restore();
+        }
+
+        // 4. Draw Centroid Target Point
+        if (config.showCentroids) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(blob.x, blob.y, 5, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.fill();
+          ctx.strokeStyle = blob.color;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Crosshair lines
+          ctx.beginPath();
+          ctx.moveTo(blob.x - 8, blob.y); ctx.lineTo(blob.x + 8, blob.y);
+          ctx.moveTo(blob.x, blob.y - 8); ctx.lineTo(blob.x, blob.y + 8);
+          ctx.strokeStyle = blob.color;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          ctx.restore();
+        }
+      });
+    }
+
+    // --- Main Loop ---
+
+    function processFrame(now) {
+      const deltaTime = Math.max((now - lastFrameTime) / 1000, 0.001);
+      lastFrameTime = now;
+
+      // Calculate FPS
+      frameCount++;
+      if (frameCount % 10 === 0) {
+        fps = Math.round(1 / deltaTime);
+        statFPS.innerText = `${fps} FPS`;
+      }
+
+      // Resize canvas internal buffer to video stream dimensions
+      if (isWebcamActive && video.videoWidth) {
+        if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+        }
+      } else if (!isWebcamActive && (canvas.width !== 640 || canvas.height !== 480)) {
+        canvas.width = 640;
+        canvas.height = 480;
+      }
+
+      // Draw background frame
+      if (isWebcamActive) {
+        ctx.save();
+        if (config.flipHorizontal) {
+          ctx.translate(canvas.width, 0);
+          ctx.scale(-1, 1);
+        }
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        ctx.restore();
+      } else {
+        updateDemoBall();
+        drawDemoBackground();
+      }
+
+      // Extract pixel frame data for Computer Vision processing
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      // Run Blob Detection
+      const candidateBlobs = detectBlobs(imageData);
+
+      // Re-put binary mask on screen if enabled
+      if (config.showMask) {
+        ctx.putImageData(imageData, 0, 0);
+      }
+
+      // Track candidate blobs across frames
+      updateTrackedBlobs(candidateBlobs, deltaTime);
+
+      // Draw active visual overlays
+      drawOverlays();
+
+      // Update Diagnostics HUD
+      statBlobCount.innerText = trackedBlobs.length;
+      if (trackedBlobs.length > 0) {
+        const primary = trackedBlobs[0]; // Largest / primary blob
+        const totalVel = Math.round(Math.sqrt(primary.vx * primary.vx + primary.vy * primary.vy));
+
+        statPrimaryPos.innerText = `${Math.round(primary.x)}, ${Math.round(primary.y)}`;
+        statPrimaryArea.innerText = `${Math.round(primary.area)} px²`;
+        statPrimaryVelocity.innerText = `${totalVel} px/s`;
+      } else {
+        statPrimaryPos.innerText = `0, 0`;
+        statPrimaryArea.innerText = `0 px²`;
+        statPrimaryVelocity.innerText = `0 px/s`;
+      }
+
+      requestAnimationFrame(processFrame);
+    }
+
+    // --- Camera Media Handler ---
+
+    async function startCamera() {
+      try {
+        cameraStatusText.innerText = 'Connecting...';
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' },
+          audio: false
+        });
+
+        videoStream = stream;
+        video.srcObject = stream;
+        await video.play();
+
+        isWebcamActive = true;
+        cameraStatusBadge.className = "flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+        cameraStatusText.innerText = "Camera Live";
+        toggleCameraBtnText.innerText = "Stop Camera";
+      } catch (err) {
+        console.warn("Webcam access denied or unavailable:", err);
+        isWebcamActive = false;
+        cameraStatusBadge.className = "flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
+        cameraStatusText.innerText = "Demo Mode (No Cam)";
+        toggleCameraBtnText.innerText = "Request Camera";
+      }
+    }
+
+    function stopCamera() {
+      if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+      }
+      isWebcamActive = false;
+      cameraStatusBadge.className = "flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
+      cameraStatusText.innerText = "Demo Mode";
+      toggleCameraBtnText.innerText = "Request Camera";
+    }
+
+    toggleCameraBtn.addEventListener('click', () => {
+      if (isWebcamActive) {
+        stopCamera();
+      } else {
+        startCamera();
+      }
+    });
+
+    // Take photo snapshot
+    snapshotBtn.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = `blob-tracker-snapshot-${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+
+    // --- UI Control Event Listeners ---
+
+    hueTolInput.addEventListener('input', (e) => {
+      config.hueTolerance = parseInt(e.target.value);
+      document.getElementById('hueTolVal').innerText = `${config.hueTolerance}°`;
+    });
+
+    satMinInput.addEventListener('input', (e) => {
+      config.minSat = parseInt(e.target.value) / 100;
+      document.getElementById('satMinVal').innerText = `${e.target.value}%`;
+    });
+
+    valMinInput.addEventListener('input', (e) => {
+      config.minVal = parseInt(e.target.value) / 100;
+      document.getElementById('valMinVal').innerText = `${e.target.value}%`;
+    });
+
+    minAreaInput.addEventListener('input', (e) => {
+      config.minArea = parseInt(e.target.value);
+      document.getElementById('minAreaVal').innerText = config.minArea;
+    });
+
+    maxAreaInput.addEventListener('input', (e) => {
+      config.maxArea = parseInt(e.target.value);
+      document.getElementById('maxAreaVal').innerText = config.maxArea;
+    });
+
+    gridStepInput.addEventListener('input', (e) => {
+      config.gridStep = parseInt(e.target.value);
+      document.getElementById('gridStepVal').innerText = `${config.gridStep} px`;
+    });
+
+    trailLengthInput.addEventListener('input', (e) => {
+      config.trailLength = parseInt(e.target.value);
+      document.getElementById('trailLengthVal').innerText = config.trailLength;
+    });
+
+    document.getElementById('resetTolerancesBtn').addEventListener('click', () => {
+      hueTolInput.value = 25; config.hueTolerance = 25;
+      document.getElementById('hueTolVal').innerText = '25°';
+
+      satMinInput.value = 25; config.minSat = 0.25;
+      document.getElementById('satMinVal').innerText = '25%';
+
+      valMinInput.value = 20; config.minVal = 0.20;
+      document.getElementById('valMinVal').innerText = '20%';
+    });
+
+    // Layer Checkboxes
+    chkBoxes.addEventListener('change', (e) => config.showBoxes = e.target.checked);
+    chkCentroids.addEventListener('change', (e) => config.showCentroids = e.target.checked);
+    chkTrails.addEventListener('change', (e) => config.showTrails = e.target.checked);
+    chkVectors.addEventListener('change', (e) => config.showVectors = e.target.checked);
+    chkMask.addEventListener('change', (e) => config.showMask = e.target.checked);
+    chkFlip.addEventListener('change', (e) => config.flipHorizontal = e.target.checked);
+
+    // Initialize application on window load
+    window.addEventListener('load', () => {
+      lucide.createIcons();
+      setTargetColorRGB(255, 0, 85); // Default vibrant magenta
+      
+      // Auto attempt camera start; defaults to synthetic demo mode if denied/unavailable
+      startCamera();
+      
+      // Kick off frame processing loop
+      requestAnimationFrame(processFrame);
+    });
+  </script>
+</body>
+</html>
