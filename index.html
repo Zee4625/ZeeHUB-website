@@ -1,178 +1,987 @@
 <!DOCTYPE html>
-<html lang="ro"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>FAITH: The Echoes of Alexandria — Capitolul 1</title>
-<link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#e7e2ea;--pn:#f4f0f6;--tx:#2b1620;--mu:#6b5560;--ac:#7c1d33;--ln:#c4b6c9;--bt:#fff;--sky:#cfc6d6;--bld:#3a2a38;--gr:#2a2030;--moon:#f4f0f6;--win:#6a6275;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#150b10;--pn:#22121a;--tx:#efe6d6;--mu:#a8979a;--ac:#e0b458;--ln:#47293a;--bt:#150b10;--sky:#0d0a14;--bld:#050307;--gr:#0a0610;--moon:#b9b3c9;--win:#262a38}}
-:root[data-theme="dark"]{--bg:#150b10;--pn:#22121a;--tx:#efe6d6;--mu:#a8979a;--ac:#e0b458;--ln:#47293a;--bt:#150b10;--sky:#0d0a14;--bld:#050307;--gr:#0a0610;--moon:#b9b3c9;--win:#262a38}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:19px/1.65 Spectral,Georgia,serif}
-main{max-width:680px;margin:0 auto;padding:14px 16px 60px}
-h1{font:700 clamp(44px,12vw,68px)/1 UnifrakturCook,"Old English Text MT",Georgia,serif;margin:4px 0 0;color:var(--ac)}
-.sub{display:block;font-style:italic;color:var(--mu);margin-bottom:10px}
-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-button{font:inherit;font-size:16px;color:var(--tx);background:var(--pn);border:1px solid var(--ln);border-radius:3px;padding:8px 12px;cursor:pointer}
-button:hover{border-color:var(--ac)}button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
-#art{display:block;width:100%;height:auto;max-height:190px;border:1px solid var(--ln);border-radius:3px;--win:var(--win)}
-#art.past{--sky:#2a1620;--win:#ffc864;--bld:#1a0d14}
-#art.sec{--sky:#3a0d16;--win:#121018;--bld:#0c0508}
-#art .gh{opacity:0;transition:opacity 2s}#art.past .gh{opacity:.55}
-#art .wn{fill:var(--win);transition:fill 1.5s}
-#hud{margin:10px 0;color:var(--mu);font-size:15px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--ln);padding-bottom:8px}
-.ch{font:700 27px/1.2 UnifrakturCook,Georgia,serif;color:var(--ac);margin:16px 0 8px}
-#sc p{margin:0 0 14px;max-width:62ch}
-.who{font-weight:600;color:var(--ac);margin-right:8px;font-style:italic}.who::after{content:":"}
-.p{animation:in .6s both}@keyframes in{from{opacity:0}to{opacity:1}}
-.opts{display:grid;gap:10px;margin-top:20px}
-.opts button{text-align:left;padding:12px 14px;border-left:3px solid var(--ac)}
-.opts button.go{background:var(--ac);color:var(--bt);border-color:var(--ac)}
-.nw{border:1px solid var(--ac);background:var(--pn);padding:12px 14px;margin:16px 0;border-radius:3px}
-.nw b{display:block;color:var(--ac);margin-bottom:6px}
-.note{background:var(--pn);border:1px solid var(--ln);padding:14px;margin:12px 0;border-radius:3px}
-.note h3{margin:0 0 6px;font-size:20px;color:var(--ac)}.note p{margin:0 0 10px}
-.dead{color:var(--ac);font-weight:600}.tts{color:var(--mu);font-size:15px}
-.end{font:700 34px/1.15 UnifrakturCook,Georgia,serif;color:var(--ac);margin:16px 0 10px}
-.row{display:flex;gap:8px}
-#fl{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:9}
-#fl.on{animation:fl .9s ease-out}
-@keyframes fl{0%{opacity:.95}15%{opacity:.1}30%{opacity:.8}100%{opacity:0}}
-@media (prefers-reduced-motion:reduce){#fl.on,.p{animation:none}}
-</style></head>
-<body><div id="fl"></div>
-<main>
-<h1>FAITH</h1><span class="sub">The Echoes of Alexandria</span>
-<nav><button id="bn">📜 Note (<span id="cn">0</span>)</button><button id="bv">🔇 Narator: oprit</button><button id="bs">🔈 Sunet: pornit</button><button id="bt">☾ Temă</button></nav>
-<svg id="art" viewBox="0 0 320 130" role="img" aria-label="Biserica părăsită">
-<rect width="320" height="130" fill="var(--sky)"/><circle cx="262" cy="26" r="13" fill="var(--moon)" opacity=".8"/>
-<g fill="var(--bld)"><rect x="60" y="66" width="150" height="56"/><path d="M52 68L135 38L218 68z"/><rect x="212" y="40" width="32" height="82"/><path d="M208 42L228 18L248 42z"/></g>
-<path d="M228 18V4M222 9h12" stroke="var(--bld)" stroke-width="3"/>
-<g class="wn"><rect class="wn" x="78" y="82" width="12" height="22" rx="6"/><rect class="wn" x="108" y="82" width="12" height="22" rx="6"/><rect class="wn" x="168" y="82" width="12" height="22" rx="6"/><rect class="wn" x="221" y="62" width="14" height="20" rx="7"/></g>
-<rect x="136" y="94" width="20" height="28" rx="10" fill="var(--sky)" opacity=".6"/>
-<g class="gh" fill="#e8e4f0"><ellipse cx="84" cy="112" rx="4" ry="9"/><ellipse cx="114" cy="113" rx="4" ry="8"/><ellipse cx="174" cy="112" rx="4" ry="9"/><ellipse cx="192" cy="114" rx="4" ry="7"/></g>
-<path d="M0 122h320v8H0z" fill="var(--gr)"/>
-</svg>
-<div id="hud"></div>
-<section id="sc"></section>
-<section id="nt" hidden></section>
-</main>
-<script>
-let s,view='g',narr=false,snd=true,voice=null,AC;
-const $=i=>document.getElementById(i);
-const F=n=>{s.f=Math.max(0,Math.min(5,s.f+n))};
-const init=()=>{s={f:3,d:0,v:{},inv:[],notes:[],cur:'intro',mode:''}};
-const KEY='Cheie ruginită';
-const N={
-piatra:["Pietrele din cimitir","Toate pietrele poartă aceeași dată: noaptea în care clopotul a bătut singur. Sub ele sunt oameni de toate vârstele, îngropați deodată, dar fără mormântul vreunui stareț."],
-maria:["Mărturia Mariei","Maria spune că starețul a cerut bani pentru acoperiș și pentru clopot. Fiul ei, Ioan, a întrebat unde au ajuns banii și a dispărut în pivniță. De atunci umblă înfuriat prin biserică."],
-toma:["Mărturia paznicului","Paznicul a sunat clopotul în noaptea aceea. Starețul a zidit ușa din spatele altarului și a spus că ține acolo vasele sfinte. Din spatele zidului se auzeau cântece."],
-registru:["Registrul de socoteli","Sumele luate de la enoriași sunt trecute an de an, cu aceeași destinație: Alexandria. Ultima pagină e udă de ceară topită."],
-jurnal:["Jurnalul starețului","Banii nu mai ajung la acoperiș. Cei din Alexandria mi-au arătat cercul și mi-au spus că fiecare cerc cere încă un suflet. Dumnezeu tace. Poate că nu mai ascultă."],
-scrisoare:["Scrisoarea sigilată","Către cei din Alexandria: cercul de aici este aproape plin. Mai e nevoie de un păstor tânăr și neexperimentat, trimis de Biserică. Veți fi anunțați când ajunge."],
-potir:["Potirul lui Janel","Potirul sfințit nu suportă sânge. Cine ridică arma împotriva unui om nu mai poate închide ușa Alexandriei. Păstrează credința curată."]
-};
-const dead=(t,b)=>({dead:1,back:b,t:[t]});
-const back=(g)=>[{l:"Înapoi",g}];
-const Q={
-intro:{mode:'',t:["Capitolul 1 este o anchetă paranormală: explorezi, vorbești cu fantome și alegi ce faci. Fiecare indiciu contează, iar notele pe care le găsești pot fi ascultate cu voce tare.","Credința ta crește și scade după alegeri. Dacă mori, reiei de la ultimul punct sigur. Pentru un final perfect, nu muri deloc."],o:[{l:"Începe misiunea",g:'out',c:1}]},
-out:{mode:'',c:"Capitolul 1 — Prima Misiune și Timpul Întors",t:["Seară de toamnă, ploaie măruntă. În fața ta, biserica părăsită se ridică din ceață, cu turnul crăpat și crucea strâmbă.","Gheorghe|Ascultă, Denis. Nu spune nimic de care nu ești sigur și nu atinge nimic fără să te rogi mai întâi. Casa asta nu e goală.","Ai crucea de lemn la gât și lanterna în mână. El ține candela aprinsă și crucea de aur strânsă în palmă."],o:[{l:"Privește pietrele din cimitir",g:'cim',i:()=>!s.v.cim},{l:"Roagă-te lângă poartă (+1 credință)",g:'ru',i:()=>!s.v.ru},{l:"Intră în biserică",g:'int',c:1}]},
-cim:{e:()=>{s.v.cim=1},n:'piatra',t:["Pietrele sunt înghesuite și tocite de ploi. Toate poartă aceeași dată, iar printre ele nu e niciun mormânt de stareț.","Gheorghe|Cineva i-a îngropat pe toți deodată. Și n-a vrut să fie găsit."],o:back('out')},
-ru:{e:()=>{s.v.ru=1;F(1)},t:["Îngenunchezi în noroi și te rogi. Gheorghe așteaptă fără o vorbă, apoi încuviințează din cap. Pentru prima oară de azi, vântul tace."],o:back('out')},
-int:{mode:'',t:["Ușa cedează cu un geamăt. Înăuntru: bănci rupte, praf gros, picături care cad din tavan. Pe peretele altarului stă o icoană cu ochii zgâriați.","Gheorghe|Nu te despărți de lumină. Ce vezi acum e doar coaja."],o:[{l:"Examinează peretele din dreapta altarului",g:'crap',i:()=>!s.v.crap},{l:"Caută prin spovedanie",g:'conf',i:()=>!s.v.conf},{l:"Atinge icoana cu ochii zgâriați",g:'ico',i:()=>!s.v.ico},{l:"Mergi spre altar",g:'boom',c:1}]},
-crap:{e:()=>{s.v.crap=1},t:["Tencuiala din dreapta altarului e mai nouă decât restul, ca un petic pus în grabă. Când o bați cu degetul, sună a gol.","Gheorghe|Bine. Ține minte locul."],o:back('int')},
-conf:{e:()=>{s.v.conf=1;s.inv.push(KEY)},t:["În confesional, sub scândura scaunului, găsești o cheie ruginită legată cu sfoară neagră. Pe ea e gravată o literă: S."],o:back('int')},
-ico:{e:()=>{s.v.ico=1;F(-1)},t:["Degetele tale ating ochii zgâriați. O voce care nu e a ta îți șoptește: „Nu mai privi.” Gheorghe îți trage mâna înapoi.","Gheorghe|Ți-am spus să nu atingi nimic. Roagă-te."],o:[{l:"Roagă-te ca să-ți revii (+1 credință)",g:'int',d:()=>F(1)}]},
-boom:{fx:'t',mode:'past',t:["Pașii tăi răsună spre altar. BOOM! Un fulger lovește turnul și toată biserica se luminează alb.","Realitatea se frânge. Praful se ridică și cade ca o ploaie inversă. Lumânările se aprind una câte una, iar băncile sunt din nou întregi și pline de oameni care nu se mișcă.","Enoriașii sunt fantome, rămase în ciclul morții. Candela lui Gheorghe arde acum cu flacără albă.","Gheorghe|Se poate vorbi cu ei, Denis. Dar ai grijă ce spui și cum."],o:[{l:"Privește în jur",g:'past',c:1}]},
-past:{mode:'past',t:["Aerul miroase a tămâie veche și a pământ ud. Trei fantome se disting dintre ceilalți: o femeie în doliu, un paznic gârbov și un bărbat cu ochii goi, care te privește fix. Deasupra, un policandru de fier se leagănă fără vânt."],o:[{l:"Vorbește cu femeia în doliu",g:'maria',i:()=>!s.v.maria},{l:"Vorbește cu paznicul gârbov",g:'toma',i:()=>!s.v.toma},{l:"Apropie-te de bărbatul cu ochii goi",g:'ioan'},{l:"Urcă pe o bancă și apucă policandrul",g:'dC'}]},
-maria:{e:()=>{s.v.maria=1},n:'maria',t:["Femeia ridică spre tine o față obosită.","Maria|Starețul ne-a cerut banii pentru acoperiș și pentru clopot. Fiul meu, Ioan, a întrebat unde s-au dus și n-a mai ieșit din pivniță. De atunci umblă înfuriat.","Gheorghe|Ioan. Ține minte numele."],o:back('past')},
-toma:{e:()=>{s.v.toma=1},n:'toma',t:["Paznicul se uită după fiecare umbră.","Toma|Eu am sunat clopotul în noaptea aceea. Starețul a zidit ușa din spatele altarului. Zicea că ține acolo vasele sfinte. Dar de acolo se aud cântece."],o:back('past')},
-ioan:{t:["Bărbatul cu ochii goi rămâne nemișcat, cu pumnii strânși. Aerul din jurul lui e rece ca piatra.","Gheorghe|Alege cu grijă. Mânia lui n-are fund."],o:[{l:"Scoate crucea de lemn în fața lui",g:'ioanA'},{l:"Spune-i pe nume: „Ioan, fiul Mariei”",g:'ioanB',i:()=>s.v.maria},{l:"Retrage-te",g:'past'}]},
-ioanA:{fx:'k',mode:'sec',t:["Fantoma refuză să răspundă. Se înfurie, țipă fără glas, te ia pe sus și te aruncă printr-un perete. Zidul cedează și cazi într-o încăpere ascunsă, plină de praf și de miros de ceară arsă."],o:[{l:"Ridică-te din moloz",g:'sec',c:1}]},
-ioanB:{e:()=>{s.v.calm=1;F(1)},fx:'k',mode:'sec',t:["Fantoma tresare. Ochii goi se umplu o clipă de lacrimi. Își ridică mâna spre zidul din spatele altarului, iar piatra se desparte singură.","Gheorghe|Un om iertat arată drumul mai bine decât unul speriat."],o:[{l:"Intră în încăpere",g:'sec',c:1}]},
-dC:dead("Policandrul se desprinde și te lovește cu greutatea unui mort. Mori.",'past'),
-sec:{mode:'sec',t:()=>["Încăperea ascunsă e plină de dovezi: un registru de socoteli, un jurnal legat în piele neagră, un cerc desenat cu sânge pe podea și un cufăr încuiat. Pe zid, zgâriate cu unghia, două litere: M.S.",(s.v.reg&&s.v.jur)?"Gheorghe|Am văzut destul. Starețul fura și chema ceva. Hai să încheiem.":"Gheorghe|Încă nu înțelegem tot. Caută mai bine."],o:[{l:"Citește registrul de socoteli",g:'reg',i:()=>!s.v.reg},{l:"Răsfoiește jurnalul starețului",g:'jur',i:()=>!s.v.jur},{l:"Examinează cercul de pe podea",g:'cerc',i:()=>!s.v.cerc},{l:"Deschide cufărul cu cheia ruginită",g:'cuf',i:()=>!s.v.cuf&&s.inv.includes(KEY)},{l:"Ciocănește peretele din dreapta",g:'jan',i:()=>s.v.crap&&!s.v.jan},{l:"Încheie ancheta",g:'abb',i:()=>s.v.reg&&s.v.jur,c:1}]},
-reg:{e:()=>{s.v.reg=1},n:'registru',t:["Registrul arată sumele luate de la oameni, an după an, cu aceeași destinație trecută mereu: Alexandria."],o:back('sec')},
-jur:{e:()=>{s.v.jur=1},n:'jurnal',t:["Jurnalul te înfioară. Starețul nu a fost doar un hoț: a deschis o ușă și a hrănit-o."],o:back('sec')},
-cerc:{e:()=>{s.v.cerc=1},t:["Cercul de sânge e încă lipicios. Are șase locuri: cinci sunt pătate, iar al șaselea e gol.","Gheorghe|Nu te uita în el. N-are fund, ci doar foame."],o:back('sec')},
-cuf:{e:()=>{s.v.cuf=1},n:'scrisoare',t:["Cheia se potrivește. În cufăr stă o scrisoare sigilată cu un clopot de ceară, adresată celor din Alexandria."],o:back('sec')},
-jan:{e:()=>{s.v.jan=1;s.v.janel=1;F(1)},n:'potir',fx:'k',t:["Bați în zid. Sună a gol de trei ori, apoi o cărămidă cedează. În spatele ei, un bătrân slab se ghemuiește lângă un potir sfințit.","Janel|Eu sunt Janel. N-a mai dat nimeni de mine de o sută de ani. Ia potirul, părinte. Fără el, ușa Alexandriei nu se va închide."],o:back('sec')},
-abb:{mode:'sec',t:["În clipa în care închizi jurnalul, aerul îngheață. Din cercul de sânge se ridică o umbră înaltă, în sutană ruptă: starețul. Nu are chip, ci doar o gură deschisă.","Gheorghe|Acum, Denis! Ține crucea sus și rostește rugăciunea!"],o:[{l:"Ridică crucea și rostește rugăciunea",g:'fin',c:1},{l:"Fugi spre ieșire",g:'dA'}]},
-dA:dead("Umbra îți taie calea și te trage în cerc. Mori.",'abb'),
-fin:{end:1,mode:'past'}
-};
-function add(k){if(!s.notes.includes(k)){s.notes.push(k);return 1}}
-function go(id){
- const q=Q[id];s.cur=id;
- if(q.mode!==undefined)s.mode=q.mode;
- if(q.dead)s.d++;if(q.e)q.e();
- q.nn=q.n&&add(q.n)?q.n:null;
- view='g';
- if(q.fx){const f=$('fl');if(q.fx=='t'){f.classList.remove('on');void f.offsetWidth;f.classList.add('on')}sfx(q.fx)}
- draw();
-}
-function el(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
-function para(x,i){const p=el('p','p');p.style.animationDelay=(i*.4)+'s';const m=x.match(/^([^|]{2,12})\|(.*)$/);if(m){p.append(el('span','who',m[1]),document.createTextNode(m[2]))}else p.textContent=x;return p}
-function draw(){
- const q=Q[s.cur],S=$('sc');
- $('cn').textContent=s.notes.length;
- $('art').setAttribute('class',s.mode||'');
- $('hud').replaceChildren(el('span','','Credință '+'✝'.repeat(s.f)+'·'.repeat(5-s.f)+'  ·  Morți '+s.d),el('span','','🔦 Lanternă, ✝ Cruce'+s.inv.map(x=>', 🗝 '+x).join('')));
- S.hidden=view!='g';$('nt').hidden=view!='n';
- if(view=='n')return notes();
- S.replaceChildren();let sp=[],lines=[];
- if(q.end){
-  const r=[];
-  r.push("Rugăciunea ta se ridică peste cântecul umbrei. Candela lui Gheorghe aprinde cercul, iar starețul se destramă într-un strigăt tăcut. Fantomele își găsesc pace una câte una, iar biserica revine în ruină, dar acum e liniștită.");
-  if(s.v.calm)r.push("Ioan te privește și zâmbește înainte să dispară.");
-  r.push(s.v.janel?"Potirul lui Janel lucește în buzunarul tău. Alexandria te așteaptă.":"Simți că ai ratat ceva ascuns în pereții bisericii.");
-  S.append(el('div','end','Capitolul 1 încheiat'));
-  r.forEach((x,i)=>{S.append(para(x,i));sp.push(x)});
-  const ok=s.d==0&&s.v.janel&&s.f>=4;
-  S.append(el('p','tts','Note găsite: '+s.notes.length+' din 7  ·  Credință: '+s.f+' din 5  ·  Morți: '+s.d+'  ·  '+(ok?'Ești pe calea Sfântului.':'Un început cu răni.')));
-  S.append(el('p','tts','Capitolul 2 — Dispariția lui Mr. Gheorghe — urmează.'));
-  const o=el('div','opts'),b=el('button','go','Joacă din nou Capitolul 1');b.onclick=()=>{init();go('intro')};o.append(b);S.append(o);
- }else{
-  if(q.c)S.append(el('div','ch',q.c));
-  if(q.dead){S.append(el('p','dead','Ai murit.'))}
-  lines=typeof q.t=='function'?q.t():q.t;
-  lines.forEach((x,i)=>{S.append(para(x,i));sp.push(x.replace('|',': '))});
-  if(q.nn){const n=el('div','nw');n.append(el('b','','Notă nouă: '+N[q.nn][0]),rb(q.nn));S.append(n)}
-  const o=el('div','opts');o.className='opts p';o.style.animationDelay=(lines.length*.4+.1)+'s';
-  if(q.dead){const b=el('button','go','Încearcă din nou');b.onclick=()=>go(q.back);o.append(b)}
-  (q.o||[]).forEach(x=>{if(x.i&&!x.i())return;const b=el('button',x.c?'go':'',x.l);b.onclick=()=>{if(x.d)x.d();go(x.g)};o.append(b)});
-  S.append(o);
- }
- scrollTo(0,0);
- if(narr)say(sp.join(' '));
-}
-function notes(){
- const T=$('nt');T.replaceChildren(el('div','ch','Note găsite'));
- if(!s.notes.length)T.append(el('p','tts','Nu ai găsit nicio notă încă.'));
- s.notes.forEach(k=>{const n=el('div','note');n.append(el('h3','',N[k][0]),el('p','',N[k][1]),rb(k));T.append(n)});
- const b=el('button','go','Înapoi la joc');b.onclick=()=>{stop();view='g';draw()};T.append(b);
- T.append(el('p','tts',voice?'Voce: '+voice.name:'Nu am găsit voce românească; se folosește vocea implicită a browserului.'));
-}
-function rb(k){const d=el('div','row'),a=el('button','','🔊 Citește'),b=el('button','','■ Stop');
- a.onclick=()=>say(N[k][0]+'. '+N[k][1]);b.onclick=stop;d.append(a,b);return d}
-const syn=window.speechSynthesis;
-function vs(){voice=(syn.getVoices()||[]).find(v=>/^ro/i.test(v.lang))||null}
-if(syn){vs();syn.onvoiceschanged=vs}
-function say(x){if(!syn)return;syn.cancel();const u=new SpeechSynthesisUtterance(x);u.lang='ro-RO';if(voice)u.voice=voice;u.rate=.92;syn.speak(u)}
-function stop(){if(syn)syn.cancel()}
-function sfx(k){
- if(!snd)return;let a;try{a=AC=AC||new(window.AudioContext||window.webkitAudioContext)()}catch(e){return}
- if(a.state=='suspended')a.resume();
- const g=a.createGain(),t=a.currentTime;g.connect(a.destination);
- if(k=='t'){const n=a.createBuffer(1,a.sampleRate*3,a.sampleRate),c=n.getChannelData(0);
-  for(let i=0;i<c.length;i++)c[i]=(Math.random()*2-1)*Math.pow(1-i/c.length,2);
-  const S=a.createBufferSource(),L=a.createBiquadFilter();L.type='lowpass';L.frequency.value=260;S.buffer=n;S.connect(L);L.connect(g);g.gain.value=1.4;S.start(t)}
- else{const o=a.createOscillator();o.frequency.value=90;o.connect(g);g.gain.setValueAtTime(.8,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.35)}
-}
-$('bn').onclick=()=>{view=view=='n'?'g':'n';stop();draw()};
-$('bv').onclick=()=>{narr=!narr;$('bv').textContent=narr?'🔊 Narator: pornit':'🔇 Narator: oprit';if(narr){const q=Q[s.cur],l=typeof q.t=='function'?q.t():(q.t||[]);say(l.map(x=>x.replace('|',': ')).join(' '))}else stop()};
-$('bs').onclick=()=>{snd=!snd;$('bs').textContent=snd?'🔈 Sunet: pornit':'🔇 Sunet: oprit'};
-$('bt').onclick=()=>{const r=document.documentElement,d=matchMedia('(prefers-color-scheme: dark)').matches,c=r.dataset.theme||(d?'dark':'light');r.dataset.theme=c=='dark'?'light':'dark'};
-init();go('intro');
-</script></body></html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAITH: The Echoes of Alexandria</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #050508;
+            color: #e2e8f0;
+            font-family: 'Press Start 2P', monospace;
+            user-select: none;
+            overflow: hidden;
+        }
+        /* Custom Cross Cursor */
+        .cross-cursor, canvas, button, a {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23ffeb3b" stroke-width="3"><path d="M12 2v20M5 8h14"/></svg>') 12 12, crosshair !important;
+        }
+        canvas {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
+        }
+        .crt-overlay {
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+        /* Retro Modal Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col items-center justify-center relative cross-cursor">
+
+    <!-- CRT Visual Filter -->
+    <div class="absolute inset-0 crt-overlay z-40"></div>
+
+    <!-- Main Game Container -->
+    <div class="relative w-full max-w-4xl h-full max-h-[700px] flex flex-col items-center justify-center p-2">
+        
+        <!-- Header Bar -->
+        <div class="w-full flex justify-between items-center mb-2 px-4 py-2 bg-slate-900 border-2 border-slate-700 rounded text-xs z-30">
+            <div class="flex items-center space-x-2">
+                <span class="text-amber-400">FAITH: Echoes of Alexandria</span>
+                <span id="chapter-tag" class="text-slate-400 text-[10px] hidden sm:inline">[Cap 1]</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="lang-btn" class="bg-slate-800 hover:bg-slate-700 px-2 py-1 border border-slate-600 rounded text-amber-300 transition">
+                    🌐 ENG / RO
+                </button>
+                <button id="mute-btn" class="bg-slate-800 hover:bg-slate-700 px-2 py-1 border border-slate-600 rounded text-slate-300 transition">
+                    🔊 SOUND: ON
+                </button>
+            </div>
+        </div>
+
+        <!-- Canvas Container -->
+        <div class="relative w-full aspect-video border-4 border-slate-800 bg-black rounded overflow-hidden flex items-center justify-center">
+            <canvas id="gameCanvas" width="640" height="360" class="w-full h-full block"></canvas>
+
+            <!-- UI Overlay for Dialogues / Notes / Menus -->
+            <div id="ui-layer" class="absolute inset-0 z-20 flex flex-col justify-end p-4 pointer-events-none">
+                
+                <!-- Dialogue Box -->
+                <div id="dialogue-box" class="hidden pointer-events-auto bg-slate-950/95 border-4 border-slate-400 p-4 rounded text-sm text-slate-100 shadow-2xl space-y-3">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-1">
+                        <span id="speaker-name" class="text-amber-400 font-bold">???</span>
+                        <span class="text-[10px] text-slate-500">[SPACE / CLICK NEXT]</span>
+                    </div>
+                    <p id="dialogue-text" class="text-xs leading-relaxed min-h-[40px]"></p>
+                    <div id="dialogue-choices" class="flex flex-col space-y-2 mt-2 hidden"></div>
+                </div>
+
+                <!-- Note View Modal -->
+                <div id="note-box" class="hidden pointer-events-auto absolute inset-6 bg-amber-950/95 border-4 border-amber-600 p-6 rounded shadow-2xl flex flex-col justify-between text-amber-100 overflow-y-auto">
+                    <div>
+                        <h3 id="note-title" class="text-amber-400 text-sm font-bold mb-4 border-b border-amber-700 pb-2">SACRED TEXT</h3>
+                        <p id="note-body" class="text-xs leading-relaxed font-mono whitespace-pre-wrap"></p>
+                    </div>
+                    <button id="close-note-btn" class="mt-4 self-center bg-amber-900 hover:bg-amber-800 text-amber-200 border-2 border-amber-500 px-4 py-2 text-xs rounded">
+                        CLOSE (ESC / SPACE)
+                    </button>
+                </div>
+
+                <!-- Title Menu Screen Overlay -->
+                <div id="title-screen" class="pointer-events-auto absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-6 space-y-6 text-center">
+                    <div class="space-y-2">
+                        <h1 class="text-2xl sm:text-3xl text-red-600 tracking-wider font-extrabold animate-pulse">FAITH</h1>
+                        <h2 class="text-xs sm:text-sm text-amber-400">THE ECHOES OF ALEXANDRIA</h2>
+                        <p class="text-[10px] text-slate-500 mt-1">Created by Zack & Ghita boschetarul</p>
+                    </div>
+
+                    <div class="w-full max-w-xs space-y-3">
+                        <button id="start-btn" class="w-full py-3 bg-red-950 hover:bg-red-900 border-2 border-red-600 text-slate-100 text-xs rounded transition flex items-center justify-center space-x-2">
+                            <span>✝</span> <span>START NEW GAME</span>
+                        </button>
+                        <button id="controls-btn" class="w-full py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-[10px] rounded">
+                            CONTROLS & HOW TO PLAY
+                        </button>
+                        <button id="credits-btn" class="w-full py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-[10px] rounded">
+                            CREDITS
+                        </button>
+                    </div>
+
+                    <p class="text-[9px] text-slate-600 max-w-sm">Use Holy Cross to cleanse demons. Choose your path wisely—decisions permanently lock your ending.</p>
+                </div>
+
+                <!-- Controls Modal -->
+                <div id="controls-modal" class="hidden pointer-events-auto absolute inset-6 bg-slate-900 border-4 border-slate-600 p-6 rounded text-xs space-y-4 text-slate-200 overflow-y-auto">
+                    <h3 class="text-amber-400 text-sm font-bold border-b border-slate-700 pb-2">CONTROLS</h3>
+                    <ul class="space-y-2 text-[10px] leading-relaxed">
+                        <li><b class="text-amber-300">WASD / Arrow Keys:</b> Move Character</li>
+                        <li><b class="text-amber-300">SPACE / Right Click:</b> Hold to Raise Holy Cross (Deals Holy Damage / Cleanses)</li>
+                        <li><b class="text-amber-300">F Key:</b> Toggle Flashlight (Denis) / Light Candle</li>
+                        <li><b class="text-amber-300">E Key:</b> Interact with Objects / Read Notes / Save Altars</li>
+                        <li><b class="text-amber-300">R Key:</b> Use Equipped Revolver (If Acquired - WARNING: Irreversible choice!)</li>
+                    </ul>
+                    <button id="close-controls-btn" class="bg-slate-800 hover:bg-slate-700 border border-slate-500 px-4 py-2 text-[10px] rounded">BACK TO MENU</button>
+                </div>
+
+                <!-- Credits Modal -->
+                <div id="credits-modal" class="hidden pointer-events-auto absolute inset-6 bg-slate-900 border-4 border-slate-600 p-6 rounded text-xs space-y-4 text-slate-200 text-center flex flex-col items-center justify-center">
+                    <h3 class="text-amber-400 text-sm font-bold">CREDITS</h3>
+                    <p class="text-xs text-red-400 font-bold">FAITH: The Echoes of Alexandria</p>
+                    <p class="text-[11px] text-slate-300">Created & Designed by:</p>
+                    <p class="text-sm text-amber-300 font-bold">Zack & Ghita boschetarul</p>
+                    <p class="text-[9px] text-slate-500 mt-4 max-w-md">Inspired by classic 80s retro horror games, SAM speech synthesis, and cosmic horror stories.</p>
+                    <button id="close-credits-btn" class="mt-4 bg-slate-800 hover:bg-slate-700 border border-slate-500 px-4 py-2 text-[10px] rounded">BACK TO MENU</button>
+                </div>
+            </div>
+
+            <!-- On-Screen Touch Controls for Mobile / On-Screen play -->
+            <div id="touch-controls" class="absolute bottom-2 right-2 z-30 flex space-x-2 sm:hidden opacity-80">
+                <button id="btn-cross-touch" class="w-12 h-12 bg-red-950 border border-red-500 text-amber-300 rounded-full text-xs font-bold">✝</button>
+                <button id="btn-interact-touch" class="w-12 h-12 bg-slate-800 border border-slate-500 text-slate-100 rounded-full text-xs font-bold">E</button>
+                <button id="btn-flash-touch" class="w-12 h-12 bg-slate-800 border border-slate-500 text-amber-400 rounded-full text-xs font-bold">💡</button>
+            </div>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="w-full flex justify-between text-[9px] text-slate-500 mt-2 px-2">
+            <span>Grid Room Engine: Active</span>
+            <span id="save-status" class="text-amber-500/70">Checkpoints: Active</span>
+        </div>
+    </div>
+
+    <!-- MAIN GAME LOGIC -->
+    <script>
+        /**
+         * FAITH: THE ECHOES OF ALEXANDRIA
+         * Complete 2D Top-Down Retro Horror Engine
+         */
+
+        // Global State & Language Dictionary
+        const LANG = {
+            en: {
+                start: "START NEW GAME",
+                controls: "CONTROLS & HOW TO PLAY",
+                credits: "CREDITS",
+                saint_ending: "ENDING 1: THE SAINT (GOOD ENDING)",
+                disciple_ending: "ENDING 2: THE FALLEN DISCIPLE (BAD ENDING 1)",
+                curse_ending: "ENDING 3: THE CHILD'S CURSE (BAD ENDING 2)",
+                lone_ending: "ENDING 4: THE LONE CRUSADER (SECRET ENDING)",
+                death_msg: "MORTIS. YOU HAVE PERISHED.",
+                ch1_title: "Chapter 1: The Shattered Sanctuary",
+                ch2_title: "Chapter 2: The Sins of the Well",
+                ch3_title: "Chapter 3: The Holy Pact & Divergence",
+                ch4_title: "Chapter 4: The Cathedral of Echoes",
+                denis: "Father Denis Dinu",
+                gheorghe: "Father Mr. Gheorghe",
+                ghost: "Parishioner Phantom",
+                emilian: "Emilian Pancu",
+                serban: "Serban (Informant)",
+                janel: "Janel (Secret Relic)",
+                matei: "Matei S.",
+                cross_prompt: "Raise Holy Cross to cleanse or inspect...",
+                note_saved: "Progress consecrated at holy altar.",
+                choice_stay: "Stay together with Mr. Gheorghe",
+                choice_solo: "Go completely alone into the dark",
+                choice_shoot_g: "Shoot Father Mr. Gheorghe (Revolver)",
+                choice_spare_g: "Put the gun away"
+            },
+            ro: {
+                start: "ÎNCEPE JOC NOU",
+                controls: "CONTROALE ȘI INSTRUCȚIUNI",
+                credits: "CREDITE",
+                saint_ending: "FINALUL 1: SFÂNTUL (FINAL BUN)",
+                disciple_ending: "FINALUL 2: UCENICUL CĂZUT (FINAL RĂU 1)",
+                curse_ending: "FINALUL 3: BLESTEMUL COPILULUI (FINAL RĂU 2)",
+                lone_ending: "FINALUL 4: CRUCIATUL SINGURATIC (FINAL SECRET)",
+                death_msg: "MORTIS. SUFLETUL TĂU A FOST PIERDUT.",
+                ch1_title: "Capitolul 1: Sanctuarul Zdruncinat",
+                ch2_title: "Capitolul 2: Păcatele Fântânii",
+                ch3_title: "Capitolul 3: Legământul Sacru și Răspântia",
+                ch4_title: "Capitolul 4: Catedrala Ecourilor",
+                denis: "Părintele Denis Dinu",
+                gheorghe: "Părintele Mr. Gheorghe",
+                ghost: "Fantoma Enoriașului",
+                emilian: "Emilian Pancu",
+                serban: "Șerban (Cântărețul)",
+                janel: "Janel (Relicvar)",
+                matei: "Matei S.",
+                cross_prompt: "Ridicã Sfânta Cruce pentru purificare...",
+                note_saved: "Progresul a fost salvat la altarul sfințit.",
+                choice_stay: "Rămâi alături de Părintele Mr. Gheorghe",
+                choice_solo: "Continuă complet singur în întuneric",
+                choice_shoot_g: "Împușcă-l pe Părintele Mr. Gheorghe (Revolver)",
+                choice_spare_g: "Lasă arma jos"
+            }
+        };
+
+        let currentLang = 'en';
+
+        // Audio Engine (Web Audio API Synth)
+        class AudioSynth {
+            constructor() {
+                this.ctx = null;
+                this.isMuted = false;
+                this.bgmOsc = null;
+                this.bgmGain = null;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            playBGM(freq = 110, type = 'sawtooth') {
+                if (this.isMuted) return;
+                this.init();
+                this.stopBGM();
+                this.bgmOsc = this.ctx.createOscillator();
+                this.bgmGain = this.ctx.createGain();
+                
+                this.bgmOsc.type = type;
+                this.bgmOsc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                
+                // Lowpass filter for dark retro horror feel
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(400, this.ctx.currentTime);
+
+                this.bgmGain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+                
+                this.bgmOsc.connect(filter);
+                filter.connect(this.bgmGain);
+                this.bgmGain.connect(this.ctx.destination);
+                
+                this.bgmOsc.start();
+            }
+
+            stopBGM() {
+                if (this.bgmOsc) {
+                    try { this.bgmOsc.stop(); } catch(e){}
+                    this.bgmOsc = null;
+                }
+            }
+
+            playSFX(type) {
+                if (this.isMuted) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                if (type === 'thunder') {
+                    // White noise thunder burst
+                    const bufferSize = this.ctx.sampleRate * 0.8;
+                    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                    const output = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        output[i] = Math.random() * 2 - 1;
+                    }
+                    const whiteNoise = this.ctx.createBufferSource();
+                    whiteNoise.buffer = buffer;
+                    const filter = this.ctx.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(300, now);
+                    filter.frequency.exponentialRampToValueAtTime(50, now + 0.8);
+                    
+                    gain.gain.setValueAtTime(0.4, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+                    
+                    whiteNoise.connect(filter);
+                    filter.connect(gain);
+                    whiteNoise.start(now);
+                } else if (type === 'cross') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.3);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'step') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(120, now);
+                    gain.gain.setValueAtTime(0.05, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'gun') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(800, now);
+                    osc.frequency.exponentialRampToValueAtTime(100, now + 0.2);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                }
+            }
+        }
+
+        const audio = new AudioSynth();
+
+        // Speech Synthesis (TTS) Engine
+        function speak(text, isDemon = false) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel(); // stop prior speech
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = currentLang === 'ro' ? 'ro-RO' : 'en-US';
+            utter.pitch = isDemon ? 0.2 : 0.9;
+            utter.rate = isDemon ? 0.7 : 0.95;
+            window.speechSynthesis.speak(utter);
+        }
+
+        // Game Setup & Engine Variables
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const CANVAS_WIDTH = 640;
+        const CANVAS_HEIGHT = 360;
+        const GRID_SIZE = 32;
+
+        let gameState = {
+            chapter: 1,
+            inMenu: true,
+            isPaused: false,
+            isDead: false,
+            deathReason: '',
+            endingLocked: null, // 'SAINT', 'DISCIPLE', 'CURSE', 'LONE'
+            hasGun: false,
+            hasKey: false,
+            hasJanelRelic: false,
+            wentSolo: false,
+            killedInnocent: false,
+            shotGheorghe: false,
+            noDeathsRun: true,
+            currentRoom: { x: 0, y: 0 }
+        };
+
+        // Player Entity
+        const player = {
+            x: 300,
+            y: 200,
+            width: 24,
+            height: 28,
+            speed: 2.2,
+            direction: 'down',
+            isRaisingCross: false,
+            flashlightOn: true,
+            role: 'denis', // 'denis' or 'gheorghe'
+            crossPower: 100
+        };
+
+        // Companion NPC (Mr. Gheorghe in Cap 1 & 3)
+        const companion = {
+            x: 260,
+            y: 200,
+            active: false
+        };
+
+        // Keys state
+        const keys = {};
+        window.addEventListener('keydown', e => {
+            keys[e.code] = true;
+            if (e.code === 'KeyF') toggleFlashlight();
+            if (e.code === 'KeyE') interact();
+            if (e.code === 'KeyR') useRevolver();
+            if (e.code === 'Space') player.isRaisingCross = true;
+        });
+        window.addEventListener('keyup', e => {
+            keys[e.code] = false;
+            if (e.code === 'Space') player.isRaisingCross = false;
+        });
+
+        // Mouse Controls
+        window.addEventListener('mousedown', e => {
+            if (e.button === 2 || e.button === 0) {
+                player.isRaisingCross = true;
+            }
+        });
+        window.addEventListener('mouseup', e => {
+            player.isRaisingCross = false;
+        });
+        window.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Dynamic Map Rooms Data Structure
+        // Grid: (0,0) Church Interior; (1,0) Secret Wall Room; (0,1) Subterranean Well; (1,1) Cathedral Core
+        const rooms = {
+            '0,0': {
+                name: 'Sanctuary Main Hall',
+                bg: '#1a1829',
+                walls: [
+                    {x: 0, y: 0, w: 640, h: 40},
+                    {x: 0, y: 320, w: 640, h: 40},
+                    {x: 0, y: 0, w: 40, h: 360},
+                    {x: 600, y: 0, w: 40, h: 360}
+                ],
+                interactables: [
+                    {x: 300, y: 60, w: 40, h: 40, type: 'altar', text: 'Consecrated Altar. Your progress is saved.'},
+                    {x: 520, y: 140, w: 32, h: 32, type: 'ghost', id: 'parishioner'},
+                    {x: 100, y: 100, w: 32, h: 32, type: 'note', title: 'Corrupt Ledger (1886)', text: 'Entry 104: The congregation funds have been siphoned to the Alexandria Core project under the well. Mr. Gheorghe must not find out.'}
+                ],
+                enemies: []
+            },
+            '1,0': {
+                name: 'Hidden Sacristy (Behind Wall)',
+                bg: '#0f172a',
+                walls: [
+                    {x: 0, y: 0, w: 640, h: 40},
+                    {x: 0, y: 320, w: 640, h: 40},
+                    {x: 600, y: 0, w: 40, h: 360}
+                ],
+                interactables: [
+                    {x: 200, y: 150, w: 32, h: 32, type: 'npc', name: 'Janel', text: 'You found me in the shadows, Denis. Take this Holy Stole relic to protect your soul.'},
+                    {x: 400, y: 200, w: 32, h: 32, type: 'chest', item: 'gun', text: 'You found an Old Revolver inside the desk. A dangerous tool...'}
+                ],
+                enemies: []
+            },
+            '0,1': {
+                name: 'Subterranean Well Ruins (Chapter 2)',
+                bg: '#090d16',
+                walls: [
+                    {x: 0, y: 0, w: 640, h: 40},
+                    {x: 0, y: 320, w: 640, h: 40},
+                    {x: 0, y: 0, w: 40, h: 360}
+                ],
+                interactables: [
+                    {x: 300, y: 200, w: 40, h: 40, type: 'well', text: 'The ancient well. Whispers linger from its depth.'},
+                    {x: 450, y: 100, w: 32, h: 32, type: 'npc', name: 'Serban', text: 'Denis! Gheorghe was dragged below. The cult is preparing the Alexandria Core catalyst!'}
+                ],
+                enemies: [
+                    {x: 400, y: 250, w: 24, h: 24, speed: 1.1, active: true}
+                ]
+            },
+            '1,1': {
+                name: 'The Cathedral of Echoes (Chapter 4)',
+                bg: '#180505',
+                walls: [
+                    {x: 0, y: 0, w: 640, h: 40},
+                    {x: 0, y: 320, w: 640, h: 40},
+                    {x: 600, y: 0, w: 40, h: 360}
+                ],
+                interactables: [
+                    {x: 300, y: 80, w: 40, h: 40, type: 'boss_altar', text: 'The Alexandria Core Catalyst pulsing with dark cosmic energy.'},
+                    {x: 150, y: 250, w: 32, h: 32, type: 'npc', name: 'Matei S.', text: 'You walked this path alone, Denis. The cosmic truth of Alexandria is revealed.'}
+                ],
+                enemies: [
+                    {x: 300, y: 150, w: 36, h: 36, speed: 0.8, isBoss: true, hp: 100, active: true}
+                ]
+            }
+        };
+
+        // UI Event Listeners & Modals
+        document.getElementById('start-btn').addEventListener('click', () => {
+            document.getElementById('title-screen').classList.add('hidden');
+            gameState.inMenu = false;
+            audio.playBGM(90, 'sawtooth');
+            triggerChapterCutscene(1);
+        });
+
+        document.getElementById('controls-btn').addEventListener('click', () => {
+            document.getElementById('controls-modal').classList.remove('hidden');
+        });
+        document.getElementById('close-controls-btn').addEventListener('click', () => {
+            document.getElementById('controls-modal').classList.add('hidden');
+        });
+
+        document.getElementById('credits-btn').addEventListener('click', () => {
+            document.getElementById('credits-modal').classList.remove('hidden');
+        });
+        document.getElementById('close-credits-btn').addEventListener('click', () => {
+            document.getElementById('credits-modal').classList.add('hidden');
+        });
+
+        document.getElementById('close-note-btn').addEventListener('click', closeNote);
+
+        document.getElementById('lang-btn').addEventListener('click', () => {
+            currentLang = currentLang === 'en' ? 'ro' : 'en';
+            updateLanguageUI();
+        });
+
+        document.getElementById('mute-btn').addEventListener('click', () => {
+            audio.isMuted = !audio.isMuted;
+            document.getElementById('mute-btn').innerText = audio.isMuted ? '🔇 SOUND: OFF' : '🔊 SOUND: ON';
+            if (audio.isMuted) audio.stopBGM();
+            else audio.playBGM(90);
+        });
+
+        // Touch Control Listeners
+        document.getElementById('btn-cross-touch').addEventListener('touchstart', (e) => { e.preventDefault(); player.isRaisingCross = true; });
+        document.getElementById('btn-cross-touch').addEventListener('touchend', (e) => { e.preventDefault(); player.isRaisingCross = false; });
+        document.getElementById('btn-flash-touch').addEventListener('click', toggleFlashlight);
+        document.getElementById('btn-interact-touch').addEventListener('click', interact);
+
+        function updateLanguageUI() {
+            const l = LANG[currentLang];
+            document.getElementById('start-btn').innerHTML = `<span>✝</span> <span>${l.start}</span>`;
+            document.getElementById('controls-btn').innerText = l.controls;
+            document.getElementById('credits-btn').innerText = l.credits;
+            document.getElementById('chapter-tag').innerText = `[Cap ${gameState.chapter}]`;
+        }
+
+        function toggleFlashlight() {
+            player.flashlightOn = !player.flashlightOn;
+            audio.playSFX('step');
+        }
+
+        // Gameplay Functions
+        function interact() {
+            if (gameState.isPaused || gameState.inMenu) return;
+
+            const roomKey = `${gameState.currentRoom.x},${gameState.currentRoom.y}`;
+            const room = rooms[roomKey];
+            if (!room) return;
+
+            for (let obj of room.interactables) {
+                const dist = Math.hypot((player.x + player.width/2) - (obj.x + obj.w/2), (player.y + player.height/2) - (obj.y + obj.h/2));
+                if (dist < 45) {
+                    if (obj.type === 'note') {
+                        openNote(obj.title, obj.text);
+                    } else if (obj.type === 'altar') {
+                        showDialogue('DIVINE ALTAR', LANG[currentLang].note_saved);
+                        audio.playSFX('cross');
+                    } else if (obj.type === 'ghost') {
+                        if (player.isRaisingCross) {
+                            // Aggressive cross on phantom cutscene -> throw through wall
+                            audio.playSFX('thunder');
+                            showDialogue(LANG[currentLang].ghost, "BEGONE DEMON! *The spirit violently hurls Denis through the chapel wall!*");
+                            speak("Get out!", true);
+                            setTimeout(() => {
+                                transitionToRoom(1, 0, 80, 180); // Move to hidden room
+                                triggerChapterCutscene(2);
+                            }, 1800);
+                        } else {
+                            showDialogue(LANG[currentLang].ghost, "The parishioner whispers: 'The former pastor betrayed us all... look behind the sacristy wall...'");
+                            speak("Look behind the wall");
+                        }
+                    } else if (obj.type === 'npc') {
+                        if (obj.name === 'Janel') {
+                            gameState.hasJanelRelic = true;
+                            showDialogue(LANG[currentLang].janel, obj.text);
+                        } else if (obj.name === 'Matei S.' && gameState.wentSolo) {
+                            triggerEnding('LONE');
+                        } else {
+                            showDialogue(obj.name, obj.text);
+                        }
+                    } else if (obj.type === 'chest') {
+                        gameState.hasGun = true;
+                        showDialogue("ITEM ACQUIRED", obj.text);
+                    } else if (obj.type === 'boss_altar') {
+                        if (gameState.wentSolo) {
+                            triggerEnding('LONE');
+                        } else {
+                            triggerEnding('SAINT');
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        function useRevolver() {
+            if (!gameState.hasGun || gameState.isPaused) return;
+            audio.playSFX('gun');
+
+            // If companion is near -> Shoot Mr. Gheorghe
+            if (companion.active && gameState.chapter === 3) {
+                gameState.shotGheorghe = true;
+                gameState.endingLocked = 'DISCIPLE';
+                showDialogue("TEMPTATION", "You raised the revolver and shot Father Mr. Gheorghe! Your faith shatters...");
+                speak("Forgive me...", false);
+                setTimeout(() => triggerEnding('DISCIPLE'), 2500);
+            } else {
+                // Killed innocent
+                gameState.killedInnocent = true;
+                gameState.endingLocked = 'CURSE';
+                showDialogue("BLOODSHED", "You fired into the dark, striking an innocent villager. A terrible curse binds to your soul.");
+            }
+        }
+
+        function openNote(title, text) {
+            gameState.isPaused = true;
+            document.getElementById('note-title').innerText = title;
+            document.getElementById('note-body').innerText = text;
+            document.getElementById('note-box').classList.remove('hidden');
+        }
+
+        function closeNote() {
+            document.getElementById('note-box').classList.add('hidden');
+            gameState.isPaused = false;
+        }
+
+        function showDialogue(speaker, text, choices = null) {
+            gameState.isPaused = true;
+            document.getElementById('speaker-name').innerText = speaker;
+            document.getElementById('dialogue-text').innerText = text;
+            const choicesDiv = document.getElementById('dialogue-choices');
+            choicesDiv.innerHTML = '';
+
+            if (choices) {
+                choicesDiv.classList.remove('hidden');
+                choices.forEach(c => {
+                    const btn = document.createElement('button');
+                    btn.className = 'w-full text-left bg-slate-800 hover:bg-slate-700 p-2 text-xs rounded border border-slate-600 text-amber-300';
+                    btn.innerText = `✝ ${c.text}`;
+                    btn.onclick = () => {
+                        choicesDiv.classList.add('hidden');
+                        document.getElementById('dialogue-box').classList.add('hidden');
+                        gameState.isPaused = false;
+                        c.action();
+                    };
+                    choicesDiv.appendChild(btn);
+                });
+            } else {
+                choicesDiv.classList.add('hidden');
+                const closeHandler = (e) => {
+                    if (e.code === 'Space' || e.type === 'click') {
+                        document.getElementById('dialogue-box').classList.add('hidden');
+                        gameState.isPaused = false;
+                        window.removeEventListener('keydown', closeHandler);
+                        document.getElementById('dialogue-box').removeEventListener('click', closeHandler);
+                    }
+                };
+                window.addEventListener('keydown', closeHandler);
+                document.getElementById('dialogue-box').addEventListener('click', closeHandler);
+            }
+
+            document.getElementById('dialogue-box').classList.remove('hidden');
+            speak(text);
+        }
+
+        function triggerChapterCutscene(capNum) {
+            gameState.chapter = capNum;
+            document.getElementById('chapter-tag').innerText = `[Cap ${capNum}]`;
+            
+            if (capNum === 1) {
+                audio.playSFX('thunder');
+                showDialogue("CHAPTER 1", "The Shattered Sanctuary. Lightning strikes outside as Denis enters the ancient chapel...");
+            } else if (capNum === 2) {
+                player.role = 'gheorghe'; // Play as Mr. Gheorghe
+                audio.playBGM(70, 'triangle');
+                showDialogue("CHAPTER 2", "The Sins of the Well. You now control Father Mr. Gheorghe deep within the subterranean ruins...");
+            } else if (capNum === 3) {
+                player.role = 'denis';
+                companion.active = true;
+                showDialogue("CHAPTER 3", "The Holy Pact. Mr. Gheorghe climbs from the well. The two priests reunite!", [
+                    {
+                        text: LANG[currentLang].choice_stay,
+                        action: () => {
+                            gameState.wentSolo = false;
+                            showDialogue(LANG[currentLang].gheorghe, "We fight side by side against the Alexandria Core!");
+                            transitionToRoom(1, 1, 100, 200);
+                            gameState.chapter = 4;
+                        }
+                    },
+                    {
+                        text: LANG[currentLang].choice_solo,
+                        action: () => {
+                            gameState.wentSolo = true;
+                            gameState.endingLocked = 'LONE';
+                            companion.active = false;
+                            showDialogue(LANG[currentLang].denis, "I must venture alone into the abyss...");
+                            transitionToRoom(1, 1, 100, 200);
+                            gameState.chapter = 4;
+                        }
+                    }
+                ]);
+            }
+        }
+
+        function transitionToRoom(rx, ry, px, py) {
+            gameState.currentRoom.x = rx;
+            gameState.currentRoom.y = ry;
+            player.x = px;
+            player.y = py;
+        }
+
+        function triggerEnding(type) {
+            gameState.isPaused = true;
+            audio.stopBGM();
+            const l = LANG[currentLang];
+            let endingTitle = '';
+            let endingDesc = '';
+
+            if (type === 'SAINT') {
+                audio.playBGM(220, 'sine');
+                endingTitle = l.saint_ending;
+                endingDesc = "Alexandria is cleansed. Denis and Mr. Gheorghe's faith holds true. You saved all souls with pure devotion!";
+            } else if (type === 'DISCIPLE') {
+                audio.playBGM(50, 'sawtooth');
+                endingTitle = l.disciple_ending;
+                endingDesc = "Having slain your mentor, darkness consumes your soul. You join the cult of Alexandria as their final sacrifice.";
+            } else if (type === 'CURSE') {
+                audio.playBGM(60, 'square');
+                endingTitle = l.curse_ending;
+                endingDesc = "Though the demon was sealed, the innocent blood you spilled triggers a mortal curse. You collapse at the altar.";
+            } else if (type === 'LONE') {
+                audio.playBGM(150, 'triangle');
+                endingTitle = l.lone_ending;
+                endingDesc = "Walking the path alone, Matei S. reveals the cosmic secrets of Alexandria. You transcend human reality.";
+            }
+
+            document.getElementById('speaker-name').innerText = endingTitle;
+            document.getElementById('dialogue-text').innerText = endingDesc;
+            document.getElementById('dialogue-box').classList.remove('hidden');
+            speak(endingDesc);
+        }
+
+        function triggerDeath(reason) {
+            gameState.isDead = true;
+            gameState.noDeathsRun = false;
+            audio.stopBGM();
+            audio.playSFX('thunder');
+            speak("Mortis", true);
+        }
+
+        // Main Update Loop
+        function update() {
+            if (gameState.inMenu || gameState.isPaused || gameState.isDead) return;
+
+            // Player Movement
+            let dx = 0, dy = 0;
+            if (keys['KeyW'] || keys['ArrowUp']) dy -= 1;
+            if (keys['KeyS'] || keys['ArrowDown']) dy += 1;
+            if (keys['KeyA'] || keys['ArrowLeft']) dx -= 1;
+            if (keys['KeyD'] || keys['ArrowRight']) dx += 1;
+
+            if (dx !== 0 && dy !== 0) {
+                dx *= 0.7071;
+                dy *= 0.7071;
+            }
+
+            if (dx !== 0 || dy !== 0) {
+                player.x += dx * player.speed;
+                player.y += dy * player.speed;
+                if (Math.random() < 0.05) audio.playSFX('step');
+            }
+
+            // Room Border Transitions (Grid Engine)
+            if (player.x > CANVAS_WIDTH - player.width) {
+                transitionToRoom(gameState.currentRoom.x + 1, gameState.currentRoom.y, 10, player.y);
+            } else if (player.x < 0) {
+                transitionToRoom(gameState.currentRoom.x - 1, gameState.currentRoom.y, CANVAS_WIDTH - player.width - 10, player.y);
+            } else if (player.y > CANVAS_HEIGHT - player.height) {
+                transitionToRoom(gameState.currentRoom.x, gameState.currentRoom.y + 1, player.x, 10);
+            } else if (player.y < 0) {
+                transitionToRoom(gameState.currentRoom.x, gameState.currentRoom.y - 1, player.x, CANVAS_HEIGHT - player.height - 10);
+            }
+
+            // Wall Collision Checks
+            const roomKey = `${gameState.currentRoom.x},${gameState.currentRoom.y}`;
+            const room = rooms[roomKey];
+            if (room && room.walls) {
+                for (let w of room.walls) {
+                    if (player.x < w.x + w.w && player.x + player.width > w.x &&
+                        player.y < w.y + w.h && player.y + player.height > w.y) {
+                        player.x -= dx * player.speed;
+                        player.y -= dy * player.speed;
+                    }
+                }
+            }
+
+            // Enemy AI & Cross Cleansing Mechanics
+            if (room && room.enemies) {
+                for (let e of room.enemies) {
+                    if (!e.active) continue;
+                    
+                    // Enemy moves towards player
+                    const angle = Math.atan2((player.y - e.y), (player.x - e.x));
+                    e.x += Math.cos(angle) * e.speed;
+                    e.y += Math.sin(angle) * e.speed;
+
+                    // Distance to player
+                    const dist = Math.hypot(player.x - e.x, player.y - e.y);
+
+                    // If raising Holy Cross -> Push & Cleanse enemy
+                    if (player.isRaisingCross && dist < 90) {
+                        e.x -= Math.cos(angle) * 3;
+                        e.y -= Math.sin(angle) * 3;
+                        if (e.hp) e.hp -= 1;
+                        audio.playSFX('cross');
+
+                        if (e.hp <= 0) e.active = false;
+                    } else if (dist < 20) {
+                        // Enemy hits player
+                        if (gameState.killedInnocent) {
+                            triggerEnding('CURSE');
+                        } else {
+                            triggerDeath('Killed by Alexandria Demon');
+                        }
+                    }
+                }
+            }
+
+            // Companion Movement (Follow player in Cap 3)
+            if (companion.active) {
+                companion.x += (player.x - 30 - companion.x) * 0.05;
+                companion.y += (player.y - companion.y) * 0.05;
+            }
+        }
+
+        // Render Engine (Canvas 2D Pixel Art)
+        function render() {
+            ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+            const roomKey = `${gameState.currentRoom.x},${gameState.currentRoom.y}`;
+            const room = rooms[roomKey] || { bg: '#000', walls: [], interactables: [] };
+
+            // Draw Floor Background
+            ctx.fillStyle = room.bg;
+            ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+            // Draw Grid Pattern (Retro Undertale Aesthetic)
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < CANVAS_WIDTH; x += GRID_SIZE) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, CANVAS_HEIGHT); ctx.stroke();
+            }
+            for (let y = 0; y < CANVAS_HEIGHT; y += GRID_SIZE) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CANVAS_WIDTH, y); ctx.stroke();
+            }
+
+            // Draw Room Walls
+            ctx.fillStyle = '#334155';
+            if (room.walls) {
+                for (let w of room.walls) {
+                    ctx.fillRect(w.x, w.y, w.w, w.h);
+                    ctx.strokeStyle = '#64748b';
+                    ctx.strokeRect(w.x, w.y, w.w, w.h);
+                }
+            }
+
+            // Draw Room Interactables
+            if (room.interactables) {
+                for (let obj of room.interactables) {
+                    if (obj.type === 'altar' || obj.type === 'boss_altar') {
+                        ctx.fillStyle = obj.type === 'boss_altar' ? '#dc2626' : '#f59e0b';
+                        ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
+                        // Candle flame
+                        ctx.fillStyle = '#fef08a';
+                        ctx.beginPath();
+                        ctx.arc(obj.x + obj.w/2, obj.y - 4, 4, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else if (obj.type === 'ghost') {
+                        ctx.fillStyle = 'rgba(147, 197, 253, 0.6)';
+                        ctx.beginPath();
+                        ctx.arc(obj.x + 16, obj.y + 16, 14, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else if (obj.type === 'note') {
+                        ctx.fillStyle = '#fef3c7';
+                        ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
+                        ctx.fillStyle = '#78350f';
+                        ctx.fillText('📜', obj.x + 8, obj.y + 20);
+                    } else if (obj.type === 'npc') {
+                        ctx.fillStyle = '#a855f7';
+                        ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = '8px "Press Start 2P"';
+                        ctx.fillText(obj.name, obj.x - 10, obj.y - 6);
+                    } else if (obj.type === 'chest') {
+                        ctx.fillStyle = '#854d0e';
+                        ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
+                    }
+                }
+            }
+
+            // Draw Companion (Mr. Gheorghe)
+            if (companion.active) {
+                ctx.fillStyle = '#fbbf24'; // Golden robes
+                ctx.fillRect(companion.x, companion.y, 24, 28);
+                // Golden Cross
+                ctx.fillStyle = '#fef08a';
+                ctx.fillRect(companion.x + 18, companion.y + 6, 8, 12);
+            }
+
+            // Draw Enemies
+            if (room.enemies) {
+                for (let e of room.enemies) {
+                    if (!e.active) continue;
+                    ctx.fillStyle = e.isBoss ? '#b91c1c' : '#7f1d1d';
+                    ctx.fillRect(e.x, e.y, e.w, e.h);
+                    // Glowing Red Eyes
+                    ctx.fillStyle = '#ff0000';
+                    ctx.fillRect(e.x + 4, e.y + 6, 4, 4);
+                    ctx.fillRect(e.x + e.w - 8, e.y + 6, 4, 4);
+                }
+            }
+
+            // Draw Player Sprite (18-bit Retro Style)
+            if (player.role === 'denis') {
+                ctx.fillStyle = '#0f172a'; // Black Cassock
+            } else {
+                ctx.fillStyle = '#92400e'; // Mr. Gheorghe Brown Cassock
+            }
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+
+            // Head
+            ctx.fillStyle = '#fde047';
+            ctx.fillRect(player.x + 4, player.y + 2, 16, 10);
+
+            // Raise Cross FX Beam
+            if (player.isRaisingCross) {
+                ctx.fillStyle = 'rgba(254, 240, 138, 0.3)';
+                ctx.beginPath();
+                ctx.arc(player.x + 12, player.y + 14, 70, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw Holy Cross in Hand
+                ctx.fillStyle = player.role === 'denis' ? '#78350f' : '#f59e0b'; // Wood / Gold
+                ctx.fillRect(player.x + 8, player.y - 12, 8, 20);
+                ctx.fillRect(player.x + 2, player.y - 8, 20, 6);
+            }
+
+            // Flashlight Cone Effect
+            if (player.flashlightOn) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+                ctx.beginPath();
+                ctx.moveTo(player.x + 12, player.y + 14);
+                ctx.lineTo(player.x - 40, player.y + 120);
+                ctx.lineTo(player.x + 64, player.y + 120);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            // Darkness Vignette
+            const gradient = ctx.createRadialGradient(
+                player.x + 12, player.y + 14, 20,
+                player.x + 12, player.y + 14, 220
+            );
+            gradient.addColorStop(0, 'rgba(0,0,0,0)');
+            gradient.addColorStop(1, 'rgba(0,0,0,0.92)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+            // Draw Death Screen
+            if (gameState.isDead) {
+                ctx.fillStyle = 'rgba(153, 27, 27, 0.85)';
+                ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '16px "Press Start 2P"';
+                ctx.textAlign = 'center';
+                ctx.fillText(LANG[currentLang].death_msg, CANVAS_WIDTH/2, CANVAS_HEIGHT/2 - 10);
+                ctx.font = '10px "Press Start 2P"';
+                ctx.fillText("REFRESH TO RESTART TRIAL", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 20);
+            }
+        }
+
+        // Main Game Loop
+        function gameLoop() {
+            update();
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Initialize Engine
+        window.onload = () => {
+            updateLanguageUI();
+            requestAnimationFrame(gameLoop);
+        };
+    </script>
+</body>
+</html>
