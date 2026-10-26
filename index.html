@@ -1,633 +1,145 @@
 <!DOCTYPE html>
-<html lang="ro" class="dark h-full">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Urmărire & Recunoaștere Facială AI — MediaPipe</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        darkBg: '#090d16',
-                        cardBg: '#131a2a',
-                        accentBlue: '#38bdf8',
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <!-- MediaPipe FaceMesh & Camera Utils (Versiuni CDN stabile) -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
-
-    <style>
-        /* Oglindire video și canvas pentru experiență nativă */
-        .mirror {
-            transform: scaleX(-1);
-        }
-        /* Gradient animat pentru text */
-        .gradient-text {
-            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        /* Overlay stilizat pe canvas */
-        .hud-border {
-            box-shadow: inset 0 0 15px rgba(56, 189, 248, 0.15);
-        }
-    </style>
-</head>
-<body class="bg-darkBg text-slate-100 min-h-full font-sans flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
-
-    <!-- Header / Antet -->
-    <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-4 py-3.5 sm:px-8">
-        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="p-2.5 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">
-                    <i data-lucide="scan-face" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold gradient-text tracking-wide">FaceTracker & Memory AI</h1>
-                    <p class="text-xs text-slate-400">Detecție 3D, Estimare Vârstă/Emoții & Memorare Facială</p>
-                </div>
-            </div>
-
-            <!-- Indicator Stare Cameră -->
-            <div class="flex items-center gap-3">
-                <span id="statusBadge" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700 transition-all">
-                    <span class="w-2 h-2 rounded-full bg-slate-500"></span>
-                    Oprită
-                </span>
-            </div>
-        </div>
-    </header>
-
-    <!-- Conținut Principal -->
-    <main class="max-w-7xl mx-auto px-4 py-6 sm:px-8 flex-1 w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
-        
-        <!-- Zona Video/Canvas (3 coloane pe desktop) -->
-        <div class="lg:col-span-3 flex flex-col gap-4">
-            <!-- Container Principal Video & HUD Overlay -->
-            <div class="relative w-full aspect-video bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl flex items-center justify-center hud-border">
-                
-                <!-- Video Element -->
-                <video id="webcam" playsinline class="w-full h-full object-cover mirror hidden"></video>
-                
-                <!-- Canvas suprapus pentru desenat rețeaua facială -->
-                <canvas id="outputCanvas" class="absolute inset-0 w-full h-full object-cover mirror pointer-events-none"></canvas>
-
-                <!-- UI Solicitare Permisiune / Pornire Integrată direct în Pagină -->
-                <div id="permissionCard" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-slate-950/95 gap-5 transition-all z-20">
-                    <div class="p-4 bg-indigo-500/10 rounded-full border border-indigo-500/20 text-indigo-400 animate-pulse">
-                        <i data-lucide="camera" class="w-12 h-12"></i>
-                    </div>
-                    <div class="max-w-md space-y-2">
-                        <h2 class="text-2xl font-bold text-slate-100">Acces la Cameră Web</h2>
-                        <p class="text-sm text-slate-400 leading-relaxed">
-                            Pentru a permite urmărirea și recunoașterea facială în timp real, apăsați pe butonul de mai jos și confirmați permisiunea din browser.
-                        </p>
-                    </div>
-
-                    <button id="requestCamBtn" class="mt-2 inline-flex items-center gap-2.5 px-7 py-4 rounded-xl font-bold text-sm bg-gradient-to-r from-indigo-600 to-sky-500 hover:from-indigo-500 hover:to-sky-400 text-white transition-all shadow-xl shadow-indigo-600/30 active:scale-95 cursor-pointer">
-                        <i data-lucide="video" class="w-5 h-5"></i>
-                        <span>Activează Camera & Începe</span>
-                    </button>
-
-                    <p class="text-xs text-slate-500 mt-2 flex items-center gap-1">
-                        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> Datele biometrice rămân 100% private în browserul tău.
-                    </p>
-                </div>
-
-                <!-- Overlay Mesaje Eroare/Încărcare -->
-                <div id="statusOverlay" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-slate-950/90 gap-4 transition-opacity hidden z-10">
-                    <div id="overlayIconContainer" class="p-3 bg-slate-900 rounded-full border border-slate-800 text-slate-400">
-                        <i id="overlayIcon" data-lucide="loader" class="w-10 h-10 animate-spin text-indigo-400"></i>
-                    </div>
-                    <div class="max-w-md">
-                        <h3 id="overlayTitle" class="text-lg font-bold text-slate-100 mb-1">Se inițializează...</h3>
-                        <p id="overlayDesc" class="text-xs text-slate-400 leading-relaxed">Se încarcă modelele neurale MediaPipe.</p>
-                    </div>
-                </div>
-
-                <!-- HUD Info suprapus pe Video când e activ -->
-                <div id="hudBox" class="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-md border border-slate-700/60 p-3 rounded-xl hidden flex-col gap-1 text-xs z-10 shadow-lg">
-                    <div class="flex items-center gap-2 text-indigo-400 font-bold">
-                        <i data-lucide="user-check" class="w-4 h-4"></i>
-                        <span id="hudRecognition">Identitate: Necunoscut</span>
-                    </div>
-                    <div class="text-slate-300 font-medium" id="hudDetails">
-                        Sistem activ
-                    </div>
-                </div>
-            </div>
-
-            <!-- Panou Statistici Live & Estimări Biometrice -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div class="bg-cardBg p-3.5 rounded-xl border border-slate-800/80 flex flex-col items-center text-center">
-                    <span class="text-[11px] text-slate-400 font-medium flex items-center gap-1">
-                        <i data-lucide="smile" class="w-3.5 h-3.5 text-amber-400"></i> Expresie
-                    </span>
-                    <span id="estExpression" class="text-base font-bold text-amber-400 mt-1">--</span>
-                </div>
-
-                <div class="bg-cardBg p-3.5 rounded-xl border border-slate-800/80 flex flex-col items-center text-center">
-                    <span class="text-[11px] text-slate-400 font-medium flex items-center gap-1">
-                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-sky-400"></i> Vârstă Estimată
-                    </span>
-                    <span id="estAge" class="text-base font-bold text-sky-400 mt-1">--</span>
-                </div>
-
-                <div class="bg-cardBg p-3.5 rounded-xl border border-slate-800/80 flex flex-col items-center text-center">
-                    <span class="text-[11px] text-slate-400 font-medium flex items-center gap-1">
-                        <i data-lucide="user" class="w-3.5 h-3.5 text-indigo-400"></i> Gen Probabil
-                    </span>
-                    <span id="estGender" class="text-base font-bold text-indigo-400 mt-1">--</span>
-                </div>
-
-                <div class="bg-cardBg p-3.5 rounded-xl border border-slate-800/80 flex flex-col items-center text-center">
-                    <span class="text-[11px] text-slate-400 font-medium flex items-center gap-1">
-                        <i data-lucide="activity" class="w-3.5 h-3.5 text-emerald-400"></i> Perf. (FPS)
-                    </span>
-                    <span id="fpsCounter" class="text-base font-bold text-emerald-400 mt-1">0</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Panou Lateral: Salvare Memorie & Controale (1 coloană) -->
-        <div class="space-y-5">
-            
-            <!-- Secțiunea Memorare / Înregistrare Facială -->
-            <div class="bg-cardBg p-5 rounded-2xl border border-slate-800 shadow-lg space-y-4">
-                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                    <i data-lucide="save" class="w-4 h-4 text-indigo-400"></i> Salvare Chip în Memorie
-                </h2>
-                
-                <div class="space-y-3">
-                    <input type="text" id="personNameInput" placeholder="Nume persoană (ex: Alex)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors">
-                    
-                    <button id="saveFaceBtn" class="w-full py-2.5 px-4 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-md active:scale-95 cursor-pointer">
-                        <i data-lucide="user-plus" class="w-4 h-4"></i>
-                        <span>Memorază Profilul Facial</span>
-                    </button>
-                </div>
-
-                <!-- Lista Persoanelor Memorate -->
-                <div class="pt-3 border-t border-slate-800">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold text-slate-400">Persoane Salvate:</span>
-                        <button id="clearMemoryBtn" class="text-[10px] text-rose-400 hover:text-rose-300 underline cursor-pointer">Șterge tot</button>
-                    </div>
-                    <div id="savedFacesList" class="max-h-36 overflow-y-auto space-y-1.5 pr-1 text-xs">
-                        <p class="text-slate-500 italic text-center py-2">Nicio persoană memorată încă.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Opțiuni Afișare & Personalizare -->
-            <div class="bg-cardBg p-5 rounded-2xl border border-slate-800 shadow-lg space-y-4">
-                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                    <i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i> Controale & Aspect
-                </h2>
-
-                <button id="toggleCamBtn" class="w-full py-3 px-4 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-md active:scale-95 cursor-pointer">
-                    <i data-lucide="power" class="w-4 h-4"></i>
-                    <span>Oprește Camera</span>
-                </button>
-
-                <!-- Toggle Plasă Facială -->
-                <label class="flex items-center justify-between cursor-pointer p-2 rounded-xl hover:bg-slate-800/50 transition-colors">
-                    <span class="text-xs font-medium text-slate-300 flex items-center gap-2">
-                        <i data-lucide="grid" class="w-4 h-4 text-indigo-400"></i> Plasă Facială (Mesh)
-                    </span>
-                    <input type="checkbox" id="toggleMesh" checked class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500">
-                </label>
-
-                <!-- Culoare Linie -->
-                <div class="pt-2 border-t border-slate-800">
-                    <label class="block text-[11px] font-semibold text-slate-400 mb-2 uppercase tracking-wider">Culoare Neon</label>
-                    <div class="grid grid-cols-4 gap-2">
-                        <button data-color="#00ffcc" class="color-btn h-8 rounded-lg border-2 border-slate-100 bg-[#00ffcc] hover:scale-105 transition-all"></button>
-                        <button data-color="#38bdf8" class="color-btn h-8 rounded-lg border-2 border-transparent bg-[#38bdf8] hover:scale-105 transition-all"></button>
-                        <button data-color="#f43f5e" class="color-btn h-8 rounded-lg border-2 border-transparent bg-[#f43f5e] hover:scale-105 transition-all"></button>
-                        <button data-color="#facc15" class="color-btn h-8 rounded-lg border-2 border-transparent bg-[#facc15] hover:scale-105 transition-all"></button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Ghid și Ajutor -->
-            <div class="bg-cardBg/60 p-4 rounded-2xl border border-slate-800 text-xs text-slate-400 space-y-2">
-                <h3 class="font-semibold text-slate-300 flex items-center gap-1.5">
-                    <i data-lucide="info" class="w-4 h-4 text-indigo-400"></i> Cum funcționează recunoașterea?
-                </h3>
-                <p class="leading-relaxed text-[11px] text-slate-400">
-                    Aplicația măsoară distanțele dintre punctele cheie (ochi, nas, gură) pentru a crea o amprentă geometrică unică salvată local.
-                </p>
-            </div>
-        </div>
-    </main>
-
-    <!-- Subsol (Footer) -->
-    <footer class="border-t border-slate-800 bg-slate-900/50 py-3 text-center text-xs text-slate-500">
-        <p>Aplicație HTML5 / AI Face Mesh — Procesare Locală în Browser</p>
-    </footer>
-
-    <!-- Script Principal JavaScript -->
-    <script>
-        // Elemente DOM
-        const videoElement = document.getElementById("webcam");
-        const canvasElement = document.getElementById("outputCanvas");
-        const canvasCtx = canvasElement.getContext("2d");
-        
-        const permissionCard = document.getElementById("permissionCard");
-        const requestCamBtn = document.getElementById("requestCamBtn");
-        const toggleCamBtn = document.getElementById("toggleCamBtn");
-        const statusBadge = document.getElementById("statusBadge");
-        
-        const statusOverlay = document.getElementById("statusOverlay");
-        const overlayIcon = document.getElementById("overlayIcon");
-        const overlayTitle = document.getElementById("overlayTitle");
-        const overlayDesc = document.getElementById("overlayDesc");
-
-        const hudBox = document.getElementById("hudBox");
-        const hudRecognition = document.getElementById("hudRecognition");
-        const hudDetails = document.getElementById("hudDetails");
-
-        const estExpression = document.getElementById("estExpression");
-        const estAge = document.getElementById("estAge");
-        const estGender = document.getElementById("estGender");
-        const fpsCounter = document.getElementById("fpsCounter");
-
-        const personNameInput = document.getElementById("personNameInput");
-        const saveFaceBtn = document.getElementById("saveFaceBtn");
-        const savedFacesList = document.getElementById("savedFacesList");
-        const clearMemoryBtn = document.getElementById("clearMemoryBtn");
-
-        const toggleMesh = document.getElementById("toggleMesh");
-        const colorBtns = document.querySelectorAll(".color-btn");
-
-        // Stări Globale
-        let cameraUtils = null;
-        let faceMesh = null;
-        let isCameraRunning = false;
-        let strokeColor = "#00ffcc";
-        let showMesh = true;
-        let currentLandmarks = null;
-
-        // Calcul FPS
-        let frameCount = 0;
-        let lastFpsUpdate = performance.now();
-
-        // Baza de date locală pentru fețe salvate
-        let savedProfiles = JSON.parse(localStorage.getItem("face_memory_profiles") || "[]");
-
-        // Inițializare Iconițe
-        lucide.createIcons();
-        renderSavedProfiles();
-
-        // 1. Inițializare Model MediaPipe FaceMesh
-        function initFaceMesh() {
-            faceMesh = new FaceMesh({
-                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
-            });
-
-            faceMesh.setOptions({
-                maxNumFaces: 1,
-                refineLandmarks: true,
-                minDetectionConfidence: 0.6,
-                minTrackingConfidence: 0.6
-            });
-
-            faceMesh.onResults(onFaceMeshResults);
-        }
-
-        // 2. Procesare Cadre & Rezultate
-        function onFaceMeshResults(results) {
-            // Calcul FPS
-            const now = performance.now();
-            frameCount++;
-            if (now - lastFpsUpdate >= 1000) {
-                fpsCounter.textContent = Math.round((frameCount * 1000) / (now - lastFpsUpdate));
-                frameCount = 0;
-                lastFpsUpdate = now;
-            }
-
-            // Redimensionare Canvas
-            if (canvasElement.width !== videoElement.videoWidth || canvasElement.height !== videoElement.videoHeight) {
-                canvasElement.width = videoElement.videoWidth || 1280;
-                canvasElement.height = videoElement.videoHeight || 720;
-            }
-
-            canvasCtx.save();
-            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-
-            if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
-                currentLandmarks = results.multiFaceLandmarks[0];
-
-                // 2a. Desenează Plasa Facială
-                if (showMesh) {
-                    drawConnectors(canvasCtx, currentLandmarks, FACEMESH_TESSELATION, { color: strokeColor + "22", lineWidth: 1 });
-                    drawConnectors(canvasCtx, currentLandmarks, FACEMESH_RIGHT_EYE, { color: strokeColor, lineWidth: 1.5 });
-                    drawConnectors(canvasCtx, currentLandmarks, FACEMESH_LEFT_EYE, { color: strokeColor, lineWidth: 1.5 });
-                    drawConnectors(canvasCtx, currentLandmarks, FACEMESH_LIPS, { color: strokeColor, lineWidth: 1.5 });
-                    drawConnectors(canvasCtx, currentLandmarks, FACEMESH_FACE_OVAL, { color: strokeColor, lineWidth: 1.5 });
-                }
-
-                // 2b. Analiză Emoție, Vârstă, Gen
-                analyzeFacialFeatures(currentLandmarks);
-
-                // 2c. Recunoaștere Facială din Memorie
-                recognizeFace(currentLandmarks);
-
-                hudBox.classList.remove("hidden");
-                hudBox.classList.add("flex");
-            } else {
-                currentLandmarks = null;
-                estExpression.textContent = "--";
-                estAge.textContent = "--";
-                estGender.textContent = "--";
-                hudBox.classList.add("hidden");
-            }
-
-            canvasCtx.restore();
-        }
-
-        // 3. Calculare Distanță Euclideană
-        function getDistance(p1, p2) {
-            return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2) + Math.pow((p1.z || 0) - (p2.z || 0), 2));
-        }
-
-        // 4. Algoritm Estimare Trăsături (Vârstă, Gen, Expresie)
-        function analyzeFacialFeatures(landmarks) {
-            // Puncte Cheie: Lip sus(13), Lip jos(14), Ochi stânga(33, 160), Ochi dreapta(263, 387), Sprânceana stânga(70), Bărbie(152), Frunte(10)
-            const mouthOpen = getDistance(landmarks[13], landmarks[14]);
-            const mouthWidth = getDistance(landmarks[61], landmarks[291]);
-            const faceHeight = getDistance(landmarks[10], landmarks[152]);
-            const faceWidth = getDistance(landmarks[234], landmarks[454]);
-
-            const leftEyeOpen = getDistance(landmarks[159], landmarks[145]);
-            const rightEyeOpen = getDistance(landmarks[386], landmarks[374]);
-            const avgEyeOpen = (leftEyeOpen + rightEyeOpen) / 2;
-
-            // Arcul sprâncenelor față de ochi
-            const browDist = getDistance(landmarks[70], landmarks[159]);
-
-            // Expresie
-            const smileRatio = mouthWidth / faceWidth;
-            const mouthOpenRatio = mouthOpen / faceHeight;
-
-            let expression = "Neutru";
-            if (smileRatio > 0.42) {
-                expression = "Zâmbitor 😀";
-            } else if (mouthOpenRatio > 0.08) {
-                expression = "Uimit 😲";
-            } else if (browDist / faceHeight < 0.08) {
-                expression = "Încruntat 😠";
-            }
-            estExpression.textContent = expression;
-
-            // Vârstă Estimată (Aproximare bazată pe raportul frunte/bărbie și deschiderea feței)
-            const eyeToChin = getDistance(landmarks[168], landmarks[152]);
-            const ageRatio = eyeToChin / faceHeight;
-            let estimatedAge = 25;
-
-            if (ageRatio > 0.62) {
-                estimatedAge = Math.round(18 + (ageRatio - 0.6) * 120);
-            } else {
-                estimatedAge = Math.round(14 + ageRatio * 20);
-            }
-            estimatedAge = Math.min(Math.max(estimatedAge, 16), 65); // Limitare între 16 și 65 ani
-            estAge.textContent = `~${estimatedAge} ani`;
-
-            // Gen Probabil (Bazat pe raportul lățimii feței și structura bărbiei)
-            const jawWidth = getDistance(landmarks[172], landmarks[397]);
-            const jawRatio = jawWidth / faceWidth;
-            let gender = jawRatio > 0.38 ? "Masculin" : "Feminin";
-            estGender.textContent = gender;
-
-            hudDetails.textContent = `${gender} • ~${estimatedAge} ani • ${expression}`;
-        }
-
-        // 5. Extragere Vector Baza de Distanțe Faciale Normate
-        function extractFaceDescriptor(landmarks) {
-            const faceSize = getDistance(landmarks[10], landmarks[152]) || 1;
-            // Puncte cheie pentru amprentă facială unică
-            const keyPoints = [10, 152, 234, 454, 1, 33, 263, 61, 291, 199];
-            let descriptor = [];
-
-            for (let i = 0; i < keyPoints.length; i++) {
-                for (let j = i + 1; j < keyPoints.length; j++) {
-                    const dist = getDistance(landmarks[keyPoints[i]], landmarks[keyPoints[j]]);
-                    descriptor.push(dist / faceSize); // Normat la dimensiunea feței
-                }
-            }
-            return descriptor;
-        }
-
-        // 6. Recunoaștere Facială din Memorie
-        function recognizeFace(landmarks) {
-            if (savedProfiles.length === 0) {
-                hudRecognition.textContent = "Identitate: Necunoscut";
-                return;
-            }
-
-            const currentDescriptor = extractFaceDescriptor(landmarks);
-            let bestMatch = null;
-            let minDistance = Infinity;
-
-            for (const profile of savedProfiles) {
-                let sumSquareDiff = 0;
-                for (let i = 0; i < currentDescriptor.length; i++) {
-                    sumSquareDiff += Math.pow(currentDescriptor[i] - profile.descriptor[i], 2);
-                }
-                const distance = Math.sqrt(sumSquareDiff);
-
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    bestMatch = profile;
-                }
-            }
-
-            // Prag de potrivire
-            if (minDistance < 0.15 && bestMatch) {
-                const confidence = Math.round((1 - minDistance / 0.15) * 100);
-                hudRecognition.textContent = `Cunoscut: ${bestMatch.name} (${confidence}%)`;
-                hudRecognition.className = "text-emerald-400 font-bold";
-            } else {
-                hudRecognition.textContent = "Identitate: Necunoscut";
-                hudRecognition.className = "text-indigo-400 font-bold";
-            }
-        }
-
-        // 7. Salvare Profil Facial Nou
-        saveFaceBtn.addEventListener("click", () => {
-            const name = personNameInput.value.trim();
-            if (!name) {
-                alert("Te rugăm să introduci un nume pentru persoana detectată!");
-                return;
-            }
-            if (!currentLandmarks) {
-                alert("Nicio față detectată pe cameră! Așază-te în fața camerei și încearcă din nou.");
-                return;
-            }
-
-            const descriptor = extractFaceDescriptor(currentLandmarks);
-            const newProfile = { id: Date.now(), name: name, descriptor: descriptor };
-
-            savedProfiles.push(newProfile);
-            localStorage.setItem("face_memory_profiles", JSON.stringify(savedProfiles));
-
-            personNameInput.value = "";
-            renderSavedProfiles();
-            alert(`Profilul pentru "${name}" a fost memorat cu succes!`);
-        });
-
-        // Afișare Lista Persoane Salvate
-        function renderSavedProfiles() {
-            if (savedProfiles.length === 0) {
-                savedFacesList.innerHTML = `<p class="text-slate-500 italic text-center py-2">Nicio persoană memorată încă.</p>`;
-                return;
-            }
-
-            savedFacesList.innerHTML = savedProfiles.map(p => `
-                <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900 border border-slate-800">
-                    <span class="font-medium text-slate-200">${p.name}</span>
-                    <button onclick="deleteProfile(${p.id})" class="text-rose-400 hover:text-rose-300 p-1 cursor-pointer" title="Șterge">
-                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                    </button>
-                </div>
-            `).join("");
-            lucide.createIcons();
-        }
-
-        // Ștergere profil individual
-        window.deleteProfile = function(id) {
-            savedProfiles = savedProfiles.filter(p => p.id !== id);
-            localStorage.setItem("face_memory_profiles", JSON.stringify(savedProfiles));
-            renderSavedProfiles();
-        };
-
-        // Ștergere toată memoria
-        clearMemoryBtn.addEventListener("click", () => {
-            if (confirm("Sigur vrei să ștergi toate persoanele memorate?")) {
-                savedProfiles = [];
-                localStorage.removeItem("face_memory_profiles");
-                renderSavedProfiles();
-            }
-        });
-
-        // 8. Pornire Cameră cu Solicitare Permisiune Integrată
-        async function startCamera() {
-            permissionCard.classList.add("hidden");
-            statusOverlay.classList.remove("hidden");
-            updateStatus("Se inițializează...", "loading");
-
-            if (!faceMesh) {
-                initFaceMesh();
-            }
-
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "user" }
-                });
-
-                videoElement.srcObject = stream;
-                
-                cameraUtils = new Camera(videoElement, {
-                    onFrame: async () => {
-                        await faceMesh.send({ image: videoElement });
-                    },
-                    width: 1280,
-                    height: 720
-                });
-
-                await cameraUtils.start();
-
-                isCameraRunning = true;
-                videoElement.classList.remove("hidden");
-                statusOverlay.classList.add("hidden");
-
-                updateStatus("Activă", "active");
-                toggleCamBtn.querySelector("span").textContent = "Oprește Camera";
-
-            } catch (err) {
-                console.error("Eroare acces cameră:", err);
-                isCameraRunning = false;
-                statusOverlay.classList.remove("hidden");
-                
-                overlayIcon.setAttribute("data-lucide", "alert-triangle");
-                overlayIcon.classList.remove("animate-spin");
-                overlayTitle.textContent = "Acces Refuzat la Cameră";
-                overlayDesc.textContent = "Asigură-te că ai apăsat 'Permite' (Allow) în pop-up-ul browserului sau deblochează camera din setările adresei web.";
-                
-                updateStatus("Eroare", "error");
-                lucide.createIcons();
-            }
-        }
-
-        function stopCamera() {
-            if (cameraUtils) {
-                cameraUtils.stop();
-                cameraUtils = null;
-            }
-
-            if (videoElement.srcObject) {
-                const tracks = videoElement.srcObject.getTracks();
-                tracks.forEach(track => track.stop());
-                videoElement.srcObject = null;
-            }
-
-            isCameraRunning = false;
-            videoElement.classList.add("hidden");
-            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-            permissionCard.classList.remove("hidden");
-            hudBox.classList.add("hidden");
-
-            updateStatus("Oprită", "stopped");
-            toggleCamBtn.querySelector("span").textContent = "Pornește Camera";
-        }
-
-        // Action Handlers
-        requestCamBtn.addEventListener("click", startCamera);
-        toggleCamBtn.addEventListener("click", () => {
-            if (isCameraRunning) stopCamera();
-            else startCamera();
-        });
-
-        toggleMesh.addEventListener("change", (e) => showMesh = e.target.checked);
-
-        colorBtns.forEach(btn => {
-            btn.addEventListener("click", () => {
-                colorBtns.forEach(b => b.classList.replace("border-slate-100", "border-transparent"));
-                btn.classList.replace("border-transparent", "border-slate-100");
-                strokeColor = btn.getAttribute("data-color");
-            });
-        });
-
-        function updateStatus(text, type) {
-            const colors = {
-                stopped: "bg-slate-800 text-slate-400 border-slate-700",
-                loading: "bg-amber-500/10 text-amber-400 border-amber-500/30",
-                active: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
-                error: "bg-rose-500/10 text-rose-400 border-rose-500/30"
-            };
-            const dots = {
-                stopped: "bg-slate-500",
-                loading: "bg-amber-400 animate-pulse",
-                active: "bg-emerald-400 animate-pulse",
-                error: "bg-rose-500"
-            };
-
-            statusBadge.className = `inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold border ${colors[type]}`;
-            statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full ${dots[type]}"></span> ${text}`;
-        }
-    </script>
-</body>
-</html>
+<html lang="ro"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FAITH: The Echoes of Alexandria</title>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e7e2ea;--pn:#f4f0f6;--tx:#2b1620;--mu:#6b5560;--ac:#7c1d33;--ln:#c4b6c9;--bt:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#150b10;--pn:#22121a;--tx:#efe6d6;--mu:#a8979a;--ac:#e0b458;--ln:#47293a;--bt:#150b10}}
+:root[data-theme="dark"]{--bg:#150b10;--pn:#22121a;--tx:#efe6d6;--mu:#a8979a;--ac:#e0b458;--ln:#47293a;--bt:#150b10}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:19px/1.65 Spectral,Georgia,serif;background-image:radial-gradient(ellipse at 50% 0,var(--pn),transparent 70%)}
+main{max-width:680px;margin:0 auto;padding:18px 18px 60px}
+h1{font:700 clamp(46px,12vw,72px)/1 UnifrakturCook,"Old English Text MT",Georgia,serif;margin:6px 0 0;color:var(--ac);letter-spacing:.02em}
+.sub{display:block;font-style:italic;color:var(--mu);margin-bottom:12px}
+nav{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;font-size:16px;color:var(--tx);background:var(--pn);border:1px solid var(--ln);border-radius:3px;padding:8px 12px;cursor:pointer}
+button:hover{border-color:var(--ac)}button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+#hud{margin:12px 0;color:var(--mu);font-size:16px;display:flex;justify-content:space-between;border-bottom:1px solid var(--ln);padding-bottom:8px}
+.ch{font:700 26px/1.2 UnifrakturCook,Georgia,serif;color:var(--ac);margin:20px 0 10px}
+#sc p{margin:0 0 14px;max-width:62ch}
+.opts{display:grid;gap:10px;margin-top:22px}
+.opts button{text-align:left;padding:12px 14px;border-left:3px solid var(--ac)}
+.opts button.go{background:var(--ac);color:var(--bt);border-color:var(--ac)}
+.nw{border:1px solid var(--ac);background:var(--pn);padding:12px 14px;margin:16px 0;border-radius:3px}
+.nw b{display:block;color:var(--ac)}
+.note{background:var(--pn);border:1px solid var(--ln);padding:14px;margin:12px 0;border-radius:3px}
+.note h3{margin:0 0 6px;font-size:20px;color:var(--ac)}.note p{margin:0 0 10px}
+.dead{color:var(--ac)}.tts{color:var(--mu);font-size:15px}
+.end{font:700 34px/1.15 UnifrakturCook,Georgia,serif;color:var(--ac);margin:18px 0 10px}
+#fl{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:9}
+#fl.on{animation:fl .9s ease-out}
+@keyframes fl{0%{opacity:.95}15%{opacity:.1}30%{opacity:.8}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){#fl.on{animation:none}}
+</style></head>
+<body><div id="fl"></div>
+<main>
+<h1>FAITH</h1><span class="sub">The Echoes of Alexandria</span>
+<nav><button id="bn">📜 Note (<span id="cn">0</span>)</button><button id="bv">🔇 Narator: oprit</button><button id="bt">☾ Temă</button></nav>
+<div id="hud"></div>
+<section id="sc"></section>
+<section id="nt" hidden></section>
+</main>
+<script>
+let s,view='g',narr=false;
+const $=i=>document.getElementById(i);
+const F=n=>{s.f=Math.max(0,Math.min(5,s.f+n))};
+const init=()=>{s={f:3,d:0,gun:0,alone:0,janel:0,km:0,kill:0,notes:[],cur:'intro'}};
+const N={
+jurnal:["Jurnalul starețului","Am luat banii de la oamenii care mi-au dat tot ce aveau. Ritualul cere încă un cerc. Cei din Alexandria promit că ușa se va deschide, iar eu voi sta lângă ea. Dumnezeu tace. Poate că nu mai ascultă."],
+potir:["Potirul lui Janel","Potirul sfințit nu suportă sânge. Cine ridică arma împotriva unui om, chiar și din frică, nu mai poate închide ușa Alexandriei. Păstrează credința curată, părinte."],
+plan:["Însemnările cultiștilor","Catalistul este aproape gata. Când clopotul va suna a treia oară, ușa din Alexandria se deschide și lumea cade. Nimeni nu trebuie să afle cine păzește clopotnița."],
+emilian:["Povestea lui Emilian","Emilian mi-a spus: „Pe vremuri, un om a numărat treptele clopotniței din Alexandria și a scris numele lui sub clopot. Matei S. A rămas acolo. Doar cine merge singur poate ajunge la el.”],
+adevar:["Adevărul lui Matei S.","Ce-au ridicat oamenii în Alexandria nu a fost un altar al demonilor, ci un zăvor. Divinitatea nu a tăcut: a păzit. Demonii sunt ecoul fricii noastre, iar ușa se deschide doar celui care o crede goală."]
+};
+const E={
+saint:["Finalul Bun — The Saint Ending","Potirul lui Janel ține ușa închisă. Alături de Mr. Gheorghe, rostești ultima rugăciune, iar clopotul Alexandriei tace pentru totdeauna. Satul se trezește la lumină. Nu ai murit niciodată, nu ai ridicat arma și ai ales credința. Denis Dinu devine un adevărat stâlp al bisericii."],
+ev1:["Finalul Rău 1 — Căderea în Păcat","Împușcătura răsună. Mr. Gheorghe se prăbușește, iar credința ta se stinge odată cu el. Rătăcit și corupt, te alături cultului din Alexandria. La al treilea sunet al clopotului, tu ești sacrificiul final al ritualului lor."],
+ev2:["Finalul Rău 2 — Blestemul Copilului","Mr. Gheorghe te-a iertat și te-a ridicat. Ajungi aproape de victorie. Dar copilul celui pe care l-ai ucis a rostit un blestem, iar el te găsește chiar în pragul Alexandriei. Mori brusc, cu sutana plină de cenușă, înainte să se termine totul."],
+secret:["Finalul Secret — The Lone Crusader","Singur, ai urcat la Matei S. și ai aflat adevărul: ușa nu trebuie închisă cu forța, ci păzită. Rămâi în clopotniță în locul lui, ecou între ecouri. Ai deschis o concluzie pe care nimeni din sat n-o va înțelege."],
+bit:["Finalul Amar","Alexandria este salvată, dar nu fără cicatrici. Ai murit de prea multe ori, ai pierdut ceva din credință sau n-ai găsit ajutorul ascuns. Ușa se închide, dar nu complet. Ecourile rămân."]
+};
+const dead=(t,b)=>({dead:1,back:b,t:[t]});
+const Q={
+intro:{t:["Un joc de poveste și alegeri. Credința ta, morțile tale și arma pe care o vei lua decid cum se termină totul. Sunt patru finaluri adevărate.","Notele pe care le găsești pot fi ascultate cu voce tare (buton Citește în secțiunea Note). Poți porni și Naratorul din meniu."],o:[{l:"Începe misiunea",g:'start',c:1}]},
+start:{c:"Capitolul 1 — Prima Misiune și Timpul Întors",t:["Ai absolvit școala de preoți. Prima ta misiune: o biserică părăsită și izolată, la marginea ținutului Alexandria.","Ești părintele Denis Dinu, idealist și neexperimentat. Ai sutana neagră, o cruce de lemn și o lanternă. Lângă tine, părintele Gheorghe, sever și devotat, cu crucea de aur, candela și o Biblie veche."],o:[{l:"Intră în biserică",g:'c1b'},{l:"Roagă-te înainte să intri (+1 credință)",g:'c1b',d:()=>F(1)}]},
+c1b:{fx:1,t:["Pașii tăi răsună în nava goală. BOOM! Un fulger lovește afară, iar realitatea se frânge.","Biserica se întoarce în vremea ei: lumânări aprinse, bănci pline. Enoriașii sunt fantome, blocate în ciclul morții."],o:[{l:"Vorbește cu fantomele",g:'c1g'},{l:"Atinge candelabrul care plutește",g:'d1'}]},
+d1:dead("Candelabrul spectral te înghite într-un foc rece. Mori.",'c1b'),
+c1g:{t:["Fantomele șoptesc despre un stareț care le-a luat banii. Una dintre ele, un bărbat cu ochi goi, te privește dușmănos.","Nu vrea să vorbească."],o:[{l:"Scoate crucea în fața fantomei ostile",g:'c1w'}]},
+c1w:{t:["Fantoma refuză să răspundă. Se înfurie, te ia pe sus și te aruncă printr-un perete."],o:[{l:"Ridică-te din moloz",g:'c1x'}]},
+c1x:{n:'jurnal',t:["Dincolo de perete descoperi dovezi șocante: lada starețului, cărți de socoteli, cercuri desenate cu sânge. Starețul fura banii enoriașilor și practica ritualuri oculte.","Misterul fantomei este rezolvat. Prima biserică se liniștește. Tencuiala de lângă altar este totuși crăpată, iar când o atingi sună a gol."],o:[{l:"Ciocănește în peretele fals",g:'jan'},{l:"Încheie capitolul",g:'c2a'}]},
+jan:{n:'potir',e:()=>{s.janel=1},t:["În spatele peretelui, un bătrân se ghemuiește lângă un potir sfințit. „Eu sunt Janel. Nu m-a găsit nimeni în o sută de ani. Ia potirul, părinte. Fără el nu vei închide Alexandria.”"],o:[{l:"Încheie capitolul",g:'c2a'}]},
+c2a:{c:"Capitolul 2 — Dispariția lui Mr. Gheorghe",t:["Părintele Gheorghe scoate apă la fântâna veche din sat. Brusc, o forță nevăzută din adâncuri îl trage în interior.","Ești singur. Cultiști cu felinare se apropie dintre case."],o:[{l:"Fugi pe drumul principal",g:'d2'},{l:"Ocolește prin livadă",g:'c2b'}]},
+d2:dead("Cultiștii te prind în drum. Mori.",'c2a'),
+c2b:{n:'plan',t:["În livadă dai peste Emilian Pancu și Damian, doi supraviețuitori. Emilian îți povestește istoria întunecată a cultului.","La un cultist căzut găsești însemnări: cineva pregătește un catalist care să distrugă lumea. Centrul planului este regiunea Alexandria."],o:[{l:"Ascultă povestea lui Emilian până la capăt",g:'c2c',d:()=>{s.km=1;add('emilian')}},{l:"Pleacă repede",g:'c2c'}]},
+c2c:{t:["La marginea satului te oprește Serban, fost cântăreț bisericesc care a trădat comunitatea. Îți arată un pistol vechi, învelit în pânză.","„Se plătește, părinte. Spune-i lui Emilian că eu n-am trădat pe nimeni.”"],o:[{l:"Ia arma și minte pentru el (−2 credință)",g:'c3a',d:()=>{s.gun=1;F(-2)}},{l:"Refuză arma și minciuna",g:'c3a'}]},
+c3a:{c:"Capitolul 3 — Alianța și Răspântia",t:["Mr. Gheorghe iese miraculos din fântână, ud și epuizat. Alergi spre el, vorbiți scurt, vă bateți palma și reînnoiți legământul sacru."],o:[{l:"Pornește la vânătoarea demonului",g:'c3m'}]},
+c3m:{t:["Urmele demonului duc într-o ceață deasă. Ceva se mișcă. O siluetă."],o:[{l:"Strigă: „Cine e acolo?”",g:'c3d'},{l:"Trage în siluetă",g:'c3k',i:()=>s.gun}]},
+c3k:{e:()=>{s.kill=1},t:["Împușcătura sună ca un clopot spart. Silueta cade: era Damian, rătăcit în ceață. Gheorghe te ridică fără reproș: „Dumnezeu iartă, fiule. Hai.”","Dar în depărtare auzi plânsul unui copil."],o:[{l:"Mergi mai departe",g:'c3e'}]},
+c3d:{t:["Este Damian, tremurând. Îți arată pe unde a trecut demonul și se ascunde."],o:[{l:"Mergi mai departe",g:'c3e'}]},
+c3e:{t:["Demonul major se ridică din ceață și intră în Mr. Gheorghe. Vocea lui devine a altcuiva. Cu mâini tremurânde, el deschide Biblia de piele, pentru prima oară, iar realitatea se rupe."],o:[{l:"Recită psalmul alături de el (+1 credință)",g:'c3s',d:()=>F(1)},{l:"Trage în mentorul tău",g:'ev1',i:()=>s.gun},{l:"Rămâi înmărmurit",g:'d3'}]},
+d3:dead("Demonul te lovește cu o mână de umbră. Mori.",'c3e'),
+c3s:{t:["Psalmul risipește demonul. Gheorghe se clatină, apoi spune: „Aici drumul se desparte. Vii cu mine spre Alexandria sau mergi singur?”"],o:[{l:"Rămâi alături de Mr. Gheorghe",g:'fin'},{l:"Despărțiți-vă: mergi singur",g:'solo',d:()=>{s.alone=1}}]},
+solo:{t:["Gheorghe te binecuvântează și dispare în ceață. Alexandria se ridică în fața ta: turnuri negre, un clopot care bate fără nimeni."],o:[{l:"Urcă în clopotniță, unde se pomenește un nume",g:'matei',i:()=>s.km},{l:"Intră în sala ritualului",g:'d4'}]},
+d4:dead("Ceva te chema din clopotniță, dar tu n-ai știut cine. Cultul te găsește în sala ritualului. Mori.",'solo'),
+matei:{n:'adevar',t:["În clopotniță, un om scrijelește un nume pe perete: Matei S. El îți spune un adevăr despre divinitate și despre entitățile din Alexandria. Totul se schimbă."],o:[{l:"Primește adevărul",g:'fin'}]},
+fin:{r:()=>s.kill?'ev2':s.alone?'secret':(s.d==0&&s.janel&&s.f>=4?'saint':'bit')},
+saint:{end:'saint'},ev1:{end:'ev1'},ev2:{end:'ev2'},secret:{end:'secret'},bit:{end:'bit'}
+};
+function add(k){if(!s.notes.includes(k)){s.notes.push(k);return 1}}
+function go(id){
+ const q=Q[id];if(q.r)return go(q.r());
+ s.cur=id;if(q.dead)s.d++;if(q.e)q.e();
+ q.nn=q.n&&add(q.n)?q.n:null;
+ if(q.end)unlock(q.end);
+ view='g';if(q.fx){const f=$('fl');f.classList.remove('on');void f.offsetWidth;f.classList.add('on')}
+ draw();
+}
+function unlock(k){try{const a=JSON.parse(localStorage.getItem('faithEnd')||'[]');if(!a.includes(k)){a.push(k);localStorage.setItem('faithEnd',JSON.stringify(a))}}catch(e){}}
+function got(){try{return JSON.parse(localStorage.getItem('faithEnd')||'[]')}catch(e){return[]}}
+function el(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function draw(){
+ const q=Q[s.cur],S=$('sc'),T=$('nt');S.replaceChildren();
+ $('cn').textContent=s.notes.length;
+ $('hud').textContent='';
+ $('hud').append(el('span','','Credință: '+'✝'.repeat(s.f)+'·'.repeat(5-s.f)),el('span','','Morți: '+s.d));
+ S.hidden=view!='g';T.hidden=view!='n';
+ if(view=='n')return notes();
+ let txt=[];
+ if(q.end){const e=E[q.end];S.append(el('div','end',e[0]),el('p','',e[1]));txt=[e[0],e[1]];
+  const g=got().filter(k=>k!='bit').length;S.append(el('p','tts','Finaluri descoperite: '+g+' din 4.'));
+  const b=el('button','go','Joacă din nou');b.onclick=()=>{init();go('intro')};S.append(el('div','opts'));S.lastChild.append(b);
+ }else{
+  if(q.c)S.append(el('div','ch',q.c));
+  if(q.dead)S.append(el('p','dead','Ai murit.'));
+  q.t.forEach(p=>{S.append(el('p','',p));txt.push(p)});
+  if(q.nn){const n=el('div','nw'),h=el('b','','Notă nouă: '+N[q.nn][0]);n.append(h,rb(q.nn));S.append(n)}
+  const o=el('div','opts');
+  if(q.dead){const b=el('button','go','Încearcă din nou');b.onclick=()=>go(q.back);o.append(b)}
+  (q.o||[]).forEach(x=>{if(x.i&&!x.i())return;const b=el('button',x.c?'go':'',x.l);b.onclick=()=>{if(x.d)x.d();go(x.g)};o.append(b)});
+  S.append(o);
+ }
+ scrollTo(0,0);
+ if(narr)say(txt.join(' '));
+}
+function notes(){
+ const T=$('nt');T.replaceChildren(el('div','ch','Note găsite'));
+ if(!s.notes.length)T.append(el('p','tts','Nu ai găsit nicio notă încă.'));
+ s.notes.forEach(k=>{const n=el('div','note');n.append(el('h3','',N[k][0]),el('p','',N[k][1]),rb(k));T.append(n)});
+ const b=el('button','go','Înapoi la joc');b.onclick=()=>{stop();view='g';draw()};T.append(b);
+ T.append(el('p','tts',V?'Voce: '+V.name:'Nu am găsit voce românească; se folosește vocea implicită a browserului.'));
+}
+function rb(k){const d=el('div');d.style.cssText='display:flex;gap:8px';
+ const a=el('button','','🔊 Citește'),b=el('button','','■ Stop');
+ a.onclick=()=>say(N[k][0]+'. '+N[k][1]);b.onclick=stop;d.append(a,b);return d}
+const syn=window.speechSynthesis;let V=null;
+function vs(){V=(syn.getVoices()||[]).find(v=>/^ro/i.test(v.lang))||null}
+if(syn){vs();syn.onvoiceschanged=vs}
+function say(x){if(!syn)return;syn.cancel();const u=new SpeechSynthesisUtterance(x);u.lang='ro-RO';if(V)u.voice=V;u.rate=.92;syn.speak(u)}
+function stop(){if(syn)syn.cancel()}
+$('bn').onclick=()=>{view=view=='n'?'g':'n';stop();draw()};
+$('bv').onclick=()=>{narr=!narr;$('bv').textContent=(narr?'🔊 Narator: pornit':'🔇 Narator: oprit');if(narr){const q=Q[s.cur];say((q.t||[]).join(' '))}else stop()};
+$('bt').onclick=()=>{const r=document.documentElement,d=matchMedia('(prefers-color-scheme: dark)').matches;const cur=r.dataset.theme||(d?'dark':'light');r.dataset.theme=cur=='dark'?'light':'dark'};
+init();go('intro');
+</script></body></html>
