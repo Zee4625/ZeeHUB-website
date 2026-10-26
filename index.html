@@ -1,145 +1,178 @@
 <!DOCTYPE html>
 <html lang="ro"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>FAITH: The Echoes of Alexandria</title>
+<title>FAITH: The Echoes of Alexandria — Capitolul 1</title>
 <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#e7e2ea;--pn:#f4f0f6;--tx:#2b1620;--mu:#6b5560;--ac:#7c1d33;--ln:#c4b6c9;--bt:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#150b10;--pn:#22121a;--tx:#efe6d6;--mu:#a8979a;--ac:#e0b458;--ln:#47293a;--bt:#150b10}}
-:root[data-theme="dark"]{--bg:#150b10;--pn:#22121a;--tx:#efe6d6;--mu:#a8979a;--ac:#e0b458;--ln:#47293a;--bt:#150b10}
+:root{--bg:#e7e2ea;--pn:#f4f0f6;--tx:#2b1620;--mu:#6b5560;--ac:#7c1d33;--ln:#c4b6c9;--bt:#fff;--sky:#cfc6d6;--bld:#3a2a38;--gr:#2a2030;--moon:#f4f0f6;--win:#6a6275;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#150b10;--pn:#22121a;--tx:#efe6d6;--mu:#a8979a;--ac:#e0b458;--ln:#47293a;--bt:#150b10;--sky:#0d0a14;--bld:#050307;--gr:#0a0610;--moon:#b9b3c9;--win:#262a38}}
+:root[data-theme="dark"]{--bg:#150b10;--pn:#22121a;--tx:#efe6d6;--mu:#a8979a;--ac:#e0b458;--ln:#47293a;--bt:#150b10;--sky:#0d0a14;--bld:#050307;--gr:#0a0610;--moon:#b9b3c9;--win:#262a38}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:19px/1.65 Spectral,Georgia,serif;background-image:radial-gradient(ellipse at 50% 0,var(--pn),transparent 70%)}
-main{max-width:680px;margin:0 auto;padding:18px 18px 60px}
-h1{font:700 clamp(46px,12vw,72px)/1 UnifrakturCook,"Old English Text MT",Georgia,serif;margin:6px 0 0;color:var(--ac);letter-spacing:.02em}
-.sub{display:block;font-style:italic;color:var(--mu);margin-bottom:12px}
-nav{display:flex;gap:8px;flex-wrap:wrap}
+body{margin:0;background:var(--bg);color:var(--tx);font:19px/1.65 Spectral,Georgia,serif}
+main{max-width:680px;margin:0 auto;padding:14px 16px 60px}
+h1{font:700 clamp(44px,12vw,68px)/1 UnifrakturCook,"Old English Text MT",Georgia,serif;margin:4px 0 0;color:var(--ac)}
+.sub{display:block;font-style:italic;color:var(--mu);margin-bottom:10px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 button{font:inherit;font-size:16px;color:var(--tx);background:var(--pn);border:1px solid var(--ln);border-radius:3px;padding:8px 12px;cursor:pointer}
 button:hover{border-color:var(--ac)}button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
-#hud{margin:12px 0;color:var(--mu);font-size:16px;display:flex;justify-content:space-between;border-bottom:1px solid var(--ln);padding-bottom:8px}
-.ch{font:700 26px/1.2 UnifrakturCook,Georgia,serif;color:var(--ac);margin:20px 0 10px}
+#art{display:block;width:100%;height:auto;max-height:190px;border:1px solid var(--ln);border-radius:3px;--win:var(--win)}
+#art.past{--sky:#2a1620;--win:#ffc864;--bld:#1a0d14}
+#art.sec{--sky:#3a0d16;--win:#121018;--bld:#0c0508}
+#art .gh{opacity:0;transition:opacity 2s}#art.past .gh{opacity:.55}
+#art .wn{fill:var(--win);transition:fill 1.5s}
+#hud{margin:10px 0;color:var(--mu);font-size:15px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--ln);padding-bottom:8px}
+.ch{font:700 27px/1.2 UnifrakturCook,Georgia,serif;color:var(--ac);margin:16px 0 8px}
 #sc p{margin:0 0 14px;max-width:62ch}
-.opts{display:grid;gap:10px;margin-top:22px}
+.who{font-weight:600;color:var(--ac);margin-right:8px;font-style:italic}.who::after{content:":"}
+.p{animation:in .6s both}@keyframes in{from{opacity:0}to{opacity:1}}
+.opts{display:grid;gap:10px;margin-top:20px}
 .opts button{text-align:left;padding:12px 14px;border-left:3px solid var(--ac)}
 .opts button.go{background:var(--ac);color:var(--bt);border-color:var(--ac)}
 .nw{border:1px solid var(--ac);background:var(--pn);padding:12px 14px;margin:16px 0;border-radius:3px}
-.nw b{display:block;color:var(--ac)}
+.nw b{display:block;color:var(--ac);margin-bottom:6px}
 .note{background:var(--pn);border:1px solid var(--ln);padding:14px;margin:12px 0;border-radius:3px}
 .note h3{margin:0 0 6px;font-size:20px;color:var(--ac)}.note p{margin:0 0 10px}
-.dead{color:var(--ac)}.tts{color:var(--mu);font-size:15px}
-.end{font:700 34px/1.15 UnifrakturCook,Georgia,serif;color:var(--ac);margin:18px 0 10px}
+.dead{color:var(--ac);font-weight:600}.tts{color:var(--mu);font-size:15px}
+.end{font:700 34px/1.15 UnifrakturCook,Georgia,serif;color:var(--ac);margin:16px 0 10px}
+.row{display:flex;gap:8px}
 #fl{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:9}
 #fl.on{animation:fl .9s ease-out}
 @keyframes fl{0%{opacity:.95}15%{opacity:.1}30%{opacity:.8}100%{opacity:0}}
-@media (prefers-reduced-motion:reduce){#fl.on{animation:none}}
+@media (prefers-reduced-motion:reduce){#fl.on,.p{animation:none}}
 </style></head>
 <body><div id="fl"></div>
 <main>
 <h1>FAITH</h1><span class="sub">The Echoes of Alexandria</span>
-<nav><button id="bn">📜 Note (<span id="cn">0</span>)</button><button id="bv">🔇 Narator: oprit</button><button id="bt">☾ Temă</button></nav>
+<nav><button id="bn">📜 Note (<span id="cn">0</span>)</button><button id="bv">🔇 Narator: oprit</button><button id="bs">🔈 Sunet: pornit</button><button id="bt">☾ Temă</button></nav>
+<svg id="art" viewBox="0 0 320 130" role="img" aria-label="Biserica părăsită">
+<rect width="320" height="130" fill="var(--sky)"/><circle cx="262" cy="26" r="13" fill="var(--moon)" opacity=".8"/>
+<g fill="var(--bld)"><rect x="60" y="66" width="150" height="56"/><path d="M52 68L135 38L218 68z"/><rect x="212" y="40" width="32" height="82"/><path d="M208 42L228 18L248 42z"/></g>
+<path d="M228 18V4M222 9h12" stroke="var(--bld)" stroke-width="3"/>
+<g class="wn"><rect class="wn" x="78" y="82" width="12" height="22" rx="6"/><rect class="wn" x="108" y="82" width="12" height="22" rx="6"/><rect class="wn" x="168" y="82" width="12" height="22" rx="6"/><rect class="wn" x="221" y="62" width="14" height="20" rx="7"/></g>
+<rect x="136" y="94" width="20" height="28" rx="10" fill="var(--sky)" opacity=".6"/>
+<g class="gh" fill="#e8e4f0"><ellipse cx="84" cy="112" rx="4" ry="9"/><ellipse cx="114" cy="113" rx="4" ry="8"/><ellipse cx="174" cy="112" rx="4" ry="9"/><ellipse cx="192" cy="114" rx="4" ry="7"/></g>
+<path d="M0 122h320v8H0z" fill="var(--gr)"/>
+</svg>
 <div id="hud"></div>
 <section id="sc"></section>
 <section id="nt" hidden></section>
 </main>
 <script>
-let s,view='g',narr=false;
+let s,view='g',narr=false,snd=true,voice=null,AC;
 const $=i=>document.getElementById(i);
 const F=n=>{s.f=Math.max(0,Math.min(5,s.f+n))};
-const init=()=>{s={f:3,d:0,gun:0,alone:0,janel:0,km:0,kill:0,notes:[],cur:'intro'}};
+const init=()=>{s={f:3,d:0,v:{},inv:[],notes:[],cur:'intro',mode:''}};
+const KEY='Cheie ruginită';
 const N={
-jurnal:["Jurnalul starețului","Am luat banii de la oamenii care mi-au dat tot ce aveau. Ritualul cere încă un cerc. Cei din Alexandria promit că ușa se va deschide, iar eu voi sta lângă ea. Dumnezeu tace. Poate că nu mai ascultă."],
-potir:["Potirul lui Janel","Potirul sfințit nu suportă sânge. Cine ridică arma împotriva unui om, chiar și din frică, nu mai poate închide ușa Alexandriei. Păstrează credința curată, părinte."],
-plan:["Însemnările cultiștilor","Catalistul este aproape gata. Când clopotul va suna a treia oară, ușa din Alexandria se deschide și lumea cade. Nimeni nu trebuie să afle cine păzește clopotnița."],
-emilian:["Povestea lui Emilian","Emilian mi-a spus: „Pe vremuri, un om a numărat treptele clopotniței din Alexandria și a scris numele lui sub clopot. Matei S. A rămas acolo. Doar cine merge singur poate ajunge la el.”],
-adevar:["Adevărul lui Matei S.","Ce-au ridicat oamenii în Alexandria nu a fost un altar al demonilor, ci un zăvor. Divinitatea nu a tăcut: a păzit. Demonii sunt ecoul fricii noastre, iar ușa se deschide doar celui care o crede goală."]
-};
-const E={
-saint:["Finalul Bun — The Saint Ending","Potirul lui Janel ține ușa închisă. Alături de Mr. Gheorghe, rostești ultima rugăciune, iar clopotul Alexandriei tace pentru totdeauna. Satul se trezește la lumină. Nu ai murit niciodată, nu ai ridicat arma și ai ales credința. Denis Dinu devine un adevărat stâlp al bisericii."],
-ev1:["Finalul Rău 1 — Căderea în Păcat","Împușcătura răsună. Mr. Gheorghe se prăbușește, iar credința ta se stinge odată cu el. Rătăcit și corupt, te alături cultului din Alexandria. La al treilea sunet al clopotului, tu ești sacrificiul final al ritualului lor."],
-ev2:["Finalul Rău 2 — Blestemul Copilului","Mr. Gheorghe te-a iertat și te-a ridicat. Ajungi aproape de victorie. Dar copilul celui pe care l-ai ucis a rostit un blestem, iar el te găsește chiar în pragul Alexandriei. Mori brusc, cu sutana plină de cenușă, înainte să se termine totul."],
-secret:["Finalul Secret — The Lone Crusader","Singur, ai urcat la Matei S. și ai aflat adevărul: ușa nu trebuie închisă cu forța, ci păzită. Rămâi în clopotniță în locul lui, ecou între ecouri. Ai deschis o concluzie pe care nimeni din sat n-o va înțelege."],
-bit:["Finalul Amar","Alexandria este salvată, dar nu fără cicatrici. Ai murit de prea multe ori, ai pierdut ceva din credință sau n-ai găsit ajutorul ascuns. Ușa se închide, dar nu complet. Ecourile rămân."]
+piatra:["Pietrele din cimitir","Toate pietrele poartă aceeași dată: noaptea în care clopotul a bătut singur. Sub ele sunt oameni de toate vârstele, îngropați deodată, dar fără mormântul vreunui stareț."],
+maria:["Mărturia Mariei","Maria spune că starețul a cerut bani pentru acoperiș și pentru clopot. Fiul ei, Ioan, a întrebat unde au ajuns banii și a dispărut în pivniță. De atunci umblă înfuriat prin biserică."],
+toma:["Mărturia paznicului","Paznicul a sunat clopotul în noaptea aceea. Starețul a zidit ușa din spatele altarului și a spus că ține acolo vasele sfinte. Din spatele zidului se auzeau cântece."],
+registru:["Registrul de socoteli","Sumele luate de la enoriași sunt trecute an de an, cu aceeași destinație: Alexandria. Ultima pagină e udă de ceară topită."],
+jurnal:["Jurnalul starețului","Banii nu mai ajung la acoperiș. Cei din Alexandria mi-au arătat cercul și mi-au spus că fiecare cerc cere încă un suflet. Dumnezeu tace. Poate că nu mai ascultă."],
+scrisoare:["Scrisoarea sigilată","Către cei din Alexandria: cercul de aici este aproape plin. Mai e nevoie de un păstor tânăr și neexperimentat, trimis de Biserică. Veți fi anunțați când ajunge."],
+potir:["Potirul lui Janel","Potirul sfințit nu suportă sânge. Cine ridică arma împotriva unui om nu mai poate închide ușa Alexandriei. Păstrează credința curată."]
 };
 const dead=(t,b)=>({dead:1,back:b,t:[t]});
+const back=(g)=>[{l:"Înapoi",g}];
 const Q={
-intro:{t:["Un joc de poveste și alegeri. Credința ta, morțile tale și arma pe care o vei lua decid cum se termină totul. Sunt patru finaluri adevărate.","Notele pe care le găsești pot fi ascultate cu voce tare (buton Citește în secțiunea Note). Poți porni și Naratorul din meniu."],o:[{l:"Începe misiunea",g:'start',c:1}]},
-start:{c:"Capitolul 1 — Prima Misiune și Timpul Întors",t:["Ai absolvit școala de preoți. Prima ta misiune: o biserică părăsită și izolată, la marginea ținutului Alexandria.","Ești părintele Denis Dinu, idealist și neexperimentat. Ai sutana neagră, o cruce de lemn și o lanternă. Lângă tine, părintele Gheorghe, sever și devotat, cu crucea de aur, candela și o Biblie veche."],o:[{l:"Intră în biserică",g:'c1b'},{l:"Roagă-te înainte să intri (+1 credință)",g:'c1b',d:()=>F(1)}]},
-c1b:{fx:1,t:["Pașii tăi răsună în nava goală. BOOM! Un fulger lovește afară, iar realitatea se frânge.","Biserica se întoarce în vremea ei: lumânări aprinse, bănci pline. Enoriașii sunt fantome, blocate în ciclul morții."],o:[{l:"Vorbește cu fantomele",g:'c1g'},{l:"Atinge candelabrul care plutește",g:'d1'}]},
-d1:dead("Candelabrul spectral te înghite într-un foc rece. Mori.",'c1b'),
-c1g:{t:["Fantomele șoptesc despre un stareț care le-a luat banii. Una dintre ele, un bărbat cu ochi goi, te privește dușmănos.","Nu vrea să vorbească."],o:[{l:"Scoate crucea în fața fantomei ostile",g:'c1w'}]},
-c1w:{t:["Fantoma refuză să răspundă. Se înfurie, te ia pe sus și te aruncă printr-un perete."],o:[{l:"Ridică-te din moloz",g:'c1x'}]},
-c1x:{n:'jurnal',t:["Dincolo de perete descoperi dovezi șocante: lada starețului, cărți de socoteli, cercuri desenate cu sânge. Starețul fura banii enoriașilor și practica ritualuri oculte.","Misterul fantomei este rezolvat. Prima biserică se liniștește. Tencuiala de lângă altar este totuși crăpată, iar când o atingi sună a gol."],o:[{l:"Ciocănește în peretele fals",g:'jan'},{l:"Încheie capitolul",g:'c2a'}]},
-jan:{n:'potir',e:()=>{s.janel=1},t:["În spatele peretelui, un bătrân se ghemuiește lângă un potir sfințit. „Eu sunt Janel. Nu m-a găsit nimeni în o sută de ani. Ia potirul, părinte. Fără el nu vei închide Alexandria.”"],o:[{l:"Încheie capitolul",g:'c2a'}]},
-c2a:{c:"Capitolul 2 — Dispariția lui Mr. Gheorghe",t:["Părintele Gheorghe scoate apă la fântâna veche din sat. Brusc, o forță nevăzută din adâncuri îl trage în interior.","Ești singur. Cultiști cu felinare se apropie dintre case."],o:[{l:"Fugi pe drumul principal",g:'d2'},{l:"Ocolește prin livadă",g:'c2b'}]},
-d2:dead("Cultiștii te prind în drum. Mori.",'c2a'),
-c2b:{n:'plan',t:["În livadă dai peste Emilian Pancu și Damian, doi supraviețuitori. Emilian îți povestește istoria întunecată a cultului.","La un cultist căzut găsești însemnări: cineva pregătește un catalist care să distrugă lumea. Centrul planului este regiunea Alexandria."],o:[{l:"Ascultă povestea lui Emilian până la capăt",g:'c2c',d:()=>{s.km=1;add('emilian')}},{l:"Pleacă repede",g:'c2c'}]},
-c2c:{t:["La marginea satului te oprește Serban, fost cântăreț bisericesc care a trădat comunitatea. Îți arată un pistol vechi, învelit în pânză.","„Se plătește, părinte. Spune-i lui Emilian că eu n-am trădat pe nimeni.”"],o:[{l:"Ia arma și minte pentru el (−2 credință)",g:'c3a',d:()=>{s.gun=1;F(-2)}},{l:"Refuză arma și minciuna",g:'c3a'}]},
-c3a:{c:"Capitolul 3 — Alianța și Răspântia",t:["Mr. Gheorghe iese miraculos din fântână, ud și epuizat. Alergi spre el, vorbiți scurt, vă bateți palma și reînnoiți legământul sacru."],o:[{l:"Pornește la vânătoarea demonului",g:'c3m'}]},
-c3m:{t:["Urmele demonului duc într-o ceață deasă. Ceva se mișcă. O siluetă."],o:[{l:"Strigă: „Cine e acolo?”",g:'c3d'},{l:"Trage în siluetă",g:'c3k',i:()=>s.gun}]},
-c3k:{e:()=>{s.kill=1},t:["Împușcătura sună ca un clopot spart. Silueta cade: era Damian, rătăcit în ceață. Gheorghe te ridică fără reproș: „Dumnezeu iartă, fiule. Hai.”","Dar în depărtare auzi plânsul unui copil."],o:[{l:"Mergi mai departe",g:'c3e'}]},
-c3d:{t:["Este Damian, tremurând. Îți arată pe unde a trecut demonul și se ascunde."],o:[{l:"Mergi mai departe",g:'c3e'}]},
-c3e:{t:["Demonul major se ridică din ceață și intră în Mr. Gheorghe. Vocea lui devine a altcuiva. Cu mâini tremurânde, el deschide Biblia de piele, pentru prima oară, iar realitatea se rupe."],o:[{l:"Recită psalmul alături de el (+1 credință)",g:'c3s',d:()=>F(1)},{l:"Trage în mentorul tău",g:'ev1',i:()=>s.gun},{l:"Rămâi înmărmurit",g:'d3'}]},
-d3:dead("Demonul te lovește cu o mână de umbră. Mori.",'c3e'),
-c3s:{t:["Psalmul risipește demonul. Gheorghe se clatină, apoi spune: „Aici drumul se desparte. Vii cu mine spre Alexandria sau mergi singur?”"],o:[{l:"Rămâi alături de Mr. Gheorghe",g:'fin'},{l:"Despărțiți-vă: mergi singur",g:'solo',d:()=>{s.alone=1}}]},
-solo:{t:["Gheorghe te binecuvântează și dispare în ceață. Alexandria se ridică în fața ta: turnuri negre, un clopot care bate fără nimeni."],o:[{l:"Urcă în clopotniță, unde se pomenește un nume",g:'matei',i:()=>s.km},{l:"Intră în sala ritualului",g:'d4'}]},
-d4:dead("Ceva te chema din clopotniță, dar tu n-ai știut cine. Cultul te găsește în sala ritualului. Mori.",'solo'),
-matei:{n:'adevar',t:["În clopotniță, un om scrijelește un nume pe perete: Matei S. El îți spune un adevăr despre divinitate și despre entitățile din Alexandria. Totul se schimbă."],o:[{l:"Primește adevărul",g:'fin'}]},
-fin:{r:()=>s.kill?'ev2':s.alone?'secret':(s.d==0&&s.janel&&s.f>=4?'saint':'bit')},
-saint:{end:'saint'},ev1:{end:'ev1'},ev2:{end:'ev2'},secret:{end:'secret'},bit:{end:'bit'}
+intro:{mode:'',t:["Capitolul 1 este o anchetă paranormală: explorezi, vorbești cu fantome și alegi ce faci. Fiecare indiciu contează, iar notele pe care le găsești pot fi ascultate cu voce tare.","Credința ta crește și scade după alegeri. Dacă mori, reiei de la ultimul punct sigur. Pentru un final perfect, nu muri deloc."],o:[{l:"Începe misiunea",g:'out',c:1}]},
+out:{mode:'',c:"Capitolul 1 — Prima Misiune și Timpul Întors",t:["Seară de toamnă, ploaie măruntă. În fața ta, biserica părăsită se ridică din ceață, cu turnul crăpat și crucea strâmbă.","Gheorghe|Ascultă, Denis. Nu spune nimic de care nu ești sigur și nu atinge nimic fără să te rogi mai întâi. Casa asta nu e goală.","Ai crucea de lemn la gât și lanterna în mână. El ține candela aprinsă și crucea de aur strânsă în palmă."],o:[{l:"Privește pietrele din cimitir",g:'cim',i:()=>!s.v.cim},{l:"Roagă-te lângă poartă (+1 credință)",g:'ru',i:()=>!s.v.ru},{l:"Intră în biserică",g:'int',c:1}]},
+cim:{e:()=>{s.v.cim=1},n:'piatra',t:["Pietrele sunt înghesuite și tocite de ploi. Toate poartă aceeași dată, iar printre ele nu e niciun mormânt de stareț.","Gheorghe|Cineva i-a îngropat pe toți deodată. Și n-a vrut să fie găsit."],o:back('out')},
+ru:{e:()=>{s.v.ru=1;F(1)},t:["Îngenunchezi în noroi și te rogi. Gheorghe așteaptă fără o vorbă, apoi încuviințează din cap. Pentru prima oară de azi, vântul tace."],o:back('out')},
+int:{mode:'',t:["Ușa cedează cu un geamăt. Înăuntru: bănci rupte, praf gros, picături care cad din tavan. Pe peretele altarului stă o icoană cu ochii zgâriați.","Gheorghe|Nu te despărți de lumină. Ce vezi acum e doar coaja."],o:[{l:"Examinează peretele din dreapta altarului",g:'crap',i:()=>!s.v.crap},{l:"Caută prin spovedanie",g:'conf',i:()=>!s.v.conf},{l:"Atinge icoana cu ochii zgâriați",g:'ico',i:()=>!s.v.ico},{l:"Mergi spre altar",g:'boom',c:1}]},
+crap:{e:()=>{s.v.crap=1},t:["Tencuiala din dreapta altarului e mai nouă decât restul, ca un petic pus în grabă. Când o bați cu degetul, sună a gol.","Gheorghe|Bine. Ține minte locul."],o:back('int')},
+conf:{e:()=>{s.v.conf=1;s.inv.push(KEY)},t:["În confesional, sub scândura scaunului, găsești o cheie ruginită legată cu sfoară neagră. Pe ea e gravată o literă: S."],o:back('int')},
+ico:{e:()=>{s.v.ico=1;F(-1)},t:["Degetele tale ating ochii zgâriați. O voce care nu e a ta îți șoptește: „Nu mai privi.” Gheorghe îți trage mâna înapoi.","Gheorghe|Ți-am spus să nu atingi nimic. Roagă-te."],o:[{l:"Roagă-te ca să-ți revii (+1 credință)",g:'int',d:()=>F(1)}]},
+boom:{fx:'t',mode:'past',t:["Pașii tăi răsună spre altar. BOOM! Un fulger lovește turnul și toată biserica se luminează alb.","Realitatea se frânge. Praful se ridică și cade ca o ploaie inversă. Lumânările se aprind una câte una, iar băncile sunt din nou întregi și pline de oameni care nu se mișcă.","Enoriașii sunt fantome, rămase în ciclul morții. Candela lui Gheorghe arde acum cu flacără albă.","Gheorghe|Se poate vorbi cu ei, Denis. Dar ai grijă ce spui și cum."],o:[{l:"Privește în jur",g:'past',c:1}]},
+past:{mode:'past',t:["Aerul miroase a tămâie veche și a pământ ud. Trei fantome se disting dintre ceilalți: o femeie în doliu, un paznic gârbov și un bărbat cu ochii goi, care te privește fix. Deasupra, un policandru de fier se leagănă fără vânt."],o:[{l:"Vorbește cu femeia în doliu",g:'maria',i:()=>!s.v.maria},{l:"Vorbește cu paznicul gârbov",g:'toma',i:()=>!s.v.toma},{l:"Apropie-te de bărbatul cu ochii goi",g:'ioan'},{l:"Urcă pe o bancă și apucă policandrul",g:'dC'}]},
+maria:{e:()=>{s.v.maria=1},n:'maria',t:["Femeia ridică spre tine o față obosită.","Maria|Starețul ne-a cerut banii pentru acoperiș și pentru clopot. Fiul meu, Ioan, a întrebat unde s-au dus și n-a mai ieșit din pivniță. De atunci umblă înfuriat.","Gheorghe|Ioan. Ține minte numele."],o:back('past')},
+toma:{e:()=>{s.v.toma=1},n:'toma',t:["Paznicul se uită după fiecare umbră.","Toma|Eu am sunat clopotul în noaptea aceea. Starețul a zidit ușa din spatele altarului. Zicea că ține acolo vasele sfinte. Dar de acolo se aud cântece."],o:back('past')},
+ioan:{t:["Bărbatul cu ochii goi rămâne nemișcat, cu pumnii strânși. Aerul din jurul lui e rece ca piatra.","Gheorghe|Alege cu grijă. Mânia lui n-are fund."],o:[{l:"Scoate crucea de lemn în fața lui",g:'ioanA'},{l:"Spune-i pe nume: „Ioan, fiul Mariei”",g:'ioanB',i:()=>s.v.maria},{l:"Retrage-te",g:'past'}]},
+ioanA:{fx:'k',mode:'sec',t:["Fantoma refuză să răspundă. Se înfurie, țipă fără glas, te ia pe sus și te aruncă printr-un perete. Zidul cedează și cazi într-o încăpere ascunsă, plină de praf și de miros de ceară arsă."],o:[{l:"Ridică-te din moloz",g:'sec',c:1}]},
+ioanB:{e:()=>{s.v.calm=1;F(1)},fx:'k',mode:'sec',t:["Fantoma tresare. Ochii goi se umplu o clipă de lacrimi. Își ridică mâna spre zidul din spatele altarului, iar piatra se desparte singură.","Gheorghe|Un om iertat arată drumul mai bine decât unul speriat."],o:[{l:"Intră în încăpere",g:'sec',c:1}]},
+dC:dead("Policandrul se desprinde și te lovește cu greutatea unui mort. Mori.",'past'),
+sec:{mode:'sec',t:()=>["Încăperea ascunsă e plină de dovezi: un registru de socoteli, un jurnal legat în piele neagră, un cerc desenat cu sânge pe podea și un cufăr încuiat. Pe zid, zgâriate cu unghia, două litere: M.S.",(s.v.reg&&s.v.jur)?"Gheorghe|Am văzut destul. Starețul fura și chema ceva. Hai să încheiem.":"Gheorghe|Încă nu înțelegem tot. Caută mai bine."],o:[{l:"Citește registrul de socoteli",g:'reg',i:()=>!s.v.reg},{l:"Răsfoiește jurnalul starețului",g:'jur',i:()=>!s.v.jur},{l:"Examinează cercul de pe podea",g:'cerc',i:()=>!s.v.cerc},{l:"Deschide cufărul cu cheia ruginită",g:'cuf',i:()=>!s.v.cuf&&s.inv.includes(KEY)},{l:"Ciocănește peretele din dreapta",g:'jan',i:()=>s.v.crap&&!s.v.jan},{l:"Încheie ancheta",g:'abb',i:()=>s.v.reg&&s.v.jur,c:1}]},
+reg:{e:()=>{s.v.reg=1},n:'registru',t:["Registrul arată sumele luate de la oameni, an după an, cu aceeași destinație trecută mereu: Alexandria."],o:back('sec')},
+jur:{e:()=>{s.v.jur=1},n:'jurnal',t:["Jurnalul te înfioară. Starețul nu a fost doar un hoț: a deschis o ușă și a hrănit-o."],o:back('sec')},
+cerc:{e:()=>{s.v.cerc=1},t:["Cercul de sânge e încă lipicios. Are șase locuri: cinci sunt pătate, iar al șaselea e gol.","Gheorghe|Nu te uita în el. N-are fund, ci doar foame."],o:back('sec')},
+cuf:{e:()=>{s.v.cuf=1},n:'scrisoare',t:["Cheia se potrivește. În cufăr stă o scrisoare sigilată cu un clopot de ceară, adresată celor din Alexandria."],o:back('sec')},
+jan:{e:()=>{s.v.jan=1;s.v.janel=1;F(1)},n:'potir',fx:'k',t:["Bați în zid. Sună a gol de trei ori, apoi o cărămidă cedează. În spatele ei, un bătrân slab se ghemuiește lângă un potir sfințit.","Janel|Eu sunt Janel. N-a mai dat nimeni de mine de o sută de ani. Ia potirul, părinte. Fără el, ușa Alexandriei nu se va închide."],o:back('sec')},
+abb:{mode:'sec',t:["În clipa în care închizi jurnalul, aerul îngheață. Din cercul de sânge se ridică o umbră înaltă, în sutană ruptă: starețul. Nu are chip, ci doar o gură deschisă.","Gheorghe|Acum, Denis! Ține crucea sus și rostește rugăciunea!"],o:[{l:"Ridică crucea și rostește rugăciunea",g:'fin',c:1},{l:"Fugi spre ieșire",g:'dA'}]},
+dA:dead("Umbra îți taie calea și te trage în cerc. Mori.",'abb'),
+fin:{end:1,mode:'past'}
 };
 function add(k){if(!s.notes.includes(k)){s.notes.push(k);return 1}}
 function go(id){
- const q=Q[id];if(q.r)return go(q.r());
- s.cur=id;if(q.dead)s.d++;if(q.e)q.e();
+ const q=Q[id];s.cur=id;
+ if(q.mode!==undefined)s.mode=q.mode;
+ if(q.dead)s.d++;if(q.e)q.e();
  q.nn=q.n&&add(q.n)?q.n:null;
- if(q.end)unlock(q.end);
- view='g';if(q.fx){const f=$('fl');f.classList.remove('on');void f.offsetWidth;f.classList.add('on')}
+ view='g';
+ if(q.fx){const f=$('fl');if(q.fx=='t'){f.classList.remove('on');void f.offsetWidth;f.classList.add('on')}sfx(q.fx)}
  draw();
 }
-function unlock(k){try{const a=JSON.parse(localStorage.getItem('faithEnd')||'[]');if(!a.includes(k)){a.push(k);localStorage.setItem('faithEnd',JSON.stringify(a))}}catch(e){}}
-function got(){try{return JSON.parse(localStorage.getItem('faithEnd')||'[]')}catch(e){return[]}}
 function el(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function para(x,i){const p=el('p','p');p.style.animationDelay=(i*.4)+'s';const m=x.match(/^([^|]{2,12})\|(.*)$/);if(m){p.append(el('span','who',m[1]),document.createTextNode(m[2]))}else p.textContent=x;return p}
 function draw(){
- const q=Q[s.cur],S=$('sc'),T=$('nt');S.replaceChildren();
+ const q=Q[s.cur],S=$('sc');
  $('cn').textContent=s.notes.length;
- $('hud').textContent='';
- $('hud').append(el('span','','Credință: '+'✝'.repeat(s.f)+'·'.repeat(5-s.f)),el('span','','Morți: '+s.d));
- S.hidden=view!='g';T.hidden=view!='n';
+ $('art').setAttribute('class',s.mode||'');
+ $('hud').replaceChildren(el('span','','Credință '+'✝'.repeat(s.f)+'·'.repeat(5-s.f)+'  ·  Morți '+s.d),el('span','','🔦 Lanternă, ✝ Cruce'+s.inv.map(x=>', 🗝 '+x).join('')));
+ S.hidden=view!='g';$('nt').hidden=view!='n';
  if(view=='n')return notes();
- let txt=[];
- if(q.end){const e=E[q.end];S.append(el('div','end',e[0]),el('p','',e[1]));txt=[e[0],e[1]];
-  const g=got().filter(k=>k!='bit').length;S.append(el('p','tts','Finaluri descoperite: '+g+' din 4.'));
-  const b=el('button','go','Joacă din nou');b.onclick=()=>{init();go('intro')};S.append(el('div','opts'));S.lastChild.append(b);
+ S.replaceChildren();let sp=[],lines=[];
+ if(q.end){
+  const r=[];
+  r.push("Rugăciunea ta se ridică peste cântecul umbrei. Candela lui Gheorghe aprinde cercul, iar starețul se destramă într-un strigăt tăcut. Fantomele își găsesc pace una câte una, iar biserica revine în ruină, dar acum e liniștită.");
+  if(s.v.calm)r.push("Ioan te privește și zâmbește înainte să dispară.");
+  r.push(s.v.janel?"Potirul lui Janel lucește în buzunarul tău. Alexandria te așteaptă.":"Simți că ai ratat ceva ascuns în pereții bisericii.");
+  S.append(el('div','end','Capitolul 1 încheiat'));
+  r.forEach((x,i)=>{S.append(para(x,i));sp.push(x)});
+  const ok=s.d==0&&s.v.janel&&s.f>=4;
+  S.append(el('p','tts','Note găsite: '+s.notes.length+' din 7  ·  Credință: '+s.f+' din 5  ·  Morți: '+s.d+'  ·  '+(ok?'Ești pe calea Sfântului.':'Un început cu răni.')));
+  S.append(el('p','tts','Capitolul 2 — Dispariția lui Mr. Gheorghe — urmează.'));
+  const o=el('div','opts'),b=el('button','go','Joacă din nou Capitolul 1');b.onclick=()=>{init();go('intro')};o.append(b);S.append(o);
  }else{
   if(q.c)S.append(el('div','ch',q.c));
-  if(q.dead)S.append(el('p','dead','Ai murit.'));
-  q.t.forEach(p=>{S.append(el('p','',p));txt.push(p)});
-  if(q.nn){const n=el('div','nw'),h=el('b','','Notă nouă: '+N[q.nn][0]);n.append(h,rb(q.nn));S.append(n)}
-  const o=el('div','opts');
+  if(q.dead){S.append(el('p','dead','Ai murit.'))}
+  lines=typeof q.t=='function'?q.t():q.t;
+  lines.forEach((x,i)=>{S.append(para(x,i));sp.push(x.replace('|',': '))});
+  if(q.nn){const n=el('div','nw');n.append(el('b','','Notă nouă: '+N[q.nn][0]),rb(q.nn));S.append(n)}
+  const o=el('div','opts');o.className='opts p';o.style.animationDelay=(lines.length*.4+.1)+'s';
   if(q.dead){const b=el('button','go','Încearcă din nou');b.onclick=()=>go(q.back);o.append(b)}
   (q.o||[]).forEach(x=>{if(x.i&&!x.i())return;const b=el('button',x.c?'go':'',x.l);b.onclick=()=>{if(x.d)x.d();go(x.g)};o.append(b)});
   S.append(o);
  }
  scrollTo(0,0);
- if(narr)say(txt.join(' '));
+ if(narr)say(sp.join(' '));
 }
 function notes(){
  const T=$('nt');T.replaceChildren(el('div','ch','Note găsite'));
  if(!s.notes.length)T.append(el('p','tts','Nu ai găsit nicio notă încă.'));
  s.notes.forEach(k=>{const n=el('div','note');n.append(el('h3','',N[k][0]),el('p','',N[k][1]),rb(k));T.append(n)});
  const b=el('button','go','Înapoi la joc');b.onclick=()=>{stop();view='g';draw()};T.append(b);
- T.append(el('p','tts',V?'Voce: '+V.name:'Nu am găsit voce românească; se folosește vocea implicită a browserului.'));
+ T.append(el('p','tts',voice?'Voce: '+voice.name:'Nu am găsit voce românească; se folosește vocea implicită a browserului.'));
 }
-function rb(k){const d=el('div');d.style.cssText='display:flex;gap:8px';
- const a=el('button','','🔊 Citește'),b=el('button','','■ Stop');
+function rb(k){const d=el('div','row'),a=el('button','','🔊 Citește'),b=el('button','','■ Stop');
  a.onclick=()=>say(N[k][0]+'. '+N[k][1]);b.onclick=stop;d.append(a,b);return d}
-const syn=window.speechSynthesis;let V=null;
-function vs(){V=(syn.getVoices()||[]).find(v=>/^ro/i.test(v.lang))||null}
+const syn=window.speechSynthesis;
+function vs(){voice=(syn.getVoices()||[]).find(v=>/^ro/i.test(v.lang))||null}
 if(syn){vs();syn.onvoiceschanged=vs}
-function say(x){if(!syn)return;syn.cancel();const u=new SpeechSynthesisUtterance(x);u.lang='ro-RO';if(V)u.voice=V;u.rate=.92;syn.speak(u)}
+function say(x){if(!syn)return;syn.cancel();const u=new SpeechSynthesisUtterance(x);u.lang='ro-RO';if(voice)u.voice=voice;u.rate=.92;syn.speak(u)}
 function stop(){if(syn)syn.cancel()}
+function sfx(k){
+ if(!snd)return;let a;try{a=AC=AC||new(window.AudioContext||window.webkitAudioContext)()}catch(e){return}
+ if(a.state=='suspended')a.resume();
+ const g=a.createGain(),t=a.currentTime;g.connect(a.destination);
+ if(k=='t'){const n=a.createBuffer(1,a.sampleRate*3,a.sampleRate),c=n.getChannelData(0);
+  for(let i=0;i<c.length;i++)c[i]=(Math.random()*2-1)*Math.pow(1-i/c.length,2);
+  const S=a.createBufferSource(),L=a.createBiquadFilter();L.type='lowpass';L.frequency.value=260;S.buffer=n;S.connect(L);L.connect(g);g.gain.value=1.4;S.start(t)}
+ else{const o=a.createOscillator();o.frequency.value=90;o.connect(g);g.gain.setValueAtTime(.8,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.35)}
+}
 $('bn').onclick=()=>{view=view=='n'?'g':'n';stop();draw()};
-$('bv').onclick=()=>{narr=!narr;$('bv').textContent=(narr?'🔊 Narator: pornit':'🔇 Narator: oprit');if(narr){const q=Q[s.cur];say((q.t||[]).join(' '))}else stop()};
-$('bt').onclick=()=>{const r=document.documentElement,d=matchMedia('(prefers-color-scheme: dark)').matches;const cur=r.dataset.theme||(d?'dark':'light');r.dataset.theme=cur=='dark'?'light':'dark'};
+$('bv').onclick=()=>{narr=!narr;$('bv').textContent=narr?'🔊 Narator: pornit':'🔇 Narator: oprit';if(narr){const q=Q[s.cur],l=typeof q.t=='function'?q.t():(q.t||[]);say(l.map(x=>x.replace('|',': ')).join(' '))}else stop()};
+$('bs').onclick=()=>{snd=!snd;$('bs').textContent=snd?'🔈 Sunet: pornit':'🔇 Sunet: oprit'};
+$('bt').onclick=()=>{const r=document.documentElement,d=matchMedia('(prefers-color-scheme: dark)').matches,c=r.dataset.theme||(d?'dark':'light');r.dataset.theme=c=='dark'?'light':'dark'};
 init();go('intro');
 </script></body></html>
